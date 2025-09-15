@@ -1,0 +1,23 @@
+{
+  "name": "pawpaw",
+  "version": "1.0.0",
+  "description": "Aplikasi web untuk memberikan **_live update_ kegiatan siswa TK** kepada orang tua secara langsung.  \r Orang tua bisa melihat aktivitas harian anak, cuaca, hingga laporan berkala, sementara guru dapat mengunggah laporan kegiatan dan pengumuman.",
+  "homepage": "https://github.com/zaidanharith/pawpaw#readme",
+  "bugs": {
+    "url": "https://github.com/zaidanharith/pawpaw/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zaidanharith/pawpaw.git"
+  },
+  "license": "ISC",
+  "author": "",
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "express": "^5.1.0"
+  }
+}
