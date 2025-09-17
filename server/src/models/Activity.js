@@ -1,20 +1,11 @@
 const mongoose = require('mongoose');
 
 const activitySchema = new mongoose.Schema({
-    child: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Child',
-        required: true
-    },
-    teacher: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Teacher', // kita bisa buat model Teacher terpisah
-        required: true
-    },
-    title: {
+    name: {
         type: String,
-        required: true,
-        trim: true
+        enum: ['Senam', 'Bermain', 'Bercerita', 'Makan Siang'],
+        trim: true,
+        required: true
     },
     description: {
         type: String,
@@ -22,15 +13,14 @@ const activitySchema = new mongoose.Schema({
     },
     date: {
         type: Date,
-        default: Date.now
+        default: Date.now,
+        required: true
     },
-    photos: [{
-        type: String // simpan URL foto aktivitas
-    }],
-    isPublished: {
-        type: Boolean,
-        default: true
-    }
+    student: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Student',
+        required: true
+    }]
 }, {
     timestamps: true
 });

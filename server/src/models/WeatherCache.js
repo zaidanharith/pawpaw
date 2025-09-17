@@ -10,7 +10,7 @@ const weatherCacheSchema = new mongoose.Schema({
         required: true
     },
     condition: {
-        type: String, // e.g., "Clear", "Rain", "Cloudy"
+        type: String,
         required: true
     },
     cachedAt: {

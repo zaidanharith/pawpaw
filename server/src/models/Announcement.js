@@ -12,7 +12,7 @@ const announcementSchema = new mongoose.Schema({
     },
     createdBy: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'User', // relasi ke model User
+        ref: 'User', 
         required: false
     },
     isImportant: {
@@ -20,7 +20,7 @@ const announcementSchema = new mongoose.Schema({
         default: false
     }
 }, {
-    timestamps: true // otomatis bikin createdAt & updatedAt
+    timestamps: true 
 });
 
 module.exports = mongoose.model('Announcement', announcementSchema);

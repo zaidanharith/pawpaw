@@ -20,11 +20,12 @@ const studentSchema = new mongoose.Schema({
         required: true,
         trim: true,
     }, 
-    class: {
+    classroom: {
         type: String,
+        ref: 'Classroom',
         trim: true,
     },
-    status : {
+    isActive : {
         type: Boolean,
         required: true,
     },

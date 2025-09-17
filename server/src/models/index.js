@@ -1,11 +1,12 @@
 module.exports = {
     Activity: require('./Activity'),
     Announcement: require('./Announcement'),
+    Attendance: require('./Attendance'),
+    Classroom: require('./Classroom'),
+    FileUpload: require('./FileUpload'),
     LiveReport: require('./LiveReport'),
-    Parent: require('./Parent'),
-    ParentMessage: require('./ParentMessage'),
+    Message: require('./Message'),
     Student: require('./Student'),
-    Teacher: require('./Teacher'),
     User: require('./User'),
     WeatherCache: require('./WeatherCache'),
 };
