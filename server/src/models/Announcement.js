@@ -1,24 +1,26 @@
-const { DataTypes } = require('sequelize');
-const sequelize = require('../config/database');
 const mongoose = require('mongoose');
 
-const Announcement = sequelize.define('Announcement', {
-    id: {
-        type: DataTypes.INTEGER,
-        primaryKey: true,
-        autoIncrement: true
-    },
+const announcementSchema = new mongoose.Schema({
     title: {
-        type: DataTypes.STRING,
-        allowNull: false
+        type: String,
+        required: true,
+        trim: true
     },
     content: {
-        type: DataTypes.TEXT,
-        allowNull: false
+        type: String,
+        required: true
+    },
+    createdBy: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User', // relasi ke model User
+        required: false
+    },
+    isImportant: {
+        type: Boolean,
+        default: false
     }
 }, {
-    tableName: 'announcements',
-    timestamps: true
+    timestamps: true // otomatis bikin createdAt & updatedAt
 });
 
 module.exports = mongoose.model('Announcement', announcementSchema);
