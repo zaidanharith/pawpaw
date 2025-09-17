@@ -31,7 +31,8 @@ const userSchema = new mongoose.Schema({
     },
     role: {
         type: String,
-        enum: ['admin', 'teacher', 'parent'], // student dihapus
+        enum: ['admin', 'teacher', 'parent'], // hanya boleh pilih dari daftar ini
+        required: true 
     },
     isLogin: {
         type: Boolean,
