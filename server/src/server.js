@@ -1,8 +1,8 @@
 const express = require('express');
 const dotenv = require('dotenv');
 const connectDB = require('./config/db');
-const { Activity, Announcement, LiveReport, Parent, ParentMessage, Student, Teacher, User, WeatherCache} = require("./models");
 
+const { Activity, Announcement, LiveReport, Parent, ParentMessage, Student, Teacher, User, WeatherCache} = require("./models");
 
 dotenv.config();
 connectDB();
