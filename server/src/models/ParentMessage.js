@@ -1,3 +1,5 @@
+const mongoose = require('mongoose');
+
 const parentMessageSchema = new mongoose.Schema({
     parent: {
         type: mongoose.Schema.Types.ObjectId,
