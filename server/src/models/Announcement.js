@@ -1,5 +1,6 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../config/database');
+const mongoose = require('mongoose');
 
 const Announcement = sequelize.define('Announcement', {
     id: {
@@ -20,4 +21,4 @@ const Announcement = sequelize.define('Announcement', {
     timestamps: true
 });
 
-module.exports = Announcement;
+module.exports = mongoose.model('Announcement', announcementSchema);
