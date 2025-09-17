@@ -1,39 +1,23 @@
 const mongoose = require('mongoose');
 
-const parentMessageSchema = new mongoose.Schema({
-    parent: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Parent',
+const weatherCacheSchema = new mongoose.Schema({
+    temperature: {
+        type: Number,
         required: true
     },
-    teacher: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Teacher',
+    humidity: {
+        type: Number,
         required: true
     },
-    message: {
-        type: String,
-        required: true,
-        trim: true
+    condition: {
+        type: String, // e.g., "Clear", "Rain", "Cloudy"
+        required: true
     },
-    reply: {
-        type: String,
-        trim: true
-    },
-    sentAt: {
+    cachedAt: {
         type: Date,
-        default: Date.now
-    },
-    readByTeacher: {
-        type: Boolean,
-        default: false
-    },
-    readByParent: {
-        type: Boolean,
-        default: false
+        default: Date.now,
+        required: true
     }
-}, {
-    timestamps: true
 });
 
-module.exports = mongoose.model('ParentMessage', parentMessageSchema);
+module.exports = mongoose.model('WeatherCache', weatherCacheSchema);
