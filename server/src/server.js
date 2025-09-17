@@ -1,20 +1,18 @@
-require('dotenv').config();
 const express = require('express');
+const dotenv = require('dotenv');
 const connectDB = require('./config/db');
-const User = require('./models/User');
 
-const app = express();
-const PORT = process.env.PORT || 3000;
+const { Activity, Announcement, LiveReport, Parent, ParentMessage, Student, Teacher, User, WeatherCache} = require("./models");
 
-app.use(express.json());
-
+dotenv.config();
 connectDB();
 
+const app = express();
+app.use(express.json());
 
 app.get('/', (req, res) => {
-    res.send('Welcome to KidConnect!');
+    res.send('Welcome to KidConnect');
 });
 
-app.listen(PORT, () => {
-    console.log(`Server listening on port ${PORT}`);
-});
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => console.log(`Server running on ${PORT}`));
