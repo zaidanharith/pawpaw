@@ -54,6 +54,28 @@ Orang tua bisa melihat aktivitas harian anak, cuaca, hingga laporan berkala, sem
 - **Database**: MongoDB
 - **API**: Weather API (untuk prediksi cuaca)
 
+## 📂 File Directory
+
+```
+pawpaw/
+├── server/
+│   ├── src/
+│   │   ├── config/
+│   │   ├── controllers/
+│   │   ├── models/
+│   │   ├── routes/
+│   │   ├── middleware/
+│   │   ├── utils/
+│   │   ├── cron/
+│   │   └── server.js
+│   ├── package.json
+│   └── README.md
+├── client/
+│   ├── package.json
+├── .gitignore
+└── README.md
+```
+
 ## 📌 Notes
 
 - Repo ini digunakan untuk pengembangan project kuliah kelompok.
