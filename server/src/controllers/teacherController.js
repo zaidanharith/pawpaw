@@ -1,6 +1,5 @@
-const Teacher = require('../models/teacherModel');
-const LiveReport = require('../models/liveReportModel');
-const Announcement = require('../models/announcementModel');
+const LiveReport = require('../models/LiveReport');
+const Announcement = require('../models/Announcement');
 
 // Get all teachers
 exports.getAllTeachers = async (req, res) => {

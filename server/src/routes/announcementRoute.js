@@ -5,7 +5,7 @@ const { authMiddleware, authorizeRole, validateObjectId } = require('../middlewa
 
 // POST "/" → createAnnouncement, hanya untuk teacher dan admin
 router.post(
-    '/',
+    '/create-announcement',
     authMiddleware,
     authorizeRole('teacher', 'admin'),
     announcementController.createAnnouncement
@@ -13,10 +13,10 @@ router.post(
 
 // GET "/" → getAnnouncements, bisa diakses parent, teacher, admin
 router.get(
-    '/',
+    '/get-announcements',
     authMiddleware,
     authorizeRole('parent', 'teacher', 'admin'),
-    announcementController.getAnnouncements
+    announcementController.getAllAnnouncements
 );
 
 // GET "/:id" → getAnnouncementById, bisa diakses parent, teacher, admin, dengan validateObjectId
