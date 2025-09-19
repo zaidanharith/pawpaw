@@ -73,9 +73,7 @@ const authController = {
 
     getProfile: async (req, res) => {
         try {
-            console.log(req.userId);
-            const user = await User.findById(req.userId).select('-password');
-            console.log(user);
+            const user = await User.findById(req.user.userId).select('-password');
             if (!user) {
                 return res.status(404).json({ message: 'User tidak ditemukan' });
             }
