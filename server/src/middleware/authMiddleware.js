@@ -1,26 +1,43 @@
 const jwt = require('jsonwebtoken');
-const User = require('../models/User');
 
-const authMiddleware = async (req, res, next) => {
+const authMiddleware = (req, res, next) => {
   try {
-    const authHeader = req.headers.authorization;
-    if (!authHeader || !authHeader.startsWith('Bearer ')) {
-      return res.status(401).json({ message: 'No token provided' });
+    const token = req.header('Authorization')?.replace('Bearer ', '');
+    
+    if (!token) {
+      return res.status(401).json({ message: 'Token tidak terdeteksi' });
     }
 
-    const token = authHeader.split(' ')[1];
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    
+    req.user = decoded;
 
-    const user = await User.findById(decoded.id).select('-passwordHash');
-    if (!user) {
-      return res.status(401).json({ message: 'User not found' });
-    }
-
-    req.user = user;
     next();
-  } catch (err) {
-    return res.status(401).json({ message: 'Invalid token' });
+  } catch (error) {
+    res.status(401).json({ message: 'Token tidak valid' });
   }
 };
 
-module.exports = authMiddleware;
+const adminOnly = (req, res, next) => {
+  try {
+    const token = req.header('Authorization')?.replace('Bearer ', '');
+    
+    if (!token) {
+      return res.status(401).json({ message: 'Token tidak terdeteksi' });
+    }
+
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+    
+    if (decoded.role !== 'admin') {
+      return res.status(403).json({ message: 'Akses ditolak. Hanya admin yang dapat mendaftar pengguna baru' });
+    }
+    
+    req.user = decoded;
+    next();
+  } catch (error) {
+    res.status(401).json({ message: 'Token tidak valid' });
+  }
+};
+
+module.exports = { authMiddleware, adminOnly };
