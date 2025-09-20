@@ -13,6 +13,40 @@ Orang tua bisa melihat aktivitas harian anak, cuaca, hingga laporan berkala, sem
 
 ⌚ Deadline Milestone 1: **Rabu, 1 Oktober 2025, 06.59 WIB (BACK-END)**
 
+## ⚙️ Cara Menjalankan Program **(Back-End Only)**
+
+1. Pastikan file `.env` sudah ada di folder `/server`. Jika belum, silakan buat dengan _template_ di `.env.example`.
+
+2. Program hanya bisa dijalankan melalui folder `/server`. Maka, jalankan _command_ berikut di folder root.
+
+```
+cd server
+npm install
+npm run dev
+```
+
+## 📂 File Directory
+
+```
+pawpaw/
+├── server/
+│   ├── src/
+│   │   ├── config/
+│   │   ├── controllers/
+│   │   ├── models/
+│   │   ├── routes/
+│   │   ├── middleware/
+│   │   ├── utils/
+│   │   ├── cron/
+│   │   └── server.js
+│   ├── package.json
+│   └── README.md
+├── client/
+│   ├── package.json
+├── .gitignore
+└── README.md
+```
+
 ## 👨‍💻 Developer (Kelompok 13)
 
 - Agatha Husna Amalia (23/515562/TK/56686)
@@ -53,28 +87,6 @@ Orang tua bisa melihat aktivitas harian anak, cuaca, hingga laporan berkala, sem
 - **Backend**: Express.js
 - **Database**: MongoDB
 - **API**: Weather API (untuk prediksi cuaca)
-
-## 📂 File Directory
-
-```
-pawpaw/
-├── server/
-│   ├── src/
-│   │   ├── config/
-│   │   ├── controllers/
-│   │   ├── models/
-│   │   ├── routes/
-│   │   ├── middleware/
-│   │   ├── utils/
-│   │   ├── cron/
-│   │   └── server.js
-│   ├── package.json
-│   └── README.md
-├── client/
-│   ├── package.json
-├── .gitignore
-└── README.md
-```
 
 ## 📌 Notes
 

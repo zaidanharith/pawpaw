@@ -12,7 +12,6 @@ Icon
 
 # Environment variable files
 .env
-.env.*
 *.env
 *.env.local
 *.env.development
