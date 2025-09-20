@@ -39,6 +39,7 @@ pawpaw/
 │   │   ├── utils/
 │   │   ├── cron/
 │   │   └── server.js
+│   ├── .env.example
 │   ├── package.json
 │   └── README.md
 ├── client/

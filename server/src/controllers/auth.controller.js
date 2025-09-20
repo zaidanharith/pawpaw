@@ -1,11 +1,10 @@
 const bcrypt = require('bcrypt');
-const jwt = require('jsonwebtoken');
+const { generateToken } = require('../utils/jwt');
 const User = require('../models/User');
 
 const authController = {
     register: async (req, res) => {
         try {   
-            console.log(req.body);
             const { username, name, email, phoneNumber, password, role } = req.body;
 
             const existingUser = await User.findOne({ email });
@@ -43,19 +42,14 @@ const authController = {
 
             const user = await User.findOne({ username });
             if (!user) {
-                return res.status(400).json({ message: 'Username/Password salah' });
+                return res.status(401).json({ message: 'Username/Password salah' });
             }
             const isPasswordValid = await bcrypt.compare(password, user.password);
 
             if (!isPasswordValid) {
-                return res.status(400).json({ message: 'Username/Password salah' });
+                return res.status(401).json({ message: 'Username/Password salah' });
             }
-
-            const token = jwt.sign(
-                { userId: user._id.toString(), username: user.username },
-                process.env.JWT_SECRET,
-                { expiresIn: '24h' }
-            );
+            const token = generateToken(user._id, user.username, user.role);
 
             res.json({
                 message: 'Login berhasil',

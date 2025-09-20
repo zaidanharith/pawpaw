@@ -1,15 +1,17 @@
-const jwt = require('jsonwebtoken');
+const { verifyToken } = require('../utils/jwt');
 
-const authMiddleware = (req, res, next) => {
+const protect = (req, res, next) => {
   try {
     const token = req.header('Authorization')?.replace('Bearer ', '');
-    
     if (!token) {
       return res.status(401).json({ message: 'Token tidak terdeteksi' });
     }
 
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    
+    const decoded = verifyToken(token);
+    if (!decoded) {
+      return res.status(401).json({ message: 'Token tidak valid' });
+    }
+
     req.user = decoded;
 
     next();
@@ -19,11 +21,10 @@ const authMiddleware = (req, res, next) => {
 };
 
 const adminOnly = (req, res, next) => {
-  console.log(req.user);
-  if (req.user.role !== 'admin') {
+  if (!req.user || req.user.role !== 'admin') {
     return res.status(403).json({ message: 'Akses ditolak. Hanya admin yang diizinkan' });
   }
   next();
 };
 
-module.exports = { authMiddleware, adminOnly };
+module.exports = { protect, adminOnly };
