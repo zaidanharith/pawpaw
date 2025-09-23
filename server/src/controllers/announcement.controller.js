@@ -3,7 +3,7 @@ const Announcement = require('../models/Announcement');
 // Get all announcements
 exports.getAllAnnouncements = async (req, res) => {
     try {
-        const announcements = await Announcement.find().populate("teacher");
+        const announcements = await Announcement.find(); // tanpa populate
         res.status(200).json(announcements);
     } catch (error) {
         res.status(500).json({ message: error.message });
@@ -13,7 +13,7 @@ exports.getAllAnnouncements = async (req, res) => {
 // Get announcement by ID
 exports.getAnnouncementById = async (req, res) => {
     try {
-        const announcement = await Announcement.findById(req.params.id).populate("teacher");
+        const announcement = await Announcement.findById(req.params.id); // tanpa populate
         if (!announcement) return res.status(404).json({ message: "Announcement not found" });
         res.status(200).json(announcement);
     } catch (error) {
