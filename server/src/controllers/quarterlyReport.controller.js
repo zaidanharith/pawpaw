@@ -22,7 +22,7 @@ exports.generateQuarterlyReport = async (req, res) => {
     if (existing) {
       return res.status(400).json({
         success: false,
-        message: Quarterly report for ${quarter} ${year} already exists
+        message: 'Quarterly report for ${quarter} ${year} already exists'
       });
     }
 
@@ -46,7 +46,7 @@ exports.generateQuarterlyReport = async (req, res) => {
       quarter,
       year,
       activitiesSummary,
-      notes: Summary report for ${quarter} ${year},
+      notes: 'Summary report for ${quarter} ${year}',
       meetingReminder: true
     });
 
