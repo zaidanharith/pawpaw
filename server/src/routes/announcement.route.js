@@ -1,49 +1,53 @@
 const express = require('express');
 const router = express.Router();
-const announcementController = require('../controllers/announcementController');
-const { authMiddleware, authorizeRole, validateObjectId } = require('../middlewares/authMiddleware');
+const { protect, roleCheck } = require('../middleware/auth.middleware');
 
-// POST "/" → createAnnouncement, hanya untuk teacher dan admin
+const {
+  getAnnouncements,
+  getAnnouncementById,
+  createAnnouncement,
+  updateAnnouncement,
+  deleteAnnouncement
+} = require('../controllers/announcement.controller');
+
+// Create announcement → hanya teacher dan admin
 router.post(
-    '/create-announcement',
-    authMiddleware,
-    authorizeRole('teacher', 'admin'),
-    announcementController.createAnnouncement
+  '/announcement/create',
+  protect,
+  roleCheck('teacher', 'admin'),
+  createAnnouncement
 );
 
-// GET "/" → getAnnouncements, bisa diakses parent, teacher, admin
+// Get all announcements → bisa diakses parent, teacher, admin
 router.get(
-    '/get-announcements',
-    authMiddleware,
-    authorizeRole('parent', 'teacher', 'admin'),
-    announcementController.getAllAnnouncements
+  '/',
+  protect,
+  roleCheck('parent', 'teacher', 'admin'),
+  getAnnouncements
 );
 
-// GET "/:id" → getAnnouncementById, bisa diakses parent, teacher, admin, dengan validateObjectId
+// Get announcement by ID → parent, teacher, admin
 router.get(
-    '/:id',
-    authMiddleware,
-    authorizeRole('parent', 'teacher', 'admin'),
-    validateObjectId,
-    announcementController.getAnnouncementById
+  '/:id',
+  protect,
+  roleCheck('parent', 'teacher', 'admin'),
+  getAnnouncementById
 );
 
-// PUT "/:id" → updateAnnouncement, hanya teacher dan admin, dengan validateObjectId
+// Update announcement → hanya teacher dan admin
 router.put(
-    '/:id',
-    authMiddleware,
-    authorizeRole('teacher', 'admin'),
-    validateObjectId,
-    announcementController.updateAnnouncement
+  '/:id',
+  protect,
+  roleCheck('teacher', 'admin'),
+  updateAnnouncement
 );
 
-// DELETE "/:id" → deleteAnnouncement, hanya teacher dan admin, dengan validateObjectId
+// Delete announcement → hanya teacher dan admin
 router.delete(
-    '/:id',
-    authMiddleware,
-    authorizeRole('teacher', 'admin'),
-    validateObjectId,
-    announcementController.deleteAnnouncement
+  '/:id',
+  protect,
+  roleCheck('teacher', 'admin'),
+  deleteAnnouncement
 );
 
 module.exports = router;
