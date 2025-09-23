@@ -18,10 +18,10 @@ app.get('/', (req, res) => {
     res.json({ message: 'Selamat Datang di Aplikasi KidConnect!' });
 });
 
-app.use((err, req, res) => {
+app.use((err, req, res, next) => {
   console.error(err.stack);
   res.status(500).json({ message: err.message });
 });
 
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log(`Servernya berjalan di : ${PORT}`));
+app.listen(PORT, () => console.log(`Server sedang berjalan di : http://localhost:${PORT}`));
