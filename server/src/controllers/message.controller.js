@@ -1,69 +1,83 @@
-const Message = require('../models/Message');
+const Message = require('../models/message');
 
-// Get all messages
-exports.getAllMessages = async (req, res) => {
-    try {
-        const messages = await Message.find();
-        res.json(messages);
-    } catch (err) {
-        res.status(500).json({ message: err.message });
-    }
+// GET all messages (hanya untuk user yg login)
+exports.getUserMessages = async (req, res) => {
+  try {
+    const messages = await Message.find({
+      $or: [
+        { sender: req.user.userId },
+        { receiver: req.user.userId }
+      ]
+    }).populate('sender receiver', 'name username email');
+
+    res.status(200).json(messages);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
 };
 
-// Get message by ID
+// GET message by ID
 exports.getMessageById = async (req, res) => {
-    try {
-        const message = await Message.findById(req.params.id);
-        if (!message) {
-            return res.status(404).json({ message: 'Message not found' });
-        }
-        res.json(message);
-    } catch (err) {
-        res.status(500).json({ message: err.message });
+  try {
+    const message = await Message.findById(req.params.id)
+      .populate('sender receiver', 'name username email');
+
+    if (!message) {
+      return res.status(404).json({ message: 'Message not found' });
     }
+
+    // pastikan yg akses adalah pengirim/penerima
+    if (
+      message.sender.toString() !== req.user.userId &&
+      message.receiver.toString() !== req.user.userId
+    ) {
+      return res.status(403).json({ message: 'Not authorized' });
+    }
+
+    res.status(200).json(message);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
 };
 
-// Create a new message
-exports.createMessage = async (req, res) => {
-    const { sender, receiver, content } = req.body;
-    const message = new Message({
-        sender,
-        receiver,
-        content
+// POST send message
+exports.sendMessage = async (req, res) => {
+  try {
+    const { receiver, title, body } = req.body;
+
+    const newMessage = await Message.create({
+      sender: req.user.userId,
+      receiver,
+      title,
+      body
     });
-    try {
-        const newMessage = await message.save();
-        res.status(201).json(newMessage);
-    } catch (err) {
-        res.status(400).json({ message: err.message });
-    }
+
+    res.status(201).json(newMessage);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
 };
 
-// Update a message
-exports.updateMessage = async (req, res) => {
-    try {
-        const message = await Message.findById(req.params.id);
-        if (!message) {
-            return res.status(404).json({ message: 'Message not found' });
-        }
-        message.content = req.body.content || message.content;
-        const updatedMessage = await message.save();
-        res.json(updatedMessage);
-    } catch (err) {
-        res.status(400).json({ message: err.message });
-    }
-};
-
-// Delete a message
+// DELETE message
 exports.deleteMessage = async (req, res) => {
-    try {
-        const message = await Message.findById(req.params.id);
-        if (!message) {
-            return res.status(404).json({ message: 'Message not found' });
-        }
-        await message.remove();
-        res.json({ message: 'Message deleted' });
-    } catch (err) {
-        res.status(500).json({ message: err.message });
+  try {
+    const message = await Message.findById(req.params.id);
+
+    if (!message) {
+      return res.status(404).json({ message: 'Message not found' });
     }
+
+    // hanya pengirim atau penerima yg bisa hapus
+    if (
+      message.sender.toString() !== req.user.userId &&
+      message.receiver.toString() !== req.user.userId
+    ) {
+      return res.status(403).json({ message: 'Not authorized' });
+    }
+
+    await message.deleteOne();
+    res.status(200).json({ message: 'Message deleted successfully' });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
 };
