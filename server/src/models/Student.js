@@ -28,12 +28,7 @@ const studentSchema = new mongoose.Schema({
     isActive : {
         type: Boolean,
         required: true,
-    },
-    attendance : {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Attendance',
-        required: true,
-    },
+    }
 });
 
 module.exports = mongoose.model('Student', studentSchema);
