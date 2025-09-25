@@ -9,11 +9,17 @@ const messageRoutes = require('./message.route');
 
 const studentRoutes = require('./student.route');
 
+
+const attendanceRoutes = require('./attendance.route');
+
 router.use('/', authRoutes);
 router.use('/', weatherRoutes);
 router.use('/', announcementRoutes);
 router.use('/', messageRoutes);
 
 router.use('/', studentRoutes); 
+
+
+router.use('/', attendanceRoutes);
 
 module.exports = router;
