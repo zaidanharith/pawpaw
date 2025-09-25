@@ -5,7 +5,7 @@ const router = express.Router();
 
 /**
  * @swagger
- * /api/weather/{location}:
+ * /weather/{location}:
  *   get:
  *     summary: Ambil data cuaca berdasarkan lokasi
  *     tags: [Weather]
@@ -15,7 +15,7 @@ const router = express.Router();
  *         required: true
  *         schema:
  *           type: string
- *         description: Nama kota atau lokasi (contoh: yogyakarta)
+ *         description: Nama kota atau lokasi
  *     responses:
  *       200:
  *         description: Data cuaca berhasil diambil

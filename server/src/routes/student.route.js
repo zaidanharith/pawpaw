@@ -1,53 +1,168 @@
 const express = require('express');
 const router = express.Router();
+const studentController = require('../controllers/student.controller');
 const { protect, roleCheck } = require('../middleware/auth.middleware');
 
-const {
-  getAllStudents,
-  getStudentById,
-  createStudent,
-  updateStudent,
-  deleteStudent
-} = require('../controllers/student.controller');
+/**
+ * @swagger
+ * tags:
+ *   name: Student
+ *   description: Manajemen data siswa (student)
+ */
 
-// Create student → hanya teacher dan admin
 router.post(
   '/student/create',
   protect,
   roleCheck('teacher', 'admin'),
-  createStudent
+  /**
+   * @swagger
+   * /student/create:
+   *   post:
+   *     summary: Tambah siswa baru
+   *     tags: [Student]
+   *     security:
+   *       - bearerAuth: []
+   *     requestBody:
+   *       required: true
+   *       content:
+   *         application/json:
+   *           schema:
+   *             type: object
+   *             properties:
+   *               name:
+   *                 type: string
+   *                 example: Agatha
+   *               age:
+   *                 type: number
+   *                 example: 10
+   *               classroomId:
+   *                 type: string
+   *                 example: 64b5f72a9c9f2a001c23a8f5
+   *     responses:
+   *       201:
+   *         description: Siswa berhasil ditambahkan
+   *       403:
+   *         description: Akses ditolak (bukan teacher/admin)
+   */
+  studentController.createStudent
 );
 
-// Get all students → bisa diakses parent, teacher, admin
 router.get(
   '/',
   protect,
   roleCheck('parent', 'teacher', 'admin'),
-  getAllStudents
+  /**
+   * @swagger
+   * /student:
+   *   get:
+   *     summary: Ambil semua siswa
+   *     tags: [Student]
+   *     security:
+   *       - bearerAuth: []
+   *     responses:
+   *       200:
+   *         description: Daftar siswa
+   *       403:
+   *         description: Akses ditolak
+   */
+  studentController.getAllStudents
 );
 
-// Get student by ID → parent, teacher, admin
 router.get(
   '/:id',
   protect,
   roleCheck('parent', 'teacher', 'admin'),
-  getStudentById
+  /**
+   * @swagger
+   * /student/{id}:
+   *   get:
+   *     summary: Ambil detail siswa berdasarkan ID
+   *     tags: [Student]
+   *     security:
+   *       - bearerAuth: []
+   *     parameters:
+   *       - in: path
+   *         name: id
+   *         schema:
+   *           type: string
+   *         required: true
+   *         description: ID siswa
+   *     responses:
+   *       200:
+   *         description: Detail siswa
+   *       404:
+   *         description: Siswa tidak ditemukan
+   */
+  studentController.getStudentById
 );
 
-// Update student → hanya teacher dan admin
 router.put(
   '/:id',
   protect,
   roleCheck('teacher', 'admin'),
-  updateStudent
+  /**
+   * @swagger
+   * /student/{id}:
+   *   put:
+   *     summary: Update data siswa
+   *     tags: [Student]
+   *     security:
+   *       - bearerAuth: []
+   *     parameters:
+   *       - in: path
+   *         name: id
+   *         schema:
+   *           type: string
+   *         required: true
+   *         description: ID siswa
+   *     requestBody:
+   *       required: true
+   *       content:
+   *         application/json:
+   *           schema:
+   *             type: object
+   *             properties:
+   *               name:
+   *                 type: string
+   *               age:
+   *                 type: number
+   *               classroomId:
+   *                 type: string
+   *     responses:
+   *       200:
+   *         description: Data siswa berhasil diperbarui
+   *       403:
+   *         description: Akses ditolak
+   */
+  studentController.updateStudent
 );
 
-// Delete student → hanya teacher dan admin
 router.delete(
   '/:id',
   protect,
   roleCheck('teacher', 'admin'),
-  deleteStudent
+  /**
+   * @swagger
+   * /student/{id}:
+   *   delete:
+   *     summary: Hapus siswa
+   *     tags: [Student]
+   *     security:
+   *       - bearerAuth: []
+   *     parameters:
+   *       - in: path
+   *         name: id
+   *         schema:
+   *           type: string
+   *         required: true
+   *         description: ID siswa
+   *     responses:
+   *       200:
+   *         description: Siswa berhasil dihapus
+   *       403:
+   *         description: Akses ditolak (bukan teacher/admin)
+   */
+  studentController.deleteStudent
 );
 
 module.exports = router;
