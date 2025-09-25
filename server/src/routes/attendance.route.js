@@ -1,58 +1,62 @@
 const express = require('express');
 const router = express.Router();
-const attendanceController = require('../controllers/attendanceController');
-const { authMiddleware, authorizeRole, validateObjectId } = require('../middleware/authMiddleware');
+const { protect, roleCheck } = require('../middleware/auth.middleware');
 
-// 🔹 CREATE attendance (teacher/admin)
+const {
+  createAttendance,
+  getAllAttendances,
+  getAttendanceById,
+  updateAttendance,
+  deleteAttendance,
+  getAttendanceByStudent
+} = require('../controllers/attendance.controller');
+
+// Create attendance → hanya teacher dan admin
 router.post(
-  '/',
-  authMiddleware,
-  authorizeRole('teacher', 'admin'),
-  attendanceController.createAttendance
+  '/attendance/create',
+  protect,
+  roleCheck('teacher', 'admin'),
+  createAttendance
 );
 
-// 🔹 GET all attendance records
+// Get all attendance records → teacher & admin
 router.get(
-  '/',
-  authMiddleware,
-  authorizeRole('teacher', 'admin'),
-  attendanceController.getAttendances
+  '/attendance',
+  protect,
+  roleCheck('teacher', 'admin'),
+  getAllAttendances
 );
 
-// 🔹 GET attendance by ID -> ambil 1 record attendance tertentu
+// Get attendance by ID → parent, teacher, admin
 router.get(
-  '/:id',
-  authMiddleware,
-  authorizeRole('parent', 'teacher', 'admin'),
-  validateObjectId,
-  attendanceController.getAttendanceById
+  '/attendance/:id',
+  protect,
+  roleCheck('parent', 'teacher', 'admin'),
+  getAttendanceById
 );
 
-// 🔹 UPDATE attendance
+// Update attendance → teacher & admin
 router.put(
-  '/:id',
-  authMiddleware,
-  authorizeRole('teacher', 'admin'),
-  validateObjectId,
-  attendanceController.updateAttendance
+  '/attendance/:id',
+  protect,
+  roleCheck('teacher', 'admin'),
+  updateAttendance
 );
 
-// 🔹 DELETE attendance
+// Delete attendance → hanya admin
 router.delete(
-  '/:id',
-  authMiddleware,
-  authorizeRole('admin'),
-  validateObjectId,
-  attendanceController.deleteAttendance
+  '/attendance/:id',
+  protect,
+  roleCheck('admin'),
+  deleteAttendance
 );
 
-// 🔹 GET by studentId → ambil semua attendance milik 1 siswa
+// Get attendance by student ID → parent, teacher, admin
 router.get(
-  '/student/:studentId',
-  authMiddleware,
-  authorizeRole('parent', 'teacher', 'admin'),
-  validateObjectId,
-  attendanceController.getAttendanceByStudent
+  '/attendance/student/:studentId',
+  protect,
+  roleCheck('parent', 'teacher', 'admin'),
+  getAttendanceByStudent
 );
 
 module.exports = router;

@@ -1,4 +1,6 @@
 const Announcement = require('../models/Announcement');
+const Student = require('../models/Student');
+
 
 // Get all announcements
 const getAnnouncements = async (req, res) => {
