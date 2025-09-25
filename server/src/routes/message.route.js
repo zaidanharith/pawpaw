@@ -1,40 +1,44 @@
+// routes/message.routes.js
 const express = require('express');
 const router = express.Router();
-const messageController = require('../controllers/messageController');
-const { authMiddleware, authorizeRole, validateObjectId } = require('../middlewares/authMiddleware');
+const { protect, roleCheck } = require('../middleware/auth.middleware');
+const {
+  getUserMessages,
+  getMessageById,
+  sendMessage,
+  deleteMessage
+} = require('../controllers/message.controller');
 
-// GET "/" → dapatkan semua pesan user (parent/teacher)
+// GET all messages (hanya parent & teacher)
 router.get(
-    '/',
-    authMiddleware,
-    authorizeRole('parent', 'teacher'),
-    messageController.getUserMessages
+  '/',
+  protect,
+  roleCheck('parent', 'teacher'),
+  getUserMessages
 );
 
-// GET "/:id" → dapatkan detail pesan tertentu
+// GET message by ID
 router.get(
-    '/:id',
-    authMiddleware,
-    authorizeRole('parent', 'teacher'),
-    validateObjectId,
-    messageController.getMessageById
+  '/send/message/:id',
+  protect,
+  roleCheck('parent', 'teacher'),
+  getMessageById
 );
 
-// POST "/" → kirim pesan (parent ke teacher, atau teacher ke parent)
+// POST send message
 router.post(
-    '/',
-    authMiddleware,
-    authorizeRole('parent', 'teacher'),
-    messageController.sendMessage
+  '/send/message',
+  protect,
+  roleCheck('parent', 'teacher'),
+  sendMessage
 );
 
-// (Opsional) DELETE "/:id" → hapus pesan (hanya pengirim/penerima)
+// DELETE message
 router.delete(
-    '/:id',
-    authMiddleware,
-    authorizeRole('parent', 'teacher'),
-    validateObjectId,
-    messageController.deleteMessage
+  '/send/message/:id',
+  protect,
+  roleCheck('parent', 'teacher'),
+  deleteMessage
 );
 
 module.exports = router;
