@@ -1,71 +1,75 @@
 const Activity = require('../models/Activity');
 
 // Get all activities
-exports.getAllActivities = async (req, res) => {
-    try {
-        const activities = await Activity.find();
-        res.json(activities);
-    } catch (err) {
-        res.status(500).json({ message: err.message });
-    }
+const getAllActivities = async (req, res) => {
+  try {
+    const activities = await Activity.find()
+      .populate("student", "name gender classroom");
+    res.status(200).json(activities);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
 };
 
 // Get activity by ID
-exports.getActivityById = async (req, res) => {
-    try {
-        const activity = await Activity.findById(req.params.id);
-        if (!activity) {
-            return res.status(404).json({ message: 'Activity not found' });
-        }
-        res.json(activity);
-    } catch (err) {
-        res.status(500).json({ message: err.message });
-    }
+const getActivityById = async (req, res) => {
+  try {
+    const activity = await Activity.findById(req.params.id)
+      .populate("student", "name gender classroom");
+    if (!activity) return res.status(404).json({ message: "Activity not found" });
+    res.status(200).json(activity);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
 };
 
-// Create a new activity
-exports.createActivity = async (req, res) => {
-    const { title, description, date } = req.body;
+// Create new activity
+const createActivity = async (req, res) => {
+  try {
     const activity = new Activity({
-        title,
-        description,
-        date
+      name: req.body.name,
+      description: req.body.description,
+      date: req.body.date,
+      student: req.body.student
     });
-    try {
-        const newActivity = await activity.save();
-        res.status(201).json(newActivity);
-    } catch (err) {
-        res.status(400).json({ message: err.message });
-    }
+
+    const newActivity = await activity.save();
+    res.status(201).json(newActivity);
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
 };
 
-// Update an activity
-exports.updateActivity = async (req, res) => {
-    try {
-        const activity = await Activity.findById(req.params.id);
-        if (!activity) {
-            return res.status(404).json({ message: 'Activity not found' });
-        }
-        activity.title = req.body.title || activity.title;
-        activity.description = req.body.description || activity.description;
-        activity.date = req.body.date || activity.date;
-        const updatedActivity = await activity.save();
-        res.json(updatedActivity);
-    } catch (err) {
-        res.status(400).json({ message: err.message });
-    }
+// Update activity
+const updateActivity = async (req, res) => {
+  try {
+    const updated = await Activity.findByIdAndUpdate(
+      req.params.id,
+      req.body,
+      { new: true, runValidators: true }
+    );
+    if (!updated) return res.status(404).json({ message: "Activity not found" });
+    res.status(200).json(updated);
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
 };
 
-// Delete an activity
-exports.deleteActivity = async (req, res) => {
-    try {
-        const activity = await Activity.findById(req.params.id);
-        if (!activity) {
-            return res.status(404).json({ message: 'Activity not found' });
-        }
-        await activity.remove();
-        res.json({ message: 'Activity deleted' });
-    } catch (err) {
-        res.status(500).json({ message: err.message });
-    }
+// Delete activity
+const deleteActivity = async (req, res) => {
+  try {
+    const deleted = await Activity.findByIdAndDelete(req.params.id);
+    if (!deleted) return res.status(404).json({ message: "Activity not found" });
+    res.status(200).json({ message: "Activity deleted successfully" });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+module.exports = {
+  getAllActivities,
+  getActivityById,
+  createActivity,
+  updateActivity,
+  deleteActivity
 };
