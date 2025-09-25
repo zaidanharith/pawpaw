@@ -2,7 +2,9 @@ const express = require('express');
 const dotenv = require('dotenv');
 const connectDB = require('./config/db');
 const cors = require('cors');
-const routes = require('./routes');
+const routes = require('./routes'); 
+const setupSwagger = require("./config/swagger");
+
 
 dotenv.config();
 connectDB();
@@ -12,10 +14,12 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+setupSwagger(app);
+
 app.use('/api', routes);
 
 app.get('/', (req, res) => {
-    res.json({ message: 'Selamat Datang di Aplikasi KidConnect!' });
+  res.json({ message: 'Selamat Datang di Aplikasi KidConnect!' });
 });
 
 app.use((err, req, res, next) => {

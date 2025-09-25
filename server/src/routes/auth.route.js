@@ -5,6 +5,8 @@ const { protect, adminOnly, roleCheck } = require('../middleware/auth.middleware
 
 const router = express.Router();
 
+
+
 router.post('/register', protect, roleCheck('admin'), authController.register);
 router.post('/login', authController.login);
 router.post('/logout', authController.logout);
