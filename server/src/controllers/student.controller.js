@@ -2,72 +2,78 @@ const Student = require('../models/Student');
 
 // Get all students
 const getAllStudents = async (req, res) => {
-    try {
-        const students = await Student.find();
-        res.status(200).json(students);
-    } catch (error) {
-        res.status(500).json({ message: error.message });
-    }
+  try {
+    const students = await Student.find()
+      .populate("classroom", "className teacher")
+      .populate("date status");
+    res.status(200).json(students);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
 };
 
 // Get student by ID
 const getStudentById = async (req, res) => {
-    try {
-        const student = await Student.findById(req.params.id);
-        if (!student) {
-            return res.status(404).json({ message: 'Student not found' });
-        }
-        res.status(200).json(student);
-    } catch (error) {
-        res.status(500).json({ message: error.message });
-    }
+  try {
+    const student = await Student.findById(req.params.id)
+      .populate("classroom", "className teacher")
+      .populate("date status");
+    if (!student) return res.status(404).json({ message: "Student not found" });
+    res.status(200).json(student);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
 };
 
 // Create new student
 const createStudent = async (req, res) => {
-    try {
-        const student = new Student(req.body);
-        const savedStudent = await student.save();
-        res.status(201).json(savedStudent);
-    } catch (error) {
-        res.status(400).json({ message: error.message });
-    }
+  try {
+    const student = new Student({
+      name: req.body.name,
+      gender: req.body.gender,
+      address: req.body.address,
+      birthDate: req.body.birthDate,
+      classroom: req.body.classroom,
+      isActive: req.body.isActive,
+    });
+
+    const newStudent = await student.save();
+    res.status(201).json(newStudent);
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
 };
 
 // Update student
 const updateStudent = async (req, res) => {
-    try {
-        const student = await Student.findByIdAndUpdate(
-            req.params.id,
-            req.body,
-            { new: true, runValidators: true }
-        );
-        if (!student) {
-            return res.status(404).json({ message: 'Student not found' });
-        }
-        res.status(200).json(student);
-    } catch (error) {
-        res.status(400).json({ message: error.message });
-    }
+  try {
+    const updated = await Student.findByIdAndUpdate(
+      req.params.id,
+      req.body,
+      { new: true, runValidators: true }
+    );
+    if (!updated) return res.status(404).json({ message: "Student not found" });
+    res.status(200).json(updated);
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
 };
 
 // Delete student
 const deleteStudent = async (req, res) => {
-    try {
-        const student = await Student.findByIdAndDelete(req.params.id);
-        if (!student) {
-            return res.status(404).json({ message: 'Student not found' });
-        }
-        res.status(200).json({ message: 'Student deleted successfully' });
-    } catch (error) {
-        res.status(500).json({ message: error.message });
-    }
+  try {
+    const deleted = await Student.findByIdAndDelete(req.params.id);
+    if (!deleted) return res.status(404).json({ message: "Student not found" });
+    res.status(200).json({ message: "Student deleted successfully" });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
 };
 
 module.exports = {
-    getAllStudents,
-    getStudentById,
-    createStudent,
-    updateStudent,
-    deleteStudent
+  getAllStudents,
+  getStudentById,
+  createStudent,
+  updateStudent,
+  deleteStudent
 };

@@ -7,9 +7,13 @@ const announcementRoutes = require('./announcement.route');
 const messageRoutes = require('./message.route');
 
 
+const studentRoutes = require('./student.route');
+
 router.use('/', authRoutes);
 router.use('/', weatherRoutes);
 router.use('/', announcementRoutes);
 router.use('/', messageRoutes);
+
+router.use('/', studentRoutes); 
 
 module.exports = router;
