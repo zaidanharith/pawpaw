@@ -20,7 +20,7 @@ router.post(
 
 // Get all announcements → bisa diakses parent, teacher, admin
 router.get(
-  '/',
+  '/announcement',
   protect,
   roleCheck('parent', 'teacher', 'admin'),
   getAnnouncements
@@ -28,7 +28,7 @@ router.get(
 
 // Get announcement by ID → parent, teacher, admin
 router.get(
-  '/:id',
+  '/announcement/:id',
   protect,
   roleCheck('parent', 'teacher', 'admin'),
   getAnnouncementById
@@ -36,7 +36,7 @@ router.get(
 
 // Update announcement → hanya teacher dan admin
 router.put(
-  '/:id',
+  '/announcement/:id',
   protect,
   roleCheck('teacher', 'admin'),
   updateAnnouncement
@@ -44,7 +44,7 @@ router.put(
 
 // Delete announcement → hanya teacher dan admin
 router.delete(
-  '/:id',
+  '/announcement/:id',
   protect,
   roleCheck('teacher', 'admin'),
   deleteAnnouncement

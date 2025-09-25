@@ -1,48 +1,46 @@
 const express = require('express');
 const router = express.Router();
-const activityController = require('../controllers/activityController');
-const { authMiddleware, authorizeRole, validateObjectId } = require('../middleware/authMiddleware');
+// PERBAIKI PATH IMPORT:
+const activityController = require('../controllers/activity.controller'); // <- tambahkan titik
+const { protect, roleCheck } = require('../middleware/auth.middleware');
 
 // 🔹 CREATE activity → hanya teacher/admin
 router.post(
-  '/',
-  authMiddleware,
-  authorizeRole('teacher', 'admin'),
+  '/activity/create',
+  protect,
+  roleCheck('teacher', 'admin'),
   activityController.createActivity
 );
 
 // 🔹 GET all activities → parent, teacher, admin
 router.get(
   '/',
-  authMiddleware,
-  authorizeRole('parent', 'teacher', 'admin'),
-  activityController.getActivities
+  protect,
+  roleCheck('parent', 'teacher', 'admin'),
+  activityController.getAllActivities
 );
 
 // 🔹 GET activity by ID
 router.get(
   '/:id',
-  authMiddleware,
-  authorizeRole('parent', 'teacher', 'admin'),
-  validateObjectId,
+  protect,
+  roleCheck('parent', 'teacher', 'admin'),
   activityController.getActivityById
 );
 
 // 🔹 UPDATE activity → teacher/admin
 router.put(
   '/:id',
-  authMiddleware,
-  authorizeRole('teacher', 'admin'),
-  validateObjectId,
+  protect,
+  roleCheck('teacher', 'admin'),
   activityController.updateActivity
 );
 
 // 🔹 DELETE activity → admin only
 router.delete(
   '/:id',
-  authMiddleware,
-  authorizeRole('admin'),
-  validateObjectId,
+  protect,
+  roleCheck('admin'),
   activityController.deleteActivity
 );
 
