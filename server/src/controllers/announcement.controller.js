@@ -21,6 +21,7 @@ const getAnnouncementById = async (req, res) => {
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
+};
 
 // Create new announcement
 const createAnnouncement = async (req, res) => {
