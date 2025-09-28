@@ -1,6 +1,11 @@
 const mongoose = require('mongoose');
 
 const liveReportSchema = new mongoose.Schema({
+    title: {
+    type: String,
+    required: true,
+    trim: true
+    },
     activity: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Activity',

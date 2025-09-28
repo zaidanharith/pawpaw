@@ -4,70 +4,7 @@ const liveReportController = require('../controllers/liveReport.controller');
 const { protect, roleCheck } = require('../middleware/auth.middleware');
 const upload = require('../middleware/upload.middleware');
 
-/**
- * @swagger
- * components:
- *   securitySchemes:
- *     bearerAuth:
- *       type: http
- *       scheme: bearer
- *       bearerFormat: JWT
- *   schemas:
- *     LiveReport:
- *       type: object
- *       required:
- *         - activity
- *         - date
- *         - teacher
- *       properties:
- *         _id:
- *           type: string
- *           description: ID auto-generated
- *         activity:
- *           type: array
- *           items:
- *             type: string
- *           description: Array of activity IDs
- *         date:
- *           type: string
- *           format: date
- *           description: Tanggal kegiatan
- *         teacher:
- *           type: string
- *           description: ID teacher yang membuat laporan
- *         photos:
- *           type: array
- *           items:
- *             type: string
- *           description: Array of photo IDs
- *         description:
- *           type: string
- *           description: Deskripsi kegiatan
- *         createdAt:
- *           type: string
- *           format: date-time
- *         updatedAt:
- *           type: string
- *           format: date-time
- *       example:
- *         _id: 507f1f77bcf86cd799439011
- *         activity: ["68d7da4c93bb4e1c51cc6a5b"]
- *         date: "2025-09-27T00:00:00.000Z"
- *         teacher: "68d7da4c93bb4e1c51cc6a5c"
- *         photos: ["68d7da4c93bb4e1c51cc6a5d"]
- *         description: "Siswa aktif mengikuti pelajaran"
- *         createdAt: "2025-09-27T12:00:00.000Z"
- *         updatedAt: "2025-09-27T12:00:00.000Z"
- */
-
-/**
- * @swagger
- * tags:
- *   name: LiveReport
- *   description: Manajemen laporan langsung (live report)
- */
-
-// GET all live reports
+// GET "/" → getAllLiveReports, bisa diakses parent, teacher, admin
 router.get(
   '/livereport',
   protect,
@@ -105,7 +42,7 @@ router.get(
   liveReportController.getAllLiveReports
 );
 
-// GET live report by ID
+// GET "/:id" → getLiveReportById, bisa diakses parent, teacher, admin
 router.get(
   '/livereport/:id',
   protect,
@@ -152,7 +89,7 @@ router.get(
   liveReportController.getLiveReportById
 );
 
-// CREATE new live report
+// POST "/" → createLiveReport, hanya teacher & admin, dengan upload foto
 router.post(
   '/livereport/create',
   protect,
@@ -218,7 +155,7 @@ router.post(
   liveReportController.createLiveReport
 );
 
-// UPDATE live report
+// PUT "/:id" → updateLiveReport, hanya teacher & admin, dengan upload foto
 router.put(
   '/livereport/:id',
   protect,
@@ -290,7 +227,7 @@ router.put(
   liveReportController.updateLiveReport
 );
 
-// DELETE live report
+// DELETE "/:id" → deleteLiveReport, hanya teacher & admin
 router.delete(
   '/livereport/:id',
   protect,

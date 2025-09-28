@@ -1,48 +1,185 @@
 const express = require('express');
 const router = express.Router();
-const classroomController = require('../controllers/classroomController');
-const { authMiddleware, authorizeRole, validateObjectId } = require('../middlewares/authMiddleware');
+const classroomController = require('../controllers/classroom.controller');
+const { protect, roleCheck } = require('../middleware/auth.middleware');
 
-// GET "/" → getAllClassrooms, bisa diakses parent, teacher, admin
-router.get(
-    '/',
-    authMiddleware,
-    authorizeRole('parent', 'teacher', 'admin'),
-    classroomController.getAllClassrooms
-);
+/**
+ * @swagger
+ * tags:
+ *   name: Classroom
+ *   description: Manajemen kelas dalam sistem
+ */
 
-// GET "/:id" → getClassroomById, bisa diakses parent, teacher, admin, dengan validateObjectId
-router.get(
-    '/:id',
-    authMiddleware,
-    authorizeRole('parent', 'teacher', 'admin'),
-    validateObjectId,
-    classroomController.getClassroomById
-);
-
-// POST "/" → createClassroom, hanya untuk teacher dan admin
+/**
+ * @swagger
+ * /classroom:
+ *   post:
+ *     summary: Buat classroom baru
+ *     tags: [Classroom]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               name:
+ *                 type: string
+ *                 example: TK-A
+ *               student:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *                 example: ["64d4e8b1d165537831aeca91"]
+ *               teacher:
+ *                 type: string
+ *                 example: "64d4e8b1d165537831aeca90"
+ *               activity:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *                 example: ["64d4e8b1d165537831aeca94"]
+ *     responses:
+ *       201:
+ *         description: Classroom berhasil dibuat
+ *       400:
+ *         description: Data tidak valid
+ */
+// POST CREATE CLASSROOM
 router.post(
-    '/',
-    authMiddleware,
-    authorizeRole('teacher', 'admin'),
+    '/classroom/create',
+    protect,
+    roleCheck('admin'),
     classroomController.createClassroom
 );
 
-// PUT "/:id" → updateClassroom, hanya untuk teacher dan admin, dengan validateObjectId
+/**
+ * @swagger
+ * /classroom:
+ *   get:
+ *     summary: Ambil data classroom
+ *     tags: [Classroom]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Daftar classroom berhasil diambil
+ *       403:
+ *         description: Akses ditolak
+ */
+router.get(
+    '/classroom',
+    protect,
+    roleCheck('parent', 'teacher', 'admin'),
+    classroomController.getAllClassrooms
+);
+
+/**
+ * @swagger
+ * /classroom/{id}:
+ *   get:
+ *     summary: Ambil classroom berdasarkan ID
+ *     tags: [Classroom]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: ID classroom
+ *     responses:
+ *       200:
+ *         description: Detail classroom
+ *       404:
+ *         description: Classroom tidak ditemukan
+ */
+router.get(
+    '/classroom/:id',
+    protect,
+    roleCheck('parent', 'teacher', 'admin'),
+    classroomController.getClassroomById
+);
+
+/**
+ * @swagger
+ * /classroom/{id}:
+ *   put:
+ *     summary: Update classroom berdasarkan ID
+ *     tags: [Classroom]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: ID classroom
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               name:
+ *                 type: string
+ *                 example: "TK-A Updated"
+ *               student:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *                 example: ["64d4e8b1d165537831aeca91", "64d4e8b1d165537831aeca92"]
+ *               teacher:
+ *                 type: string
+ *                 example: "64d4e8b1d165537831aeca90"
+ *               activity:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *                 example: ["64d4e8b1d165537831aeca94", "64d4e8b1d165537831aeca95"]
+ *     responses:
+ *       200:
+ *         description: Classroom berhasil diperbarui
+ *       404:
+ *         description: Classroom tidak ditemukan
+ */
 router.put(
-    '/:id',
-    authMiddleware,
-    authorizeRole('teacher', 'admin'),
-    validateObjectId,
+    '/classroom/:id',
+    protect,
+    roleCheck('teacher', 'admin'),
     classroomController.updateClassroom
 );
 
-// DELETE "/:id" → deleteClassroom, hanya untuk admin, dengan validateObjectId
+/**
+ * @swagger
+ * /classroom/{id}:
+ *   delete:
+ *     summary: Hapus classroom berdasarkan ID
+ *     tags: [Classroom]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: ID classroom
+ *     responses:
+ *       200:
+ *         description: Classroom berhasil dihapus
+ *       404:
+ *         description: Classroom tidak ditemukan
+ */
 router.delete(
-    '/:id',
-    authMiddleware,
-    authorizeRole('admin'),
-    validateObjectId,
+    '/classroom/:id',
+    protect,
+    roleCheck('admin'),
     classroomController.deleteClassroom
 );
 
