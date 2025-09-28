@@ -1,45 +1,14 @@
 const express = require('express');
 const router = express.Router();
-// PATH KONTROLLER DIKOREKSI: Menggunakan liveReport.controller (dengan titik)
-const liveReportController = require('../controllers/liveReport.controller'); 
-
-// PATH MIDDLEWARE DIKOREKSI: Menggunakan penamaan lama yang lebih umum
-// Anda perlu memastikan nama file/fungsi middleware mana yang benar di folder Anda
+<<<<<<< HEAD
+const liveReportController = require('../controllers/liveReport.controller');
 const { protect, roleCheck } = require('../middleware/auth.middleware');
-const upload = require('../middleware/upload.middleware'); 
-
-/**
- * @swagger
- * components:
- * schemas:
- * LiveReport:
- * type: object
- * required:
- * - title
- * - date
- * properties:
- * _id:
- * type: string
- * description: ID otomatis dari live report
- * title:
- * type: string
- * description: Judul kegiatan
- * description:
- * type: string
- * description: Deskripsi kegiatan
- * date:
- * type: string
- * format: date
- * description: Tanggal kegiatan
- * createdAt:
- * type: string
- * format: date-time
- * updatedAt:
- * type: string
- * format: date-time
- */
-
-// ---
+const upload = require('../middleware/upload.middleware');
+=======
+const liveReportController = require('../controllers/liveReportController');
+const { authMiddleware, authorizeRole, validateObjectId } = require('../middlewares/authMiddleware');
+const upload = require('../middlewares/uploadMiddleware');
+>>>>>>> c99e3676969560e647ccacd4758a5b9577b4c682
 
 // GET "/" → getAllLiveReports, bisa diakses parent, teacher, admin
 router.get(
@@ -170,9 +139,14 @@ router.post(
    * description: Akses ditolak (bukan teacher/admin)
    */
   liveReportController.createLiveReport
+=======
+    '/',
+    authMiddleware,
+    authorizeRole('teacher', 'admin'),
+    upload.single('photo'),
+    liveReportController.createLiveReport
+>>>>>>> c99e3676969560e647ccacd4758a5b9577b4c682
 );
-
-// ---
 
 // PUT "/:id" → updateLiveReport, hanya teacher & admin, dengan upload foto
 router.put(
