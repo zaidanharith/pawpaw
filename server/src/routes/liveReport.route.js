@@ -1,14 +1,45 @@
 const express = require('express');
 const router = express.Router();
-<<<<<<< HEAD
-const liveReportController = require('../controllers/liveReport.controller');
+// PATH KONTROLLER DIKOREKSI: Menggunakan liveReport.controller (dengan titik)
+const liveReportController = require('../controllers/liveReport.controller'); 
+
+// PATH MIDDLEWARE DIKOREKSI: Menggunakan penamaan lama yang lebih umum
+// Anda perlu memastikan nama file/fungsi middleware mana yang benar di folder Anda
 const { protect, roleCheck } = require('../middleware/auth.middleware');
-const upload = require('../middleware/upload.middleware');
-=======
-const liveReportController = require('../controllers/liveReportController');
-const { authMiddleware, authorizeRole, validateObjectId } = require('../middlewares/authMiddleware');
-const upload = require('../middlewares/uploadMiddleware');
->>>>>>> c99e3676969560e647ccacd4758a5b9577b4c682
+const upload = require('../middleware/upload.middleware'); 
+
+/**
+ * @swagger
+ * components:
+ * schemas:
+ * LiveReport:
+ * type: object
+ * required:
+ * - title
+ * - date
+ * properties:
+ * _id:
+ * type: string
+ * description: ID otomatis dari live report
+ * title:
+ * type: string
+ * description: Judul kegiatan
+ * description:
+ * type: string
+ * description: Deskripsi kegiatan
+ * date:
+ * type: string
+ * format: date
+ * description: Tanggal kegiatan
+ * createdAt:
+ * type: string
+ * format: date-time
+ * updatedAt:
+ * type: string
+ * format: date-time
+ */
+
+// ---
 
 // GET "/" → getAllLiveReports, bisa diakses parent, teacher, admin
 router.get(
@@ -18,35 +49,33 @@ router.get(
   /**
    * @swagger
    * /api/livereport:
-   *   get:
-   *     summary: Ambil semua live report
-   *     tags: [LiveReport]
-   *     security:
-   *       - bearerAuth: []
-   *     responses:
-   *       200:
-   *         description: Berhasil mengambil semua live report
-   *         content:
-   *           application/json:
-   *             schema:
-   *               type: object
-   *               properties:
-   *                 message:
-   *                   type: string
-   *                   example: "Live reports retrieved successfully"
-   *                 data:
-   *                   type: array
-   *                   items:
-   *                     $ref: '#/components/schemas/LiveReport'
-   *       401:
-   *         description: Tidak terautentikasi
-   *       403:
-   *         description: Akses ditolak
-   *       500:
-   *         description: Server error
+   * get:
+   * summary: Ambil semua live report
+   * tags: [LiveReport]
+   * security:
+   * - bearerAuth: []
+   * responses:
+   * 200:
+   * description: Berhasil mengambil semua live report
+   * content:
+   * application/json:
+   * schema:
+   * type: object
+   * properties:
+   * message:
+   * type: string
+   * example: "Live reports retrieved successfully"
+   * data:
+   * type: array
+   * items:
+   * $ref: '#/components/schemas/LiveReport'
+   * 500:
+   * description: Server error
    */
   liveReportController.getAllLiveReports
 );
+
+// ---
 
 // GET "/:id" → getLiveReportById, bisa diakses parent, teacher, admin
 router.get(
@@ -56,48 +85,43 @@ router.get(
   /**
    * @swagger
    * /api/livereport/{id}:
-   *   get:
-   *     summary: Ambil detail live report berdasarkan ID
-   *     tags: [LiveReport]
-   *     security:
-   *       - bearerAuth: []
-   *     parameters:
-   *       - in: path
-   *         name: id
-   *         schema:
-   *           type: string
-   *         required: true
-   *         description: ID live report
-   *     responses:
-   *       200:
-   *         description: Berhasil mengambil detail live report
-   *         content:
-   *           application/json:
-   *             schema:
-   *               type: object
-   *               properties:
-   *                 message:
-   *                   type: string
-   *                   example: "Live report retrieved successfully"
-   *                 data:
-   *                   $ref: '#/components/schemas/LiveReport'
-   *       400:
-   *         description: Format ID tidak valid
-   *       401:
-   *         description: Tidak terautentikasi
-   *       403:
-   *         description: Akses ditolak
-   *       404:
-   *         description: Live report tidak ditemukan
-   *       500:
-   *         description: Server error
+   * get:
+   * summary: Ambil detail live report berdasarkan ID
+   * tags: [LiveReport]
+   * security:
+   * - bearerAuth: []
+   * parameters:
+   * - in: path
+   * name: id
+   * schema:
+   * type: string
+   * required: true
+   * description: ID live report
+   * responses:
+   * 200:
+   * description: Berhasil mengambil detail live report
+   * content:
+   * application/json:
+   * schema:
+   * type: object
+   * properties:
+   * message:
+   * type: string
+   * example: "Live report retrieved successfully"
+   * data:
+   * $ref: '#/components/schemas/LiveReport'
+   * 404:
+   * description: Live report tidak ditemukan
+   * 500:
+   * description: Server error
    */
   liveReportController.getLiveReportById
 );
 
-// POST "/" → createLiveReport, hanya teacher & admin, dengan upload foto
+// ---
+
+// POST "/create" → createLiveReport, hanya teacher & admin, dengan upload foto
 router.post(
-<<<<<<< HEAD
   '/livereport/create',
   protect,
   roleCheck('teacher', 'admin'),
@@ -105,69 +129,50 @@ router.post(
   /**
    * @swagger
    * /api/livereport/create:
-   *   post:
-   *     summary: Tambah live report baru
-   *     tags: [LiveReport]
-   *     security:
-   *       - bearerAuth: []
-   *     requestBody:
-   *       required: true
-   *       content:
-   *         multipart/form-data:
-   *           schema:
-   *             type: object
-   *             required:
-   *               - activity
-   *               - date
-   *             properties:
-   *               activity:
-   *                 type: string
-   *                 description: ID activity (wajib)
-   *                 example: "68d7da4c93bb4e1c51cc6a5b"
-   *               date:
-   *                 type: string
-   *                 format: date
-   *                 description: Tanggal kegiatan (wajib) - format YYYY-MM-DD
-   *                 example: "2025-09-27"
-   *               description:
-   *                 type: string
-   *                 description: Deskripsi kegiatan
-   *                 example: "Siswa aktif mengikuti pelajaran"
-   *               photo:
-   *                 type: string
-   *                 format: binary
-   *                 description: Foto kegiatan (opsional)
-   *     responses:
-   *       201:
-   *         description: Live report berhasil dibuat
-   *         content:
-   *           application/json:
-   *             schema:
-   *               type: object
-   *               properties:
-   *                 message:
-   *                   type: string
-   *                   example: "Live report created successfully"
-   *                 data:
-   *                   $ref: '#/components/schemas/LiveReport'
-   *       400:
-   *         description: Data tidak valid atau activity tidak ditemukan
-   *       401:
-   *         description: Tidak terautentikasi
-   *       403:
-   *         description: Akses ditolak (bukan teacher/admin)
-   *       500:
-   *         description: Server error
+   * post:
+   * summary: Tambah live report baru
+   * tags: [LiveReport]
+   * security:
+   * - bearerAuth: []
+   * requestBody:
+   * required: true
+   * content:
+   * multipart/form-data:
+   * schema:
+   * type: object
+   * required:
+   * - title
+   * - date
+   * properties:
+   * title:
+   * type: string
+   * description: Judul kegiatan (Wajib)
+   * example: "Eksperimen Sains"
+   * date:
+   * type: string
+   * format: date
+   * description: Tanggal kegiatan (Wajib) - format YYYY-MM-DD
+   * example: "2025-09-27"
+   * description:
+   * type: string
+   * description: Deskripsi kegiatan
+   * example: "Anak-anak membuat gunung berapi mini"
+   * photo:
+   * type: string
+   * format: binary
+   * description: Foto kegiatan (opsional)
+   * responses:
+   * 201:
+   * description: Live report berhasil dibuat
+   * 400:
+   * description: Data tidak valid
+   * 403:
+   * description: Akses ditolak (bukan teacher/admin)
    */
   liveReportController.createLiveReport
-=======
-    '/',
-    authMiddleware,
-    authorizeRole('teacher', 'admin'),
-    upload.single('photo'),
-    liveReportController.createLiveReport
->>>>>>> c99e3676969560e647ccacd4758a5b9577b4c682
 );
+
+// ---
 
 // PUT "/:id" → updateLiveReport, hanya teacher & admin, dengan upload foto
 router.put(
@@ -178,68 +183,51 @@ router.put(
   /**
    * @swagger
    * /api/livereport/{id}:
-   *   put:
-   *     summary: Update live report
-   *     tags: [LiveReport]
-   *     security:
-   *       - bearerAuth: []
-   *     parameters:
-   *       - in: path
-   *         name: id
-   *         schema:
-   *           type: string
-   *         required: true
-   *         description: ID live report yang akan diupdate
-   *     requestBody:
-   *       required: false
-   *       content:
-   *         multipart/form-data:
-   *           schema:
-   *             type: object
-   *             properties:
-   *               activity:
-   *                 type: string
-   *                 description: ID activity
-   *                 example: "68d7da4c93bb4e1c51cc6a5b"
-   *               date:
-   *                 type: string
-   *                 format: date
-   *                 description: Tanggal kegiatan - format YYYY-MM-DD
-   *                 example: "2025-09-27"
-   *               description:
-   *                 type: string
-   *                 description: Deskripsi kegiatan
-   *                 example: "Siswa aktif mengikuti pelajaran"
-   *               photo:
-   *                 type: string
-   *                 format: binary
-   *                 description: Foto kegiatan baru (opsional)
-   *     responses:
-   *       200:
-   *         description: Live report berhasil diupdate
-   *         content:
-   *           application/json:
-   *             schema:
-   *               type: object
-   *               properties:
-   *                 message:
-   *                   type: string
-   *                   example: "Live report updated successfully"
-   *                 data:
-   *                   $ref: '#/components/schemas/LiveReport'
-   *       400:
-   *         description: Data tidak valid
-   *       401:
-   *         description: Tidak terautentikasi
-   *       403:
-   *         description: Akses ditolak atau tidak authorized
-   *       404:
-   *         description: Live report tidak ditemukan
-   *       500:
-   *         description: Server error
+   * put:
+   * summary: Update live report
+   * tags: [LiveReport]
+   * security:
+   * - bearerAuth: []
+   * parameters:
+   * - in: path
+   * name: id
+   * schema:
+   * type: string
+   * required: true
+   * description: ID live report yang akan diupdate
+   * requestBody:
+   * required: false
+   * content:
+   * multipart/form-data:
+   * schema:
+   * type: object
+   * properties:
+   * title:
+   * type: string
+   * description: Judul kegiatan baru
+   * date:
+   * type: string
+   * format: date
+   * description: Tanggal kegiatan baru - format YYYY-MM-DD
+   * description:
+   * type: string
+   * description: Deskripsi kegiatan baru
+   * photo:
+   * type: string
+   * format: binary
+   * description: Foto kegiatan baru (opsional)
+   * responses:
+   * 200:
+   * description: Live report berhasil diupdate
+   * 404:
+   * description: Live report tidak ditemukan
+   * 500:
+   * description: Server error
    */
   liveReportController.updateLiveReport
 );
+
+// ---
 
 // DELETE "/:id" → deleteLiveReport, hanya teacher & admin
 router.delete(
@@ -249,37 +237,31 @@ router.delete(
   /**
    * @swagger
    * /api/livereport/{id}:
-   *   delete:
-   *     summary: Hapus live report
-   *     tags: [LiveReport]
-   *     security:
-   *       - bearerAuth: []
-   *     parameters:
-   *       - in: path
-   *         name: id
-   *         schema:
-   *           type: string
-   *         required: true
-   *         description: ID live report yang akan dihapus
-   *     responses:
-   *       200:
-   *         description: Live report berhasil dihapus
-   *         content:
-   *           application/json:
-   *             schema:
-   *               type: object
-   *               properties:
-   *                 message:
-   *                   type: string
-   *                   example: "Live report deleted successfully"
-   *       401:
-   *         description: Tidak terautentikasi
-   *       403:
-   *         description: Akses ditolak atau tidak authorized
-   *       404:
-   *         description: Live report tidak ditemukan
-   *       500:
-   *         description: Server error
+   * delete:
+   * summary: Hapus live report
+   * tags: [LiveReport]
+   * security:
+   * - bearerAuth: []
+   * parameters:
+   * - in: path
+   * name: id
+   * schema:
+   * type: string
+   * required: true
+   * description: ID live report yang akan dihapus
+   * responses:
+   * 200:
+   * description: Live report berhasil dihapus
+   * content:
+   * application/json:
+   * schema:
+   * type: object
+   * properties:
+   * message:
+   * type: string
+   * example: "Live report deleted successfully"
+   * 404:
+   * description: Live report tidak ditemukan
    */
   liveReportController.deleteLiveReport
 );
