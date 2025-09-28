@@ -2,6 +2,15 @@ const express = require('express');
 const upload = require('../middleware/upload.middleware');
 const uploadController = require('../controllers/upload.controller');
 
+const router = express.Router();
+
+/**
+ * @swagger
+ * tags:
+ *   name: Upload
+ *   description: Endpoint untuk upload file
+ */
+
 /**
  * @swagger
  * /upload:
@@ -31,10 +40,10 @@ const uploadController = require('../controllers/upload.controller');
  *                   example: File uploaded successfully
  *                 file:
  *                   $ref: '#/components/schemas/Upload'
+ *       400:
+ *         description: Upload gagal
  */
 
-
-const router = express.Router();
 router.post('/upload', upload.single('file'), uploadController.uploadFile);
 
 module.exports = router;

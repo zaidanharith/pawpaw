@@ -13,10 +13,10 @@ const storage = new CloudinaryStorage({
     ],
     public_id: (req, file) => {
       const timestamp = Date.now();
-      const ext = path.extname(file.originalname).replace(".", "");
       const baseName = path.basename(file.originalname, path.extname(file.originalname));
-      return `${baseName}-${timestamp}.${ext}`;
-    }
+      return `${baseName}-${timestamp}`;
+    },
+    format: (req, file) => file.mimetype.split('/')[1],
   },
 });
 
