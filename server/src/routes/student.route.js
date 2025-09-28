@@ -7,18 +7,14 @@ const { protect, roleCheck } = require('../middleware/auth.middleware');
  * @swagger
  * tags:
  *   name: Student
- *   description: Manajemen data siswa (student)
+ *   description: Manajemen data siswa
  */
 
-router.post(
-  '/student/create',
-  protect,
-  roleCheck('teacher', 'admin'),
-  /**
+/**
    * @swagger
    * /student/create:
    *   post:
-   *     summary: Tambah siswa baru
+   *     summary: Menambah siswa baru
    *     tags: [Student]
    *     security:
    *       - bearerAuth: []
@@ -44,14 +40,15 @@ router.post(
    *       403:
    *         description: Akses ditolak (bukan teacher/admin)
    */
+router.post(
+  '/student/create',
+  protect,
+  roleCheck('teacher', 'admin'),
+  
   studentController.createStudent
 );
 
-router.get(
-  '/',
-  protect,
-  roleCheck('parent', 'teacher', 'admin'),
-  /**
+/**
    * @swagger
    * /student:
    *   get:
@@ -65,14 +62,15 @@ router.get(
    *       403:
    *         description: Akses ditolak
    */
+router.get(
+  '/student/:id',
+  protect,
+  roleCheck('parent', 'teacher', 'admin'),
+  
   studentController.getAllStudents
 );
 
-router.get(
-  '/:id',
-  protect,
-  roleCheck('parent', 'teacher', 'admin'),
-  /**
+/**
    * @swagger
    * /student/{id}:
    *   get:
@@ -93,14 +91,15 @@ router.get(
    *       404:
    *         description: Siswa tidak ditemukan
    */
+router.get(
+  '/:id',
+  protect,
+  roleCheck('parent', 'teacher', 'admin'),
+  
   studentController.getStudentById
 );
 
-router.put(
-  '/:id',
-  protect,
-  roleCheck('teacher', 'admin'),
-  /**
+/**
    * @swagger
    * /student/{id}:
    *   put:
@@ -134,14 +133,14 @@ router.put(
    *       403:
    *         description: Akses ditolak
    */
-  studentController.updateStudent
-);
-
-router.delete(
+router.put(
   '/:id',
   protect,
   roleCheck('teacher', 'admin'),
-  /**
+  studentController.updateStudent
+);
+
+/**
    * @swagger
    * /student/{id}:
    *   delete:
@@ -162,6 +161,10 @@ router.delete(
    *       403:
    *         description: Akses ditolak (bukan teacher/admin)
    */
+router.delete(
+  '/:id',
+  protect,
+  roleCheck('teacher', 'admin'),
   studentController.deleteStudent
 );
 

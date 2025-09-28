@@ -8,14 +8,14 @@ const router = express.Router();
  * @swagger
  * tags:
  *   name: Auth
- *   description: Authentication and user management
+ *   description: Manajemen user dan autentikasi
  */
 
 /**
  * @swagger
  * /auth/register:
  *   post:
- *     summary: Register new user (admin only)
+ *     summary: Mendaftarkan user baru
  *     tags: [Auth]
  *     security:
  *       - bearerAuth: []
@@ -32,20 +32,22 @@ const router = express.Router();
  *             properties:
  *               username:
  *                 type: string
- *                 example: admin123
+ *                 example: syahroni127
  *               password:
  *                 type: string
- *                 example: secret123
+ *                 example: rahasia1234
  *               role:
  *                 type: string
  *                 enum: [admin, teacher, parent]
  *     responses:
  *       201:
- *         description: User registered successfully
+ *         description: User berhasil didaftarkan
  *       400:
  *         description: Bad request
  *       401:
- *         description: Unauthorized
+ *         description: Akses ditolak
+ *       403:
+ *         description: Hanya admin yang dapat mendaftarkan user baru
  */
 router.post('/auth/register', protect, roleCheck('admin'), authController.register);
 
@@ -67,15 +69,15 @@ router.post('/auth/register', protect, roleCheck('admin'), authController.regist
  *             properties:
  *               username:
  *                 type: string
- *                 example: parent01
+ *                 example: syahroni125
  *               password:
  *                 type: string
- *                 example: pass123
+ *                 example: rahasia1234
  *     responses:
  *       200:
- *         description: Login success, returns JWT token
+ *         description: User berhasil login
  *       401:
- *         description: Invalid credentials
+ *         description: Username atau password salah
  */
 router.post('/auth/login', authController.login);
 
@@ -89,9 +91,9 @@ router.post('/auth/login', authController.login);
  *       - bearerAuth: []
  *     responses:
  *       200:
- *         description: Logout success
+ *         description: User berhasil logout
  *       401:
- *         description: Unauthorized
+ *         description: Akses ditolak
  */
 router.post('/auth/logout', protect, authController.logout);
 
@@ -99,7 +101,7 @@ router.post('/auth/logout', protect, authController.logout);
  * @swagger
  * /auth/reset-password:
  *   post:
- *     summary: Reset user password
+ *     summary: Mengatur ulang password user
  *     tags: [Auth]
  *     requestBody:
  *       required: true
@@ -113,13 +115,13 @@ router.post('/auth/logout', protect, authController.logout);
  *             properties:
  *               username:
  *                 type: string
- *                 example: parent01
+ *                 example: syahroni123
  *               newPassword:
  *                 type: string
- *                 example: newpass123
+ *                 example: rahasiabaru1234
  *     responses:
  *       200:
- *         description: Password reset success
+ *         description: Password berhasil diatur ulang
  *       400:
  *         description: Bad request
  */
@@ -129,15 +131,15 @@ router.post('/auth/reset-password', authController.resetPassword);
  * @swagger
  * /auth/profile:
  *   get:
- *     summary: Get user profile
+ *     summary: Melihat profil user
  *     tags: [Auth]
  *     security:
  *       - bearerAuth: []
  *     responses:
  *       200:
- *         description: User profile data
+ *         description: Berhasil mendapatkan profil user
  *       401:
- *         description: Unauthorized
+ *         description: Akses ditolak
  */
 router.get('/auth/profile', protect, authController.getProfile);
 

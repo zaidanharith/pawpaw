@@ -7,14 +7,14 @@ const { protect, roleCheck } = require('../middleware/auth.middleware');
  * @swagger
  * tags:
  *   name: Activity
- *   description: Manajemen aktivitas untuk user (parent, teacher, admin)
+ *   description: Manajemen aktivitas/kegiatan siswa
  */
 
 /**
  * @swagger
  * /activity/create:
  *   post:
- *     summary: Buat aktivitas baru
+ *     summary: Membuat aktivitas baru
  *     tags: [Activity]
  *     security:
  *       - bearerAuth: []
@@ -27,15 +27,15 @@ const { protect, roleCheck } = require('../middleware/auth.middleware');
  *             properties:
  *               title:
  *                 type: string
- *                 example: Belajar Matematika
+ *                 example: Makan Siang
  *               description:
  *                 type: string
- *                 example: Aktivitas latihan penjumlahan
+ *                 example: Siswa makan susu dan buah dari MBG (Semoga tidak keracunan)
  *     responses:
  *       201:
  *         description: Aktivitas berhasil dibuat
  *       403:
- *         description: Akses ditolak (bukan teacher/admin)
+ *         description: Akses ditolak
  */
 router.post(
   '/activity/create',
@@ -48,7 +48,7 @@ router.post(
  * @swagger
  * /activity:
  *   get:
- *     summary: Ambil semua aktivitas
+ *     summary: Melihat semua aktivitas
  *     tags: [Activity]
  *     security:
  *       - bearerAuth: []
@@ -69,7 +69,7 @@ router.get(
  * @swagger
  * /activity/{id}:
  *   get:
- *     summary: Ambil aktivitas berdasarkan ID
+ *     summary: Lihat aktivitas berdasarkan ID
  *     tags: [Activity]
  *     security:
  *       - bearerAuth: []
@@ -97,7 +97,7 @@ router.get(
  * @swagger
  * /activity/{id}:
  *   put:
- *     summary: Update aktivitas
+ *     summary: Mengubah aktivitas
  *     tags: [Activity]
  *     security:
  *       - bearerAuth: []
@@ -121,7 +121,7 @@ router.get(
  *                 type: string
  *     responses:
  *       200:
- *         description: Aktivitas berhasil diperbarui
+ *         description: Aktivitas berhasil diubah
  *       403:
  *         description: Akses ditolak
  */
@@ -136,7 +136,7 @@ router.put(
  * @swagger
  * /activity/{id}:
  *   delete:
- *     summary: Hapus aktivitas
+ *     summary: Menghapus aktivitas
  *     tags: [Activity]
  *     security:
  *       - bearerAuth: []
@@ -151,7 +151,7 @@ router.put(
  *       200:
  *         description: Aktivitas berhasil dihapus
  *       403:
- *         description: Akses ditolak (bukan admin)
+ *         description: Akses ditolak
  */
 router.delete(
   '/activity/:id',

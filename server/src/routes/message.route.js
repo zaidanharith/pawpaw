@@ -7,14 +7,14 @@ const { protect, roleCheck } = require('../middleware/auth.middleware');
  * @swagger
  * tags:
  *   name: Messages
- *   description: API untuk sistem pesan antara orang tua dan guru
+ *   description: Manajemen sistem pesan antara orang tua dan guru
  */
 
 /**
  * @swagger
  * /messages:
  *   get:
- *     summary: Ambil semua pesan milik user yang sedang login
+ *     summary: Melihat semua pesan milik user yang sedang login
  *     tags: [Messages]
  *     security:
  *       - bearerAuth: []
@@ -22,7 +22,7 @@ const { protect, roleCheck } = require('../middleware/auth.middleware');
  *       200:
  *         description: Daftar pesan user yang berhasil diambil
  *       401:
- *         description: Tidak memiliki otorisasi
+ *         description: Akses ditolak
  */
 router.get(
   '/',
@@ -35,7 +35,7 @@ router.get(
  * @swagger
  * /messages/{id}:
  *   get:
- *     summary: Ambil detail pesan berdasarkan ID
+ *     summary: Meihat detail pesan berdasarkan ID
  *     tags: [Messages]
  *     security:
  *       - bearerAuth: []
@@ -53,7 +53,7 @@ router.get(
  *         description: Pesan tidak ditemukan
  */
 router.get(
-  '/:id',
+  '/messages/:id',
   protect,
   roleCheck('parent', 'teacher'),
   messageController.getMessageById
@@ -63,7 +63,7 @@ router.get(
  * @swagger
  * /messages:
  *   post:
- *     summary: Kirim pesan baru
+ *     summary: Mengirim pesan baru
  *     tags: [Messages]
  *     security:
  *       - bearerAuth: []
@@ -84,10 +84,10 @@ router.get(
  *       201:
  *         description: Pesan berhasil dikirim
  *       400:
- *         description: Permintaan tidak valid
+ *         description: Bad request
  */
 router.post(
-  '/send/message',
+  '/messages',
   protect,
   roleCheck('parent', 'teacher'),
   messageController.sendMessage
@@ -97,7 +97,7 @@ router.post(
  * @swagger
  * /messages/{id}:
  *   delete:
- *     summary: Hapus pesan berdasarkan ID
+ *     summary: Menghapus pesan berdasarkan ID
  *     tags: [Messages]
  *     security:
  *       - bearerAuth: []
@@ -115,7 +115,7 @@ router.post(
  *         description: Pesan tidak ditemukan
  */
 router.delete(
-  '/:id',
+  '/messages/:id',
   protect,
   roleCheck('parent', 'teacher'),
   messageController.deleteMessage

@@ -8,14 +8,14 @@ const router = express.Router();
  * @swagger
  * tags:
  *   name: Upload
- *   description: Endpoint untuk upload file
+ *   description: Manajeman unggah (upload) file ke Cloudinary
  */
 
 /**
  * @swagger
  * /upload:
  *   post:
- *     summary: Upload file ke Cloudinary
+ *     summary: Mengunggah file ke Cloudinary
  *     tags: [Upload]
  *     requestBody:
  *       required: true
@@ -29,7 +29,7 @@ const router = express.Router();
  *                 format: binary
  *     responses:
  *       200:
- *         description: File uploaded successfully
+ *         description: File berhasil diunggah
  *         content:
  *           application/json:
  *             schema:
@@ -37,7 +37,9 @@ const router = express.Router();
  *               properties:
  *                 message:
  *                   type: string
- *                   example: File uploaded successfully
+ *                   example: File berhasil diunggah
+ *                 status:
+ *                   type: string
  *                 file:
  *                   $ref: '#/components/schemas/Upload'
  *       400:
