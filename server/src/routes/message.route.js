@@ -87,7 +87,7 @@ router.get(
  *         description: Permintaan tidak valid
  */
 router.post(
-  '/',
+  '/send/message',
   protect,
   roleCheck('parent', 'teacher'),
   messageController.sendMessage

@@ -27,8 +27,8 @@ const messageController = {
       }
 
       if (
-        message.sender.toString() !== req.user.userId &&
-        message.receiver.toString() !== req.user.userId
+        message.sender._id.toString() !== req.user.userId &&
+        message.receiver._id.toString() !== req.user.userId
       ) {
         return res.status(403).json({ message: 'Tidak diizinkan' });
       }
@@ -58,15 +58,16 @@ const messageController = {
 
   deleteMessage: async (req, res) => {
     try {
-      const message = await Message.findById(req.params.id);
+      const message = await Message.findById(req.params.id)
+        .populate('sender receiver', 'name username email');
 
       if (!message) {
         return res.status(404).json({ message: 'Pesan tidak ditemukan' });
       }
 
       if (
-        message.sender.toString() !== req.user.userId &&
-        message.receiver.toString() !== req.user.userId
+        message.sender._id.toString() !== req.user.userId &&
+        message.receiver._id.toString() !== req.user.userId
       ) {
         return res.status(403).json({ message: 'Tidak diizinkan' });
       }
