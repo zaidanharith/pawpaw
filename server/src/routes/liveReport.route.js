@@ -1,243 +1,196 @@
 const express = require('express');
 const router = express.Router();
-<<<<<<< HEAD
 const liveReportController = require('../controllers/liveReport.controller');
 const { protect, roleCheck } = require('../middleware/auth.middleware');
 const upload = require('../middleware/upload.middleware');
-=======
-const liveReportController = require('../controllers/liveReportController');
-const { authMiddleware, authorizeRole, validateObjectId } = require('../middlewares/authMiddleware');
-const upload = require('../middlewares/uploadMiddleware');
->>>>>>> c99e3676969560e647ccacd4758a5b9577b4c682
 
-// GET "/" → getAllLiveReports, bisa diakses parent, teacher, admin
+/**
+ * @swagger
+ * tags:
+ *   name: LiveReport
+ *   description: Manajemen laporan kegiatan siswa (live report)
+ */
+
+/**
+ * @swagger
+ * /livereport:
+ *   get:
+ *     summary: Ambil semua data live report
+ *     tags: [LiveReport]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Daftar semua live report
+ */
+
 router.get(
-  '/livereport',
-  protect,
-  roleCheck('parent', 'teacher', 'admin'),
-  /**
-   * @swagger
-   * /api/livereport:
-   * get:
-   * summary: Ambil semua live report
-   * tags: [LiveReport]
-   * security:
-   * - bearerAuth: []
-   * responses:
-   * 200:
-   * description: Berhasil mengambil semua live report
-   * content:
-   * application/json:
-   * schema:
-   * type: object
-   * properties:
-   * message:
-   * type: string
-   * example: "Live reports retrieved successfully"
-   * data:
-   * type: array
-   * items:
-   * $ref: '#/components/schemas/LiveReport'
-   * 500:
-   * description: Server error
-   */
-  liveReportController.getAllLiveReports
+    '/livereport',
+    protect,
+    roleCheck('parent', 'teacher', 'admin'),
+    liveReportController.getAllLiveReports
 );
 
-// ---
+/**
+ * @swagger
+ * /livereport/{id}:
+ *   get:
+ *     summary: Ambil data live report berdasarkan ID
+ *     tags: [LiveReport]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: ID live report
+ *     responses:
+ *       200:
+ *         description: Detail live report
+ *       404:
+ *         description: Live report tidak ditemukan
+ */
 
-// GET "/:id" → getLiveReportById, bisa diakses parent, teacher, admin
 router.get(
-  '/livereport/:id',
-  protect,
-  roleCheck('parent', 'teacher', 'admin'),
-  /**
-   * @swagger
-   * /api/livereport/{id}:
-   * get:
-   * summary: Ambil detail live report berdasarkan ID
-   * tags: [LiveReport]
-   * security:
-   * - bearerAuth: []
-   * parameters:
-   * - in: path
-   * name: id
-   * schema:
-   * type: string
-   * required: true
-   * description: ID live report
-   * responses:
-   * 200:
-   * description: Berhasil mengambil detail live report
-   * content:
-   * application/json:
-   * schema:
-   * type: object
-   * properties:
-   * message:
-   * type: string
-   * example: "Live report retrieved successfully"
-   * data:
-   * $ref: '#/components/schemas/LiveReport'
-   * 404:
-   * description: Live report tidak ditemukan
-   * 500:
-   * description: Server error
-   */
-  liveReportController.getLiveReportById
+    '/livereport/:id',
+    protect,
+    roleCheck('parent', 'teacher', 'admin'),
+    liveReportController.getLiveReportById
 );
 
-// ---
+/**
+ * @swagger
+ * /livereport/create:
+ *   post:
+ *     summary: Buat live report baru
+ *     tags: [LiveReport]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         multipart/form-data:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               title:
+ *                 type: string
+ *                 example: "Senam Pagi"
+ *               description:
+ *                 type: string
+ *                 example: "Siswa melakukan senam pagi di halaman sekolah"
+ *               date:
+ *                 type: string
+ *                 format: date
+ *                 example: "2025-09-28"
+ *               activity:
+ *                 type: string
+ *                 example: "68d92364591af78e97dcd366"
+ *               classroom:
+ *                 type: string
+ *                 example: "68d95174b9347010789e01a2"
+ *               photo:
+ *                 type: string
+ *                 format: binary
+ *     responses:
+ *       201:
+ *         description: Live report berhasil dibuat
+ *       400:
+ *         description: Data tidak valid
+ */
 
-// POST "/create" → createLiveReport, hanya teacher & admin, dengan upload foto
 router.post(
-  '/livereport/create',
-  protect,
-  roleCheck('teacher', 'admin'),
-  upload.single('photo'),
-  /**
-   * @swagger
-   * /api/livereport/create:
-   * post:
-   * summary: Tambah live report baru
-   * tags: [LiveReport]
-   * security:
-   * - bearerAuth: []
-   * requestBody:
-   * required: true
-   * content:
-   * multipart/form-data:
-   * schema:
-   * type: object
-   * required:
-   * - title
-   * - date
-   * properties:
-   * title:
-   * type: string
-   * description: Judul kegiatan (Wajib)
-   * example: "Eksperimen Sains"
-   * date:
-   * type: string
-   * format: date
-   * description: Tanggal kegiatan (Wajib) - format YYYY-MM-DD
-   * example: "2025-09-27"
-   * description:
-   * type: string
-   * description: Deskripsi kegiatan
-   * example: "Anak-anak membuat gunung berapi mini"
-   * photo:
-   * type: string
-   * format: binary
-   * description: Foto kegiatan (opsional)
-   * responses:
-   * 201:
-   * description: Live report berhasil dibuat
-   * 400:
-   * description: Data tidak valid
-   * 403:
-   * description: Akses ditolak (bukan teacher/admin)
-   */
-  liveReportController.createLiveReport
-=======
-    '/',
-    authMiddleware,
-    authorizeRole('teacher', 'admin'),
-    upload.single('photo'),
+    '/livereport/create',
+    protect,
+    roleCheck('teacher', 'admin'),
+    upload.single('photo'), 
     liveReportController.createLiveReport
->>>>>>> c99e3676969560e647ccacd4758a5b9577b4c682
 );
 
-// PUT "/:id" → updateLiveReport, hanya teacher & admin, dengan upload foto
+/**
+ * @swagger
+ * /livereport/{id}:
+ *   put:
+ *     summary: Update live report
+ *     tags: [LiveReport]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         example: 68d9ab6dac3e9ec6fb0d449a
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: ID live report
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         multipart/form-data:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               title:
+ *                 type: string
+ *                 example: "Senam Pagi Update"
+ *               description:
+ *                 type: string
+ *               date:
+ *                 type: string
+ *                 format: date
+ *               activity:
+ *                 type: string
+ *                 example: "68d92364591af78e97dcd366"
+ *               classroom:
+ *                 type: string
+ *                 example: "68d95174b9347010789e01a2"
+ *               photo:
+ *                 type: string
+ *                 format: binary
+ *     responses:
+ *       200:
+ *         description: Live report berhasil diperbarui
+ *       404:
+ *         description: Live report tidak ditemukan
+ */
+
 router.put(
-  '/livereport/:id',
-  protect,
-  roleCheck('teacher', 'admin'),
-  upload.single('photo'),
-  /**
-   * @swagger
-   * /api/livereport/{id}:
-   * put:
-   * summary: Update live report
-   * tags: [LiveReport]
-   * security:
-   * - bearerAuth: []
-   * parameters:
-   * - in: path
-   * name: id
-   * schema:
-   * type: string
-   * required: true
-   * description: ID live report yang akan diupdate
-   * requestBody:
-   * required: false
-   * content:
-   * multipart/form-data:
-   * schema:
-   * type: object
-   * properties:
-   * title:
-   * type: string
-   * description: Judul kegiatan baru
-   * date:
-   * type: string
-   * format: date
-   * description: Tanggal kegiatan baru - format YYYY-MM-DD
-   * description:
-   * type: string
-   * description: Deskripsi kegiatan baru
-   * photo:
-   * type: string
-   * format: binary
-   * description: Foto kegiatan baru (opsional)
-   * responses:
-   * 200:
-   * description: Live report berhasil diupdate
-   * 404:
-   * description: Live report tidak ditemukan
-   * 500:
-   * description: Server error
-   */
-  liveReportController.updateLiveReport
+    '/livereport/:id',
+    protect,
+    roleCheck('teacher', 'admin'),
+    upload.single('photo'),
+    liveReportController.updateLiveReport
 );
 
-// ---
+/**
+ * @swagger
+ * /livereport/{id}:
+ *   delete:
+ *     summary: Hapus live report
+ *     tags: [LiveReport]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: ID live report
+ *     responses:
+ *       200:
+ *         description: Live report berhasil dihapus
+ *       404:
+ *         description: Live report tidak ditemukan
+ */
 
-// DELETE "/:id" → deleteLiveReport, hanya teacher & admin
 router.delete(
-  '/livereport/:id',
-  protect,
-  roleCheck('teacher', 'admin'),
-  /**
-   * @swagger
-   * /api/livereport/{id}:
-   * delete:
-   * summary: Hapus live report
-   * tags: [LiveReport]
-   * security:
-   * - bearerAuth: []
-   * parameters:
-   * - in: path
-   * name: id
-   * schema:
-   * type: string
-   * required: true
-   * description: ID live report yang akan dihapus
-   * responses:
-   * 200:
-   * description: Live report berhasil dihapus
-   * content:
-   * application/json:
-   * schema:
-   * type: object
-   * properties:
-   * message:
-   * type: string
-   * example: "Live report deleted successfully"
-   * 404:
-   * description: Live report tidak ditemukan
-   */
-  liveReportController.deleteLiveReport
+    '/livereport/:id',
+    protect,
+    roleCheck('teacher', 'admin'),
+    liveReportController.deleteLiveReport
 );
 
 module.exports = router;
