@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-const fileUploadSchema = new mongoose.Schema({
+const uploadSchema = new mongoose.Schema({
     filename: {
         type: String,
         required: true
@@ -23,4 +23,4 @@ const fileUploadSchema = new mongoose.Schema({
     }
 }, { timestamps: true });
 
-module.exports = mongoose.model("FileUpload", fileUploadSchema);
+module.exports = mongoose.model("Upload", uploadSchema);

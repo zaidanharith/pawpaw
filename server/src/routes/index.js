@@ -1,22 +1,22 @@
 const express = require('express');
 const router = express.Router();
 
-const authRoutes = require('./auth.route');
-const weatherRoutes = require('./weather.route');
+const activityRoutes = require('./activity.route');
 const announcementRoutes = require('./announcement.route');
-const messageRoutes = require('./message.route');
-
-
-const studentRoutes = require('./student.route');
-
-
 const attendanceRoutes = require('./attendance.route');
+const authRoutes = require('./auth.route');
+const messageRoutes = require('./message.route');
+const studentRoutes = require('./student.route');
+const uploadRoutes = require('./upload.route');
+const weatherRoutes = require('./weather.route');
 
-router.use('/', authRoutes);
-router.use('/', weatherRoutes);
+router.use('/', activityRoutes);
 router.use('/', announcementRoutes);
+router.use('/', attendanceRoutes);
+router.use('/', authRoutes);
 router.use('/', messageRoutes);
 router.use('/', studentRoutes); 
-router.use('/', attendanceRoutes);
+router.use('/', uploadRoutes); 
+router.use('/', weatherRoutes);
 
 module.exports = router;
