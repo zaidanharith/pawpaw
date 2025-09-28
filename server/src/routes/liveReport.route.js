@@ -1,8 +1,14 @@
 const express = require('express');
 const router = express.Router();
+<<<<<<< HEAD
 const liveReportController = require('../controllers/liveReport.controller');
 const { protect, roleCheck } = require('../middleware/auth.middleware');
 const upload = require('../middleware/upload.middleware');
+=======
+const liveReportController = require('../controllers/liveReportController');
+const { authMiddleware, authorizeRole, validateObjectId } = require('../middlewares/authMiddleware');
+const upload = require('../middlewares/uploadMiddleware');
+>>>>>>> c99e3676969560e647ccacd4758a5b9577b4c682
 
 // GET "/" → getAllLiveReports, bisa diakses parent, teacher, admin
 router.get(
@@ -91,6 +97,7 @@ router.get(
 
 // POST "/" → createLiveReport, hanya teacher & admin, dengan upload foto
 router.post(
+<<<<<<< HEAD
   '/livereport/create',
   protect,
   roleCheck('teacher', 'admin'),
@@ -153,6 +160,13 @@ router.post(
    *         description: Server error
    */
   liveReportController.createLiveReport
+=======
+    '/',
+    authMiddleware,
+    authorizeRole('teacher', 'admin'),
+    upload.single('photo'),
+    liveReportController.createLiveReport
+>>>>>>> c99e3676969560e647ccacd4758a5b9577b4c682
 );
 
 // PUT "/:id" → updateLiveReport, hanya teacher & admin, dengan upload foto

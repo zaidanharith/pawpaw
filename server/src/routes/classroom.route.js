@@ -3,6 +3,7 @@ const router = express.Router();
 const classroomController = require('../controllers/classroom.controller');
 const { protect, roleCheck } = require('../middleware/auth.middleware');
 
+<<<<<<< HEAD
 /**
  * @swagger
  * tags:
@@ -69,6 +70,9 @@ router.post(
  *       403:
  *         description: Akses ditolak
  */
+=======
+// GET "/" → getAllClassrooms, bisa diakses parent, teacher, admin
+>>>>>>> c99e3676969560e647ccacd4758a5b9577b4c682
 router.get(
     '/classroom',
     protect,
@@ -76,6 +80,7 @@ router.get(
     classroomController.getAllClassrooms
 );
 
+<<<<<<< HEAD
 /**
  * @swagger
  * /classroom/{id}:
@@ -97,6 +102,9 @@ router.get(
  *       404:
  *         description: Classroom tidak ditemukan
  */
+=======
+// GET "/:id" → getClassroomById, bisa diakses parent, teacher, admin, dengan validateObjectId
+>>>>>>> c99e3676969560e647ccacd4758a5b9577b4c682
 router.get(
     '/classroom/:id',
     protect,
@@ -104,6 +112,7 @@ router.get(
     classroomController.getClassroomById
 );
 
+<<<<<<< HEAD
 /**
  * @swagger
  * /classroom/{id}:
@@ -148,6 +157,17 @@ router.get(
  *       404:
  *         description: Classroom tidak ditemukan
  */
+=======
+// POST "/" → createClassroom, hanya untuk teacher dan admin
+router.post(
+    '/',
+    authMiddleware,
+    authorizeRole('teacher', 'admin'),
+    classroomController.createClassroom
+);
+
+// PUT "/:id" → updateClassroom, hanya untuk teacher dan admin, dengan validateObjectId
+>>>>>>> c99e3676969560e647ccacd4758a5b9577b4c682
 router.put(
     '/classroom/:id',
     protect,
@@ -155,6 +175,7 @@ router.put(
     classroomController.updateClassroom
 );
 
+<<<<<<< HEAD
 /**
  * @swagger
  * /classroom/{id}:
@@ -176,6 +197,9 @@ router.put(
  *       404:
  *         description: Classroom tidak ditemukan
  */
+=======
+// DELETE "/:id" → deleteClassroom, hanya untuk admin, dengan validateObjectId
+>>>>>>> c99e3676969560e647ccacd4758a5b9577b4c682
 router.delete(
     '/classroom/:id',
     protect,

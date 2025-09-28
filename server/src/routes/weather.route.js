@@ -5,9 +5,16 @@ const router = express.Router();
 
 /**
  * @swagger
+ * tags:
+ *   name: Weather
+ *   description: Manajemen data cuaca dengan API eksternal
+ */
+
+/**
+ * @swagger
  * /weather/{location}:
  *   get:
- *     summary: Ambil data cuaca berdasarkan lokasi
+ *     summary: Mengambil data cuaca berdasarkan lokasi
  *     tags: [Weather]
  *     parameters:
  *       - in: path
@@ -34,7 +41,7 @@ const router = express.Router();
  *                   type: string
  *                   example: Partly cloudy
  *       400:
- *         description: Request tidak valid
+ *         description: Bad request
  *       404:
  *         description: Data cuaca tidak ditemukan
  *       500:

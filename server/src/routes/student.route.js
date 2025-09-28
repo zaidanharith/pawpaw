@@ -7,18 +7,14 @@ const { protect, roleCheck } = require('../middleware/auth.middleware');
  * @swagger
  * tags:
  *   name: Student
- *   description: Manajemen data siswa (student)
+ *   description: Manajemen data siswa
  */
 
-router.post(
-  '/student/create',
-  protect,
-  roleCheck('teacher', 'admin'),
-  /**
+/**
    * @swagger
    * /student/create:
    *   post:
-   *     summary: Tambah siswa baru
+   *     summary: Menambah siswa baru
    *     tags: [Student]
    *     security:
    *       - bearerAuth: []
@@ -44,14 +40,23 @@ router.post(
    *       403:
    *         description: Akses ditolak (bukan teacher/admin)
    */
+router.post(
+  '/student/create',
+  protect,
+  roleCheck('teacher', 'admin'),
+  
   studentController.createStudent
 );
 
+<<<<<<< HEAD
 router.get(
   '/student',
   protect,
   roleCheck('parent', 'teacher', 'admin'),
   /**
+=======
+/**
+>>>>>>> c99e3676969560e647ccacd4758a5b9577b4c682
    * @swagger
    * /student:
    *   get:
@@ -65,14 +70,23 @@ router.get(
    *       403:
    *         description: Akses ditolak
    */
+router.get(
+  '/student/:id',
+  protect,
+  roleCheck('parent', 'teacher', 'admin'),
+  
   studentController.getAllStudents
 );
 
+<<<<<<< HEAD
 router.get(
   '/student/:id',
   protect,
   roleCheck('parent', 'teacher', 'admin'),
   /**
+=======
+/**
+>>>>>>> c99e3676969560e647ccacd4758a5b9577b4c682
    * @swagger
    * /student/{id}:
    *   get:
@@ -93,14 +107,23 @@ router.get(
    *       404:
    *         description: Siswa tidak ditemukan
    */
+router.get(
+  '/:id',
+  protect,
+  roleCheck('parent', 'teacher', 'admin'),
+  
   studentController.getStudentById
 );
 
+<<<<<<< HEAD
 router.put(
   '/student/:id',
   protect,
   roleCheck('teacher', 'admin'),
   /**
+=======
+/**
+>>>>>>> c99e3676969560e647ccacd4758a5b9577b4c682
    * @swagger
    * /student/{id}:
    *   put:
@@ -134,14 +157,22 @@ router.put(
    *       403:
    *         description: Akses ditolak
    */
+<<<<<<< HEAD
   studentController.updateStudent
 );
 
 router.delete(
   '/student/:id',
+=======
+router.put(
+  '/:id',
+>>>>>>> c99e3676969560e647ccacd4758a5b9577b4c682
   protect,
   roleCheck('teacher', 'admin'),
-  /**
+  studentController.updateStudent
+);
+
+/**
    * @swagger
    * /student/{id}:
    *   delete:
@@ -162,6 +193,10 @@ router.delete(
    *       403:
    *         description: Akses ditolak (bukan teacher/admin)
    */
+router.delete(
+  '/:id',
+  protect,
+  roleCheck('teacher', 'admin'),
   studentController.deleteStudent
 );
 
