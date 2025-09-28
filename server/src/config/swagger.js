@@ -7,7 +7,7 @@ const options = {
     info: {
       title: "KidConnect API",
       version: "1.0.0",
-      description: "API untuk aplikasi TK KidConnect",
+      description: "API untuk aplikasi KidConnect oleh Kelompok 13",
     },
     servers: [
       {
@@ -20,6 +20,23 @@ const options = {
           type: "http",
           scheme: "bearer",
           bearerFormat: "JWT",
+        },
+      },
+      schemas: {
+        Upload: {
+          type: "object",
+          properties: {
+            file: {
+              type: "string",
+              format: "binary",
+              description: "File yang diunggah",
+            },
+            url: {
+              type: "string",
+              description: "URL file setelah diunggah",
+            },
+          },
+          required: ["file"],
         },
       },
     },

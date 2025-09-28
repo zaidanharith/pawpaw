@@ -23,8 +23,9 @@ const liveReportController = {
         message: "Berhasil mengambil data live report",
         data: liveReports
       });
+
     } catch (err) {
-      res.status(500).json({ message: err.message });
+        res.status(500).json({ message: err.message });
     }
   },
 

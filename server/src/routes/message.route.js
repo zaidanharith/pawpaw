@@ -7,14 +7,14 @@ const { protect, roleCheck } = require('../middleware/auth.middleware');
  * @swagger
  * tags:
  *   name: Messages
- *   description: API untuk sistem pesan antara orang tua dan guru
+ *   description: Manajemen sistem pesan antara orang tua dan guru
  */
 
 /**
  * @swagger
- * /messages:
+ * /message:
  *   get:
- *     summary: Ambil semua pesan milik user yang sedang login
+ *     summary: Melihat semua pesan milik user yang sedang login
  *     tags: [Messages]
  *     security:
  *       - bearerAuth: []
@@ -22,7 +22,7 @@ const { protect, roleCheck } = require('../middleware/auth.middleware');
  *       200:
  *         description: Daftar pesan user yang berhasil diambil
  *       401:
- *         description: Tidak memiliki otorisasi
+ *         description: Akses ditolak
  */
 router.get(
   '/message',
@@ -33,9 +33,9 @@ router.get(
 
 /**
  * @swagger
- * /messages/{id}:
+ * /message/{id}:
  *   get:
- *     summary: Ambil detail pesan berdasarkan ID
+ *     summary: Meihat detail pesan berdasarkan ID
  *     tags: [Messages]
  *     security:
  *       - bearerAuth: []
@@ -61,9 +61,9 @@ router.get(
 
 /**
  * @swagger
- * /messages:
+ * /message/send:
  *   post:
- *     summary: Kirim pesan baru
+ *     summary: Mengirim pesan baru
  *     tags: [Messages]
  *     security:
  *       - bearerAuth: []
@@ -84,10 +84,10 @@ router.get(
  *       201:
  *         description: Pesan berhasil dikirim
  *       400:
- *         description: Permintaan tidak valid
+ *         description: Bad request
  */
 router.post(
-  '/send/message',
+  '/messages/send',
   protect,
   roleCheck('parent', 'teacher'),
   messageController.sendMessage
@@ -97,7 +97,7 @@ router.post(
  * @swagger
  * /messages/{id}:
  *   delete:
- *     summary: Hapus pesan berdasarkan ID
+ *     summary: Menghapus pesan berdasarkan ID
  *     tags: [Messages]
  *     security:
  *       - bearerAuth: []

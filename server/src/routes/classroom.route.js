@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
-const classroomController = require('../controllers/classroomController');
-const { authMiddleware, authorizeRole, validateObjectId } = require('../middlewares/authMiddleware');
+const classroomController = require('../controllers/classroom.controller');
+const { protect, roleCheck } = require('../middleware/auth.middleware');
 
 /**
  * @swagger
@@ -9,6 +9,51 @@ const { authMiddleware, authorizeRole, validateObjectId } = require('../middlewa
  *   name: Classroom
  *   description: Manajemen kelas dalam sistem
  */
+
+/**
+ * @swagger
+ * /classroom/create:
+ *   post:
+ *     summary: Buat classroom baru
+ *     tags: [Classroom]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               name:
+ *                 type: string
+ *                 example: TK-A
+ *               student:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *                 example: ["64d4e8b1d165537831aeca91"]
+ *               teacher:
+ *                 type: string
+ *                 example: "64d4e8b1d165537831aeca90"
+ *               activity:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *                 example: ["64d4e8b1d165537831aeca94"]
+ *     responses:
+ *       201:
+ *         description: Classroom berhasil dibuat
+ *       400:
+ *         description: Data tidak valid
+ */
+// POST CREATE CLASSROOM
+router.post(
+  '/classroom/create',
+  protect,
+  roleCheck('teacher', 'admin'),
+  classroomController.createClassroom
+);
 
 /**
  * @swagger
@@ -24,12 +69,11 @@ const { authMiddleware, authorizeRole, validateObjectId } = require('../middlewa
  *       403:
  *         description: Akses ditolak
  */
-
 router.get(
-    '/',
-    authMiddleware,
-    authorizeRole('parent', 'teacher', 'admin'),
-    classroomController.getAllClassrooms
+  '/classroom',
+  protect,
+  roleCheck('parent', 'teacher', 'admin'),
+  classroomController.getAllClassrooms
 );
 
 /**
@@ -53,58 +97,11 @@ router.get(
  *       404:
  *         description: Classroom tidak ditemukan
  */
-
 router.get(
-    '/:id',
-    authMiddleware,
-    authorizeRole('parent', 'teacher', 'admin'),
-    validateObjectId,
-    classroomController.getClassroomById
-);
-
-/**
- * @swagger
- * /classroom:
- *   post:
- *     summary: Buat classroom baru
- *     tags: [Classroom]
- *     security:
- *       - bearerAuth: []
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               name:
- *                 type: string
- *                 example: TK-A
- *               student:
- *                 type: array
- *                 items:
- *                   type: string
- *                 example: ["64d4e8b1d165537831aeca9"]
- *               teacher:
- *                 type: string
- *                 example: 64d4e8b1d165537831aeca8
- *               activity:
- *                 type: array
- *                 items:
- *                   type: string
- *                 example: ["64d4e8b1d165537831aeca7"]
- *     responses:
- *       201:
- *         description: Classroom berhasil dibuat
- *       400:
- *         description: Data tidak valid
- */
-
-router.post(
-    '/',
-    authMiddleware,
-    authorizeRole('admin'),
-    classroomController.createClassroom
+  '/classroom/:id',
+  protect,
+  roleCheck('parent', 'teacher', 'admin'),
+  classroomController.getClassroomById
 );
 
 /**
@@ -131,29 +128,31 @@ router.post(
  *             properties:
  *               name:
  *                 type: string
+ *                 example: "TK-A Updated"
  *               student:
  *                 type: array
  *                 items:
  *                   type: string
+ *                 example: ["64d4e8b1d165537831aeca91", "64d4e8b1d165537831aeca92"]
  *               teacher:
  *                 type: string
+ *                 example: "64d4e8b1d165537831aeca90"
  *               activity:
  *                 type: array
  *                 items:
  *                   type: string
+ *                 example: ["64d4e8b1d165537831aeca94", "64d4e8b1d165537831aeca95"]
  *     responses:
  *       200:
  *         description: Classroom berhasil diperbarui
  *       404:
  *         description: Classroom tidak ditemukan
  */
-
 router.put(
-    '/:id',
-    authMiddleware,
-    authorizeRole('teacher', 'admin'),
-    validateObjectId,
-    classroomController.updateClassroom
+  '/classroom/:id',
+  protect,
+  roleCheck('teacher', 'admin'),
+  classroomController.updateClassroom
 );
 
 /**
@@ -177,13 +176,11 @@ router.put(
  *       404:
  *         description: Classroom tidak ditemukan
  */
-
 router.delete(
-    '/:id',
-    authMiddleware,
-    authorizeRole('admin'),
-    validateObjectId,
-    classroomController.deleteClassroom
+  '/classroom/:id',
+  protect,
+  roleCheck('admin'),
+  classroomController.deleteClassroom
 );
 
 module.exports = router;

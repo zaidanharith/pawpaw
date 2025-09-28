@@ -41,7 +41,7 @@ const messageController = {
 
   sendMessage: async (req, res) => {
     try {
-      const { receiver, title, body } = req.body;
+      const { sender, receiver, title, body } = req.body;
 
       const newMessage = await Message.create({
         sender: req.user.userId,

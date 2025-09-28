@@ -8,5 +8,5 @@ module.exports = {
     Message: require('Message'),
     Student: require('Student'),
     User: require('User'),
-    WeatherCache: require('WeatherCache'),
+    WeatherCache: require('WeatherCache')
 };
