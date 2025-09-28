@@ -20,15 +20,18 @@ const studentSchema = new mongoose.Schema({
         required: true,
         trim: true,
     }, 
+
     classroom: {
-        type: String,
-        ref: 'Classroom',
-        trim: true,
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Classroom',
+    required: true
     },
+
     isActive : {
         type: Boolean,
         required: true,
     }
+
 });
 
 module.exports = mongoose.model('Student', studentSchema);

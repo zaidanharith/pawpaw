@@ -1,4 +1,5 @@
 const Attendance = require('../models/Attendance');
+const User = require('../models/User');
 
 const attendanceController = {
 
@@ -9,11 +10,14 @@ const attendanceController = {
         date: req.body.date || new Date(),
         status: req.body.status,
         notes: req.body.notes || '',
-        createdBy: req.user._Id
+        createdBy: req.user._id
       });
       const savedAttendance = await attendance.save();
-      res.status(201).json(savedAttendance);
-    } catch (error) {
+      res.status(201).json({
+        message: "Data kehadiran berhasil dibuat",
+        data: savedAttendance
+      }); 
+    }catch (error) {
       res.status(400).json({ message: error.message });
     }
   },
@@ -23,9 +27,12 @@ const attendanceController = {
     try {
       const attendances = await Attendance.find()
         .populate('student', 'name')
-        .populate('name role')
+        .populate('createdBy', 'name role')
         .sort({ date: -1 });
-      res.status(200).json(attendances);
+      res.status(200).json({
+        message: "Daftar kehadiran berhasil diambil",
+        data: attendances
+      });
     } catch (error) {
       res.status(500).json({ message: error.message });
     }
@@ -35,11 +42,14 @@ const attendanceController = {
     try {
       const attendance = await Attendance.findById(req.params.id)
         .populate('student', 'name')
-        .populate('name role');
+        .populate('createdBy', 'name role')
       if (!attendance) {
         return res.status(404).json({ message: 'Data kehadiran tidak ditemukan' });
       }
-      res.status(200).json(attendance);
+      res.status(200).json({
+        message: "Data Kehadiran berhasil ditemukan",
+        data: attendance
+      });
     } catch (error) {
       res.status(500).json({ message: error.message });
     }
@@ -55,7 +65,10 @@ const attendanceController = {
       if (!updatedAttendance) {
         return res.status(404).json({ message: 'Data kehadiran tidak ditemukan' });
       }
-      res.status(200).json(updatedAttendance);
+      res.status(200).json({
+        message: "Data kehadiran berhasil diperbarui",
+        data: updatedAttendance
+      });
     } catch (error) {
       res.status(400).json({ message: error.message });
     }
@@ -78,7 +91,10 @@ const attendanceController = {
       const attendances = await Attendance.find({ student: req.params.studentId })
         .populate('student', 'name')
         .sort({ date: -1 });
-      res.status(200).json(attendances);
+      res.status(200).json({
+        message: "Data kehadiran siswa berhasil ditemukan",
+        data: attendances
+      });
     } catch (error) {
       res.status(500).json({ message: error.message });
     }
