@@ -13,12 +13,16 @@ const attendanceSchema = new mongoose.Schema({
   },
   status: {
     type: String,
-    enum: ["present", "absent", "sick", "excused"], 
+    enum: ["Hadir", "Alfa", "Sakit", "Izin"], 
     required: true
   },
   notes: {
     type: String,
     trim: true
+  },
+    createdBy: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User"
   }
 }, { timestamps: true });
 
