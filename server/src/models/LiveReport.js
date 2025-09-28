@@ -17,7 +17,7 @@ const liveReportSchema = new mongoose.Schema({
     },
     photos: [{
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'FileUpload'
+        ref: 'Upload'
     }],
     description: {
         type: String,

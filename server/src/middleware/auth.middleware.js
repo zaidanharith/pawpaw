@@ -21,10 +21,11 @@ const protect = (req, res, next) => {
 };
 
 const roleCheck = (...allowedRoles) => (req, res, next) => {
-  if (!req.user || !allowedRoles.includes(req.user.role)) {
+  if (!req.user || !allowedRoles.map(r => r.toLowerCase()).includes(req.user.role?.toLowerCase())) {
     return res.status(403).json({ message: 'Akses ditolak. Role tidak diizinkan' });
   }
   next();
 };
+
 
 module.exports = { protect, roleCheck };

@@ -48,7 +48,7 @@ router.post(
 );
 
 router.get(
-  '/',
+  '/student',
   protect,
   roleCheck('parent', 'teacher', 'admin'),
   /**
@@ -69,7 +69,7 @@ router.get(
 );
 
 router.get(
-  '/:id',
+  '/student/:id',
   protect,
   roleCheck('parent', 'teacher', 'admin'),
   /**
@@ -97,7 +97,7 @@ router.get(
 );
 
 router.put(
-  '/:id',
+  '/student/:id',
   protect,
   roleCheck('teacher', 'admin'),
   /**
@@ -138,7 +138,7 @@ router.put(
 );
 
 router.delete(
-  '/:id',
+  '/student/:id',
   protect,
   roleCheck('teacher', 'admin'),
   /**
