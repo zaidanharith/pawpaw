@@ -25,7 +25,7 @@ const { protect, roleCheck } = require('../middleware/auth.middleware');
  *         description: Tidak memiliki otorisasi
  */
 router.get(
-  '/',
+  '/message',
   protect,
   roleCheck('parent', 'teacher'),
   messageController.getUserMessages
@@ -53,7 +53,7 @@ router.get(
  *         description: Pesan tidak ditemukan
  */
 router.get(
-  '/:id',
+  '/message/:id',
   protect,
   roleCheck('parent', 'teacher'),
   messageController.getMessageById
@@ -115,7 +115,7 @@ router.post(
  *         description: Pesan tidak ditemukan
  */
 router.delete(
-  '/:id',
+  '/message/:id',
   protect,
   roleCheck('parent', 'teacher'),
   messageController.deleteMessage

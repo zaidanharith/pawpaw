@@ -1,8 +1,8 @@
 const express = require('express');
 const router = express.Router();
-const liveReportController = require('../controllers/liveReportController');
-const { authMiddleware, authorizeRole, validateObjectId } = require('../middlewares/authMiddleware');
-const upload = require('../middlewares/uploadMiddleware');
+const liveReportController = require('../controllers/liveReport.controller');
+const { protect, roleCheck } = require('../middleware/auth.middleware');
+const upload = require('../middleware/upload.middleware');
 
 /**
  * @swagger
@@ -15,7 +15,7 @@ const upload = require('../middlewares/uploadMiddleware');
  * @swagger
  * /livereport:
  *   get:
- *     summary: Ambil semua live report
+ *     summary: Ambil semua data live report
  *     tags: [LiveReport]
  *     security:
  *       - bearerAuth: []
@@ -25,9 +25,9 @@ const upload = require('../middlewares/uploadMiddleware');
  */
 
 router.get(
-    '/',
-    authMiddleware,
-    authorizeRole('parent', 'teacher', 'admin'),
+    '/livereport',
+    protect,
+    roleCheck('parent', 'teacher', 'admin'),
     liveReportController.getAllLiveReports
 );
 
@@ -35,7 +35,7 @@ router.get(
  * @swagger
  * /livereport/{id}:
  *   get:
- *     summary: Ambil live report berdasarkan ID
+ *     summary: Ambil data live report berdasarkan ID
  *     tags: [LiveReport]
  *     security:
  *       - bearerAuth: []
@@ -54,16 +54,15 @@ router.get(
  */
 
 router.get(
-    '/:id',
-    authMiddleware,
-    authorizeRole('parent', 'teacher', 'admin'),
-    validateObjectId,
+    '/livereport/:id',
+    protect,
+    roleCheck('parent', 'teacher', 'admin'),
     liveReportController.getLiveReportById
 );
 
 /**
  * @swagger
- * /livereport:
+ * /livereport/create:
  *   post:
  *     summary: Buat live report baru
  *     tags: [LiveReport]
@@ -87,10 +86,11 @@ router.get(
  *                 format: date
  *                 example: "2025-09-28"
  *               activity:
- *                 type: array
- *                 items:
- *                   type: string
- *                 example: ["6512bc2c14aaf1e33b5b45cd"]
+ *                 type: string
+ *                 example: "68d92364591af78e97dcd366"
+ *               classroom:
+ *                 type: string
+ *                 example: "68d95174b9347010789e01a2"
  *               photo:
  *                 type: string
  *                 format: binary
@@ -102,10 +102,10 @@ router.get(
  */
 
 router.post(
-    '/',
-    authMiddleware,
-    authorizeRole('teacher', 'admin'),
-    upload.single('photo'), // field foto bernama 'photo'
+    '/livereport/create',
+    protect,
+    roleCheck('teacher', 'admin'),
+    upload.single('photo'), 
     liveReportController.createLiveReport
 );
 
@@ -120,6 +120,7 @@ router.post(
  *     parameters:
  *       - in: path
  *         name: id
+ *         example: 68d9ab6dac3e9ec6fb0d449a
  *         schema:
  *           type: string
  *         required: true
@@ -140,9 +141,11 @@ router.post(
  *                 type: string
  *                 format: date
  *               activity:
- *                 type: array
- *                 items:
- *                   type: string
+ *                 type: string
+ *                 example: "68d92364591af78e97dcd366"
+ *               classroom:
+ *                 type: string
+ *                 example: "68d95174b9347010789e01a2"
  *               photo:
  *                 type: string
  *                 format: binary
@@ -154,10 +157,9 @@ router.post(
  */
 
 router.put(
-    '/:id',
-    authMiddleware,
-    authorizeRole('teacher', 'admin'),
-    validateObjectId,
+    '/livereport/:id',
+    protect,
+    roleCheck('teacher', 'admin'),
     upload.single('photo'),
     liveReportController.updateLiveReport
 );
@@ -185,10 +187,9 @@ router.put(
  */
 
 router.delete(
-    '/:id',
-    authMiddleware,
-    authorizeRole('teacher', 'admin'),
-    validateObjectId,
+    '/livereport/:id',
+    protect,
+    roleCheck('teacher', 'admin'),
     liveReportController.deleteLiveReport
 );
 

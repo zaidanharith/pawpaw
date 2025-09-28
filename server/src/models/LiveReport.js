@@ -11,18 +11,18 @@ const liveReportSchema = new mongoose.Schema({
         ref: 'Activity',
         required: true
     }],
+    classroom: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Classroom",
+      required: true
+    },
     date: {
         type: Date,
         required: true
     },
-    teacher: {
+    photo: [{
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'User',
-        required: true
-    },
-    photos: [{
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'FileUpload'
+        ref: 'Upload'
     }],
     description: {
         type: String,
