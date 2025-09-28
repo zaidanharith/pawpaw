@@ -49,10 +49,10 @@ const { protect, roleCheck } = require('../middleware/auth.middleware');
  */
 // POST CREATE CLASSROOM
 router.post(
-    '/classroom/create',
-    protect,
-    roleCheck('admin'),
-    classroomController.createClassroom
+  '/classroom/create',
+  protect,
+  roleCheck('teacher', 'admin'),
+  classroomController.createClassroom
 );
 
 /**
@@ -70,10 +70,10 @@ router.post(
  *         description: Akses ditolak
  */
 router.get(
-    '/classroom',
-    protect,
-    roleCheck('parent', 'teacher', 'admin'),
-    classroomController.getAllClassrooms
+  '/classroom',
+  protect,
+  roleCheck('parent', 'teacher', 'admin'),
+  classroomController.getAllClassrooms
 );
 
 /**
@@ -98,10 +98,10 @@ router.get(
  *         description: Classroom tidak ditemukan
  */
 router.get(
-    '/classroom/:id',
-    protect,
-    roleCheck('parent', 'teacher', 'admin'),
-    classroomController.getClassroomById
+  '/classroom/:id',
+  protect,
+  roleCheck('parent', 'teacher', 'admin'),
+  classroomController.getClassroomById
 );
 
 /**
@@ -149,10 +149,10 @@ router.get(
  *         description: Classroom tidak ditemukan
  */
 router.put(
-    '/classroom/:id',
-    protect,
-    roleCheck('teacher', 'admin'),
-    classroomController.updateClassroom
+  '/classroom/:id',
+  protect,
+  roleCheck('teacher', 'admin'),
+  classroomController.updateClassroom
 );
 
 /**
@@ -177,10 +177,10 @@ router.put(
  *         description: Classroom tidak ditemukan
  */
 router.delete(
-    '/classroom/:id',
-    protect,
-    roleCheck('admin'),
-    classroomController.deleteClassroom
+  '/classroom/:id',
+  protect,
+  roleCheck('admin'),
+  classroomController.deleteClassroom
 );
 
 module.exports = router;
