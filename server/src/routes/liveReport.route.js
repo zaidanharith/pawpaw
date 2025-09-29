@@ -13,7 +13,7 @@ const upload = require("../middleware/upload.middleware");
 
 /**
  * @swagger
- * /api/livereport:
+ * /livereport:
  *   get:
  *     summary: Ambil semua live report
  *     tags: [Live Report]
@@ -46,7 +46,7 @@ router.get(
 
 /**
  * @swagger
- * /api/livereport/{id}:
+ * /livereport/{id}:
  *   get:
  *     summary: Ambil detail live report berdasarkan ID
  *     tags: [LiveReport]
@@ -86,7 +86,7 @@ router.get(
 
 /**
  * @swagger
- * /api/livereport/create:
+ * /livereport/create:
  *   post:
  *     summary: Tambah live report baru
  *     tags: [LiveReport]
@@ -137,7 +137,7 @@ router.post(
 
 /**
  * @swagger
- * /api/livereport/{id}:
+ * /livereport/{id}:
  *   put:
  *     summary: Update live report
  *     tags: [LiveReport]
@@ -189,7 +189,7 @@ router.put(
 
 /**
  * @swagger
- * /api/livereport/{id}:
+ * /livereport/{id}:
  *   delete:
  *     summary: Hapus live report
  *     tags: [LiveReport]

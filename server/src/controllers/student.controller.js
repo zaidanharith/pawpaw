@@ -2,18 +2,16 @@ const Student = require('../models/Student');
 
 const studentController = {
 
-  // Ambil semua siswa
   getAllStudents: async (req, res) => {
     try {
       const students = await Student.find()
-        .populate("classroom", "name teacher"); // sesuai schema Classroom
+        .populate("classroom", "name teacher");
       res.status(200).json(students);
     } catch (error) {
       res.status(500).json({ message: error.message });
     }
   },
 
-  // Ambil detail siswa by ID
   getStudentById: async (req, res) => {
     try {
       const student = await Student.findById(req.params.id)
@@ -25,7 +23,6 @@ const studentController = {
     }
   },
 
-  // Tambah siswa baru
   createStudent: async (req, res) => {
     try {
       const student = new Student({
@@ -44,7 +41,6 @@ const studentController = {
     }
   },
 
-  // Update siswa
   updateStudent: async (req, res) => {
     try {
       const updated = await Student.findByIdAndUpdate(
@@ -59,7 +55,6 @@ const studentController = {
     }
   },
 
-  // Hapus siswa
   deleteStudent: async (req, res) => {
     try {
       const deleted = await Student.findByIdAndDelete(req.params.id);

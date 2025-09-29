@@ -69,10 +69,10 @@ router.post('/auth/register', protect, roleCheck('admin'), authController.regist
  *             properties:
  *               username:
  *                 type: string
- *                 example: syahroni125
+ *                 example: admin1
  *               password:
  *                 type: string
- *                 example: rahasia1234
+ *                 example: PAW123
  *     responses:
  *       200:
  *         description: User berhasil login

@@ -37,7 +37,6 @@ pawpaw/
 │   │   ├── routes/
 │   │   ├── middleware/
 │   │   ├── utils/
-│   │   ├── cron/
 │   │   └── server.js
 │   ├── .env.example
 │   ├── package.json
