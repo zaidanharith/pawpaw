@@ -16,11 +16,11 @@ router.use('/', activityRoutes);
 router.use('/', announcementRoutes);
 router.use('/', attendanceRoutes);
 router.use('/', authRoutes);
+router.use('/', classroomRoutes);
+router.use('/', liveReportRoutes);
 router.use('/', messageRoutes);
 router.use('/', studentRoutes); 
 router.use('/', uploadRoutes); 
 router.use('/', weatherRoutes);
-router.use('/', liveReportRoutes);
-router.use('/', classroomRoutes);
 
 module.exports = router;

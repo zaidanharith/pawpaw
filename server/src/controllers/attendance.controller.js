@@ -1,5 +1,5 @@
+const mongoose = require("mongoose");
 const Attendance = require('../models/Attendance');
-const User = require('../models/User');
 
 const attendanceController = {
 
@@ -7,7 +7,6 @@ const attendanceController = {
     try {
       const attendance = new Attendance({
         student: req.body.student,
-        date: req.body.date || new Date(),
         status: req.body.status,
         notes: req.body.notes || '',
         createdBy: req.user._id
@@ -40,9 +39,14 @@ const attendanceController = {
 
   getAttendanceById: async (req, res) => {
     try {
+      if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+        return res.status(400).json({ message: "ID tidak valid" });
+      }
+
       const attendance = await Attendance.findById(req.params.id)
         .populate('student', 'name')
-        .populate('createdBy', 'name role')
+        .populate('createdBy', 'name role');
+
       if (!attendance) {
         return res.status(404).json({ message: 'Data kehadiran tidak ditemukan' });
       }
@@ -57,11 +61,16 @@ const attendanceController = {
 
   updateAttendance: async (req, res) => {
     try {
+      if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+        return res.status(400).json({ message: "ID tidak valid" });
+      }
+
       const updatedAttendance = await Attendance.findByIdAndUpdate(
         req.params.id,
         req.body,
         { new: true, runValidators: true }
       );
+
       if (!updatedAttendance) {
         return res.status(404).json({ message: 'Data kehadiran tidak ditemukan' });
       }
@@ -76,10 +85,15 @@ const attendanceController = {
 
   deleteAttendance: async (req, res) => {
     try {
+      if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+        return res.status(400).json({ message: "ID tidak valid" });
+      }
+
       const deletedAttendance = await Attendance.findByIdAndDelete(req.params.id);
       if (!deletedAttendance) {
         return res.status(404).json({ message: 'Data kehadiran tidak ditemukan' });
       }
+
       res.status(200).json({ message: 'Data kehadiran berhasil dihapus' });
     } catch (error) {
       res.status(500).json({ message: error.message });
@@ -88,6 +102,10 @@ const attendanceController = {
 
   getAttendanceByStudent: async (req, res) => {
     try {
+      if (!mongoose.Types.ObjectId.isValid(req.params.studentId)) {
+        return res.status(400).json({ message: "ID tidak valid" });
+      }
+      
       const attendances = await Attendance.find({ student: req.params.studentId })
         .populate('student', 'name')
         .sort({ date: -1 });

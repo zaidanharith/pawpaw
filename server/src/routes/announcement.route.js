@@ -10,7 +10,6 @@ const {
   deleteAnnouncement
 } = require('../controllers/announcement.controller');
 
-// Create announcement → hanya teacher dan admin
 router.post(
   '/announcement/create',
   protect,
@@ -18,7 +17,6 @@ router.post(
   createAnnouncement
 );
 
-// Get all announcements → bisa diakses parent, teacher, admin
 router.get(
   '/announcement',
   protect,
@@ -26,7 +24,6 @@ router.get(
   getAnnouncements
 );
 
-// Get announcement by ID → parent, teacher, admin
 router.get(
   '/announcement/:id',
   protect,
@@ -34,7 +31,6 @@ router.get(
   getAnnouncementById
 );
 
-// Update announcement → hanya teacher dan admin
 router.put(
   '/announcement/:id',
   protect,
@@ -42,7 +38,6 @@ router.put(
   updateAnnouncement
 );
 
-// Delete announcement → hanya teacher dan admin
 router.delete(
   '/announcement/:id',
   protect,

@@ -7,14 +7,63 @@ const { protect, roleCheck } = require('../middleware/auth.middleware');
  * @swagger
  * tags:
  *   name: Classroom
- *   description: Manajemen kelas dalam sistem
+ *   description: Manajemen data kelas dalam sistem
  */
+
+/**
+ * @swagger
+ * /classroom:
+ *   get:
+ *     summary: Ambil data classroom
+ *     tags: [Classroom]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Daftar kelas berhasil diambil
+ *       403:
+ *         description: Akses ditolak
+ */
+router.get(
+  '/classroom',
+  protect,
+  roleCheck('parent', 'teacher', 'admin'),
+  classroomController.getAllClassrooms
+);
+
+/**
+ * @swagger
+ * /classroom/{id}:
+ *   get:
+ *     summary: Ambil data kelas berdasarkan ID
+ *     tags: [Classroom]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: ID kelas
+ *     responses:
+ *       200:
+ *         description: Detail kelas
+ *       404:
+ *         description: Kelas tidak ditemukan
+ */
+router.get(
+  '/classroom/:id',
+  protect,
+  roleCheck('parent', 'teacher', 'admin'),
+  classroomController.getClassroomById
+);
 
 /**
  * @swagger
  * /classroom/create:
  *   post:
- *     summary: Buat classroom baru
+ *     summary: Buat data kelas baru
  *     tags: [Classroom]
  *     security:
  *       - bearerAuth: []
@@ -43,11 +92,10 @@ const { protect, roleCheck } = require('../middleware/auth.middleware');
  *                 example: ["64d4e8b1d165537831aeca94"]
  *     responses:
  *       201:
- *         description: Classroom berhasil dibuat
+ *         description: Kelas berhasil dibuat
  *       400:
  *         description: Data tidak valid
  */
-// POST CREATE CLASSROOM
 router.post(
   '/classroom/create',
   protect,
@@ -57,58 +105,9 @@ router.post(
 
 /**
  * @swagger
- * /classroom:
- *   get:
- *     summary: Ambil data classroom
- *     tags: [Classroom]
- *     security:
- *       - bearerAuth: []
- *     responses:
- *       200:
- *         description: Daftar classroom berhasil diambil
- *       403:
- *         description: Akses ditolak
- */
-router.get(
-  '/classroom',
-  protect,
-  roleCheck('parent', 'teacher', 'admin'),
-  classroomController.getAllClassrooms
-);
-
-/**
- * @swagger
- * /classroom/{id}:
- *   get:
- *     summary: Ambil classroom berdasarkan ID
- *     tags: [Classroom]
- *     security:
- *       - bearerAuth: []
- *     parameters:
- *       - in: path
- *         name: id
- *         schema:
- *           type: string
- *         required: true
- *         description: ID classroom
- *     responses:
- *       200:
- *         description: Detail classroom
- *       404:
- *         description: Classroom tidak ditemukan
- */
-router.get(
-  '/classroom/:id',
-  protect,
-  roleCheck('parent', 'teacher', 'admin'),
-  classroomController.getClassroomById
-);
-
-/**
- * @swagger
  * /classroom/{id}:
  *   put:
- *     summary: Update classroom berdasarkan ID
+ *     summary: Ubah data kelas berdasarkan ID
  *     tags: [Classroom]
  *     security:
  *       - bearerAuth: []
@@ -128,7 +127,7 @@ router.get(
  *             properties:
  *               name:
  *                 type: string
- *                 example: "TK-A Updated"
+ *                 example: "TK-B"
  *               student:
  *                 type: array
  *                 items:
@@ -144,9 +143,9 @@ router.get(
  *                 example: ["64d4e8b1d165537831aeca94", "64d4e8b1d165537831aeca95"]
  *     responses:
  *       200:
- *         description: Classroom berhasil diperbarui
+ *         description: Kelas berhasil diperbarui
  *       404:
- *         description: Classroom tidak ditemukan
+ *         description: Kelas tidak ditemukan
  */
 router.put(
   '/classroom/:id',
@@ -159,7 +158,7 @@ router.put(
  * @swagger
  * /classroom/{id}:
  *   delete:
- *     summary: Hapus classroom berdasarkan ID
+ *     summary: Hapus data kelas berdasarkan ID
  *     tags: [Classroom]
  *     security:
  *       - bearerAuth: []
@@ -169,12 +168,12 @@ router.put(
  *         schema:
  *           type: string
  *         required: true
- *         description: ID classroom
+ *         description: ID kelas
  *     responses:
  *       200:
- *         description: Classroom berhasil dihapus
+ *         description: Kelas berhasil dihapus
  *       404:
- *         description: Classroom tidak ditemukan
+ *         description: Kelas tidak ditemukan
  */
 router.delete(
   '/classroom/:id',

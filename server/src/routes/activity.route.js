@@ -7,48 +7,14 @@ const { protect, roleCheck } = require('../middleware/auth.middleware');
  * @swagger
  * tags:
  *   name: Activity
- *   description: Manajemen aktivitas/kegiatan siswa
+ *   description: Manajemen data aktivitas/kegiatan siswa
  */
-
-/**
- * @swagger
- * /activity/create:
- *   post:
- *     summary: Membuat aktivitas baru
- *     tags: [Activity]
- *     security:
- *       - bearerAuth: []
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               title:
- *                 type: string
- *                 example: Makan Siang
- *               description:
- *                 type: string
- *                 example: Siswa makan susu dan buah dari MBG (Semoga tidak keracunan)
- *     responses:
- *       201:
- *         description: Aktivitas berhasil dibuat
- *       403:
- *         description: Akses ditolak
- */
-router.post(
-  '/activity/create',
-  protect,
-  roleCheck('teacher', 'admin'),
-  activityController.createActivity
-);
 
 /**
  * @swagger
  * /activity:
  *   get:
- *     summary: Melihat semua aktivitas
+ *     summary: Lihat semua data aktivitas
  *     tags: [Activity]
  *     security:
  *       - bearerAuth: []
@@ -69,7 +35,7 @@ router.get(
  * @swagger
  * /activity/{id}:
  *   get:
- *     summary: Lihat aktivitas berdasarkan ID
+ *     summary: Lihat data aktivitas berdasarkan ID
  *     tags: [Activity]
  *     security:
  *       - bearerAuth: []
@@ -95,9 +61,48 @@ router.get(
 
 /**
  * @swagger
+ * /activity/create:
+ *   post:
+ *     summary: Tambah data aktivitas baru
+ *     tags: [Activity]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               name:
+ *                 type: string
+ *                 example: Makan Siang
+ *               description:
+ *                 type: string
+ *                 example: Siswa makan susu dan buah dari MBG (Semoga tidak keracunan)
+ *               student:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *                   example: 60d21b4967d0d8992e610c85
+ *     responses:
+ *       201:
+ *         description: Aktivitas berhasil dibuat
+ *       403:
+ *         description: Akses ditolak
+ */
+router.post(
+  '/activity/create',
+  protect,
+  roleCheck('teacher', 'admin'),
+  activityController.createActivity
+);
+
+/**
+ * @swagger
  * /activity/{id}:
  *   put:
- *     summary: Mengubah aktivitas
+ *     summary: Ubah data aktivitas
  *     tags: [Activity]
  *     security:
  *       - bearerAuth: []
@@ -115,10 +120,17 @@ router.get(
  *           schema:
  *             type: object
  *             properties:
- *               title:
+ *               name:
  *                 type: string
+ *                 example: Bermain
  *               description:
  *                 type: string
+ *                 example: Siswa bermain di taman
+ *               student: 
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *                   example: 60d21b4967d0d8992e610c85
  *     responses:
  *       200:
  *         description: Aktivitas berhasil diubah
@@ -136,7 +148,7 @@ router.put(
  * @swagger
  * /activity/{id}:
  *   delete:
- *     summary: Menghapus aktivitas
+ *     summary: Hapus data aktivitas
  *     tags: [Activity]
  *     security:
  *       - bearerAuth: []

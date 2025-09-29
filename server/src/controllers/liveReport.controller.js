@@ -1,73 +1,85 @@
 const LiveReport = require('../models/LiveReport');
-const Activity = require('../models/Activity');
-const Upload = require('../models/Upload'); 
+const uploadController = require('./upload.controller');
 
-// Get all live reports
-exports.getAllLiveReports = async (req, res) => {
-    try {
-        const liveReports = await LiveReport.find();
-        res.json(liveReports);
-    } catch (err) {
-        res.status(500).json({ message: err.message });
-    }
-};
-
-// Get live report by ID
-exports.getLiveReportById = async (req, res) => {
-    try {
-        const liveReport = await LiveReport.findById(req.params.id);
-        if (!liveReport) {
-            return res.status(404).json({ message: 'Live report not found' });
+const liveReportController = {
+    getAllLiveReports: async (req, res) => {
+        try {
+            const liveReports = await LiveReport.find().populate('photo'); 
+            res.json(liveReports);
+        } catch (err) {
+            res.status(500).json({ message: err.message });
         }
-        res.json(liveReport);
-    } catch (err) {
-        res.status(500).json({ message: err.message });
-    }
-};
+    },
 
-// Create a new live report
-exports.createLiveReport = async (req, res) => {
-    const { title, description, date } = req.body;
-    const liveReport = new LiveReport({
-        title,
-        description,
-        date
-    });
-    try {
-        const newLiveReport = await liveReport.save();
-        res.status(201).json(newLiveReport);
-    } catch (err) {
-        res.status(400).json({ message: err.message });
-    }
-};
-
-// Update a live report
-exports.updateLiveReport = async (req, res) => {
-    try {
-        const liveReport = await LiveReport.findById(req.params.id);
-        if (!liveReport) {
-            return res.status(404).json({ message: 'Live report not found' });
+    getLiveReportById: async (req, res) => {
+        try {
+            const liveReport = await LiveReport.findById(req.params.id).populate('photo');
+            if (!liveReport) {
+                return res.status(404).json({ message: 'Live report tidak ditemukan' });
+            }
+            res.json(liveReport);
+        } catch (err) {
+            res.status(500).json({ message: err.message });
         }
-        liveReport.title = req.body.title || liveReport.title;
-        liveReport.description = req.body.description || liveReport.description;
-        liveReport.date = req.body.date || liveReport.date;
-        const updatedLiveReport = await liveReport.save();
-        res.json(updatedLiveReport);
-    } catch (err) {
-        res.status(400).json({ message: err.message });
+    },
+
+    createLiveReport: async (req, res) => {
+        try {
+            let uploadedFile = null;
+            if (req.file) {
+                uploadedFile = await uploadController._saveFile(req.file); 
+            }
+
+            const { title, description, date } = req.body;
+            const liveReport = new LiveReport({
+                title,
+                description,
+                date,
+                photo: uploadedFile ? uploadedFile._id : null,
+            });
+
+            const newLiveReport = await liveReport.save();
+            res.status(201).json(newLiveReport);
+        } catch (err) {
+            res.status(400).json({ message: err.message });
+        }
+    },
+
+    updateLiveReport: async (req, res) => {
+        try {
+            const liveReport = await LiveReport.findById(req.params.id);
+            if (!liveReport) {
+                return res.status(404).json({ message: 'Live report tidak ditemukan' });
+            }
+
+            if (req.file) {
+                const uploadedFile = await uploadController._saveFile(req.file);
+                liveReport.photo = uploadedFile._id;
+            }
+
+            liveReport.title = req.body.title || liveReport.title;
+            liveReport.description = req.body.description || liveReport.description;
+            liveReport.date = req.body.date || liveReport.date;
+
+            const updatedLiveReport = await liveReport.save();
+            res.json(updatedLiveReport);
+        } catch (err) {
+            res.status(400).json({ message: err.message });
+        }
+    },
+
+    deleteLiveReport: async (req, res) => {
+        try {
+            const liveReport = await LiveReport.findById(req.params.id);
+            if (!liveReport) {
+                return res.status(404).json({ message: 'Live report tidak ditemukan' });
+            }
+            await liveReport.remove();
+            res.json({ message: 'Live report dihapus' });
+        } catch (err) {
+            res.status(500).json({ message: err.message });
+        }
     }
 };
 
-// Delete a live report
-exports.deleteLiveReport = async (req, res) => {
-    try {
-        const liveReport = await LiveReport.findById(req.params.id);
-        if (!liveReport) {
-            return res.status(404).json({ message: 'Live report not found' });
-        }
-        await liveReport.remove();
-        res.json({ message: 'Live report deleted' });
-    } catch (err) {
-        res.status(500).json({ message: err.message });
-    }
-};
+module.exports = liveReportController;
