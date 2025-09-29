@@ -80,8 +80,8 @@ const authController = {
 
     resetPassword: async (req, res) => {
         try {
-            const { email, newPassword } = req.body;
-            const user = await User.findOne({ email });
+            const { username, newPassword } = req.body;
+            const user = await User.findOne({ username });
             if (!user) {
                 return res.status(404).json({ message: 'User tidak ditemukan' });
             }

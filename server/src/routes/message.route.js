@@ -25,7 +25,7 @@ const { protect, roleCheck } = require('../middleware/auth.middleware');
  *         description: Akses ditolak
  */
 router.get(
-  '/',
+  '/messages',
   protect,
   roleCheck('parent', 'teacher'),
   messageController.getUserMessages

@@ -2,6 +2,7 @@ const QuarterlyReport = require('../models/QuarterlyReport');
 const LiveReport = require('../models/LiveReport');
 
 // Helper untuk tentukan quarter dari bulan
+// Helper untuk tentukan quarter dari bulan (0 = Jan, 11 = Des)
 const getQuarter = (month) => {
   if (month < 3) return 'Q1';   // Jan–Mar
   if (month < 6) return 'Q2';   // Apr–Jun
@@ -22,7 +23,7 @@ exports.generateQuarterlyReport = async (req, res) => {
     if (existing) {
       return res.status(400).json({
         success: false,
-        message: 'Quarterly report for ${quarter} ${year} already exists'
+        message: `Quarterly report for ${quarter} ${year} already exists`
       });
     }
 
@@ -35,10 +36,15 @@ exports.generateQuarterlyReport = async (req, res) => {
       date: { $gte: startDate, $lte: now }
     }).populate('activity', 'title');
 
-    // Buat summary aktivitas
-    const activitiesSummary = liveReports.flatMap(r =>
-      r.activity.map(a => a.title)
-    );
+    // Buat summary aktivitas (support activity tunggal & array)
+    const activitiesSummary = liveReports.flatMap(r => {
+      if (Array.isArray(r.activity)) {
+        return r.activity.map(a => a.title);
+      } else if (r.activity) {
+        return [r.activity.title];
+      }
+      return [];
+    });
 
     const newReport = new QuarterlyReport({
       student: studentId,
@@ -46,7 +52,7 @@ exports.generateQuarterlyReport = async (req, res) => {
       quarter,
       year,
       activitiesSummary,
-      notes: 'Summary report for ${quarter} ${year}',
+      notes: `Summary report for ${quarter} ${year}`,
       meetingReminder: true
     });
 
@@ -57,6 +63,7 @@ exports.generateQuarterlyReport = async (req, res) => {
       message: 'Quarterly report generated successfully',
       data: newReport
     });
+    
   } catch (err) {
     res.status(500).json({
       success: false,
