@@ -11,6 +11,7 @@ const uploadRoutes = require('./upload.route');
 const weatherRoutes = require('./weather.route');
 const liveReportRoutes = require('./liveReport.route');
 const classroomRoutes = require('./classroom.route');
+const quarterlyReportRoutes = require('./QuarterlyReport.routes');
 
 router.use('/', activityRoutes);
 router.use('/', announcementRoutes);
@@ -22,5 +23,6 @@ router.use('/', messageRoutes);
 router.use('/', studentRoutes); 
 router.use('/', uploadRoutes); 
 router.use('/', weatherRoutes);
+router.use('/', quarterlyReportRoutes);
 
 module.exports = router;
