@@ -115,15 +115,12 @@ router.get(
   studentController.getStudentById
 );
 
-<<<<<<< HEAD
 router.put(
   '/student/:id',
   protect,
   roleCheck('teacher', 'admin'),
   /**
-=======
-/**
->>>>>>> c99e3676969560e647ccacd4758a5b9577b4c682
+
    * @swagger
    * /student/{id}:
    *   put:
@@ -157,7 +154,7 @@ router.put(
    *       403:
    *         description: Akses ditolak
    */
-<<<<<<< HEAD
+
   studentController.updateStudent
 );
 
