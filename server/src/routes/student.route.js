@@ -117,42 +117,50 @@ router.get(
   studentController.getStudentById
 );
 
-// PUT /student/{id}
-/**
- * @swagger
- * /student/{id}:
- *   put:
- *     summary: Update data siswa
- *     tags: [Student]
- *     security:
- *       - bearerAuth: []
- *     parameters:
- *       - in: path
- *         name: id
- *         schema:
- *           type: string
- *         required: true
- *         description: ID siswa
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               name:
- *                 type: string
- *               age:
- *                 type: number
- *               classroomId:
- *                 type: string
- *     responses:
- *       200:
- *         description: Data siswa berhasil diperbarui
- *       403:
- *         description: Akses ditolak
- */
 router.put(
+  '/student/:id',
+  protect,
+  roleCheck('teacher', 'admin'),
+  /**
+
+   * @swagger
+   * /student/{id}:
+   *   put:
+   *     summary: Update data siswa
+   *     tags: [Student]
+   *     security:
+   *       - bearerAuth: []
+   *     parameters:
+   *       - in: path
+   *         name: id
+   *         schema:
+   *           type: string
+   *         required: true
+   *         description: ID siswa
+   *     requestBody:
+   *       required: true
+   *       content:
+   *         application/json:
+   *           schema:
+   *             type: object
+   *             properties:
+   *               name:
+   *                 type: string
+   *               age:
+   *                 type: number
+   *               classroomId:
+   *                 type: string
+   *     responses:
+   *       200:
+   *         description: Data siswa berhasil diperbarui
+   *       403:
+   *         description: Akses ditolak
+   */
+
+  studentController.updateStudent
+);
+
+router.delete(
   '/student/:id',
   protect,
   roleCheck('teacher', 'admin'),
