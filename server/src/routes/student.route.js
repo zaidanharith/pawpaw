@@ -120,7 +120,6 @@ router.put(
   protect,
   roleCheck('teacher', 'admin'),
   /**
-
    * @swagger
    * /student/{id}:
    *   put:
@@ -154,7 +153,6 @@ router.put(
    *       403:
    *         description: Akses ditolak
    */
-
   studentController.updateStudent
 );
 
