@@ -1,4 +1,4 @@
-# 🌱 KidConnect App
+# 🏫 KidConnect Application 🎒
 
 Aplikasi web untuk memberikan **_live update_ kegiatan siswa TK** kepada orang tua secara langsung.  
 Orang tua bisa melihat aktivitas harian anak, cuaca, hingga laporan berkala, sementara guru dapat mengunggah laporan kegiatan dan pengumuman.
@@ -10,6 +10,10 @@ Orang tua bisa melihat aktivitas harian anak, cuaca, hingga laporan berkala, sem
 - Joecelyn Aurora Majesty (23/514716/TK/56510)
 - Zaidan Harith (23/512629/TK/56334)
 - Zaki Fadhila Rahman (23/520148/TK/57327)
+
+## Penjelasan Detail Tentang Aplikasi
+
+🔗 [Laporan Kelompok 13 PAW_US3 : KidConnect Application](https://drive.google.com/drive/folders/1BU8iePVpYhGK1ela7MJdZAZUS7w8tawK?usp=sharing)
 
 ## ⚙️ Cara Menjalankan Program **(Back-End Only)**
 
@@ -28,17 +32,61 @@ npm run dev
 ```
 pawpaw/
 ├── server/
-│   ├── src/
-│   │   ├── config/
-│   │   ├── controllers/
-│   │   ├── models/
-│   │   ├── routes/
-│   │   ├── middleware/
-│   │   ├── utils/
-│   │   └── server.js
+│   ├── .env
 │   ├── .env.example
 │   ├── package.json
-│   └── README.md
+│   ├── README.md
+│   └── src/
+│       ├── config/
+│       │   ├── cloudinary.js
+│       │   ├── database.js
+│       │   └── swagger.js
+│       ├── controllers/
+│       │   ├── activity.controller.js
+│       │   ├── announcement.controller.js
+│       │   ├── attendance.controller.js
+│       │   ├── auth.controller.js
+│       │   ├── classroom.controller.js
+│       │   ├── liveReport.controller.js
+│       │   ├── message.controller.js
+│       │   ├── quarterlyReport.controller.js
+│       │   ├── student.controller.js
+│       │   ├── upload.controller.js
+│       │   ├── user.controller.js
+│       │   └── weather.controller.js
+│       ├── middleware/
+│       │   ├── auth.middleware.js
+│       │   └── upload.middleware.js
+│       ├── models/
+│       │   ├── Activity.js
+│       │   ├── Announcement.js
+│       │   ├── Attendance.js
+│       │   ├── Classroom.js
+│       │   ├── index.js
+│       │   ├── LiveReport.js
+│       │   ├── Message.js
+│       │   ├── QuarterlyReport.js
+│       │   ├── Student.js
+│       │   ├── Upload.js
+│       │   └── User.js
+│       ├── routes/
+│       │   ├── activity.route.js
+│       │   ├── announcement.route.js
+│       │   ├── attendance.route.js
+│       │   ├── auth.route.js
+│       │   ├── classroom.route.js
+│       │   ├── index.js
+│       │   ├── liveReport.route.js
+│       │   ├── message.route.js
+│       │   ├── quarterlyReport.route.js
+│       │   ├── student.route.js
+│       │   ├── upload.route.js
+│       │   └── weather.route.js
+│       ├── services/
+│       │   └── weather.service.js
+│       ├── utils/
+│       │   └── jwt.js
+│       └── server.js
 ├── client/
 │   ├── package.json
 ├── .gitignore
@@ -69,18 +117,20 @@ pawpaw/
   - Mendaftarkan (_register_) orang tua dan guru
   - Melihat daftar orang tua dan guru
 
-## 🕒 Batasan & Asumsi
+## 🕒 Batasan & Asumsi pada Aplikasi
 
 - Hari sekolah: **Senin – Rabu**
 - Jam sekolah: **08.00 – 12.00**
 - Kegiatan harian: **Senam, Bermain, Bercerita, dan Makan Siang**
 - Pertemuan orang tua: **Setiap 3 bulan sekali**
 
-## 🛠️ Tech Stack
+## 🛠️ Tech Stack yang Digunakan
 
-- **Frontend**: React / Next.js
-- **Backend**: Express.js
-- **Database**: MongoDB
-- **Cloud**: Cloudinary
-- **API UI**: Swagger UI
-- **API Eksternal**: Weather API (untuk prediksi cuaca)
+<p>
+  <img src="https://img.shields.io/badge/-TypeScript-3178C6?style=for-the-badge&logo=typescript&logoColor=white"/>
+  <img src="https://img.shields.io/badge/-Express-000000?style=for-the-badge&logo=express&logoColor=white"/>
+  <img src="https://img.shields.io/badge/-MongoDB-47A248?style=for-the-badge&logo=mongodb&logoColor=white"/>
+  <img src="https://img.shields.io/badge/-Cloudinary-3448C5?style=for-the-badge&logo=cloudinary&logoColor=white"/>
+  <img src="https://img.shields.io/badge/-Swagger-85EA2D?style=for-the-badge&logo=swagger&logoColor=black"/>
+  <img src="https://img.shields.io/badge/-Weather%20API-FF9A00?style=for-the-badge&logo=openweathermap&logoColor=white"/>
+</p>

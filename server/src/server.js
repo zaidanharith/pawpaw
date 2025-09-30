@@ -1,6 +1,6 @@
 const express = require('express');
 const dotenv = require('dotenv');
-const connectDB = require('./config/db');
+const connectDB = require('./config/database');
 const cors = require('cors');
 const routes = require('./routes'); 
 const setupSwagger = require("./config/swagger");
