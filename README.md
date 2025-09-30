@@ -1,23 +1,21 @@
-# 🌱 KidConnect
+# 🌱 KidConnect App
 
 Aplikasi web untuk memberikan **_live update_ kegiatan siswa TK** kepada orang tua secara langsung.  
 Orang tua bisa melihat aktivitas harian anak, cuaca, hingga laporan berkala, sementara guru dapat mengunggah laporan kegiatan dan pengumuman.
 
-## ✅ To-do List
+## 👨‍💻 Developer (Kelompok 13)
 
-1. Install tools yang belum lengkap (Express, dll) — _Minggu ini_
-2. Pelajari & eksplorasi fitur-fitur aplikasi — _Minggu ini_
-3. Cari referensi sesuai case — _Minggu ini_
-
-📌 Jadwal ketemuan: **TIAP RABU HABIS REKDAT (TILL DROP)‼️**
-
-⌚ Deadline Milestone 1: **Rabu, 1 Oktober 2025, 06.59 WIB (BACK-END)**
+- Agatha Husna Amalia (23/515562/TK/56686)
+- Amira Syafika Pohan (23/514788/TK/56518)
+- Joecelyn Aurora Majesty (23/514716/TK/56510)
+- Zaidan Harith (23/512629/TK/56334)
+- Zaki Fadhila Rahman (23/520148/TK/57327)
 
 ## ⚙️ Cara Menjalankan Program **(Back-End Only)**
 
 1. Pastikan file `.env` sudah ada di folder `/server`. Jika belum, silakan buat dengan _template_ di `.env.example`.
 
-2. Program hanya bisa dijalankan melalui folder `/server`. Maka, jalankan _command_ berikut di folder root.
+2. Program hanya bisa dijalankan melalui folder `/server`. Maka, jalankan _command prompt_ berikut di folder root.
 
 ```
 cd server
@@ -47,20 +45,12 @@ pawpaw/
 └── README.md
 ```
 
-## 👨‍💻 Developer (Kelompok 13)
-
-- Agatha Husna Amalia (23/515562/TK/56686)
-- Amira Syafika Pohan (23/514788/TK/56518)
-- Joecelyn Aurora Majesty (23/514716/TK/56510)
-- Zaidan Harith (23/512629/TK/56334)
-- Zaki Fadhila Rahman (23/520148/TK/57327)
-
 ## 📖 User Story: Pengembangan Sistem Baru (US3)
 
 - **Login & Role**
 
-  - Login menggunakan akun yang sudah diberikan (tanpa fitur register).
-  - Role: **Orang Tua** & **Guru/Admin**.
+  - Login menggunakan akun yang sudah diberikan (tanpa fitur _register_).
+  - Role User: Guru (**Teacher**), orang tua (**Parent**), dan **Admin**.
 
 - **Fitur untuk Orang Tua**
 
@@ -70,9 +60,14 @@ pawpaw/
   - Memberikan informasi ke guru (misalnya anak sedang sakit atau ada kebutuhan khusus).
 
 - **Fitur untuk Guru/Admin**
+
   - Posting live report kegiatan siswa setiap hari.
   - Posting pengumuman.
-  - Menghasilkan laporan otomatis setiap 3 bulan (trending aktivitas & catatan siswa untuk rapat orang tua).
+  - Menghasilkan laporan otomatis setiap 3 bulan (Laporan Triwulan) yang berisi aktivitas yang _trending_ & catatan siswa untuk rapat orang tua.
+
+- **Fitur khusus untuk Admin**
+  - Mendaftarkan (_register_) orang tua dan guru
+  - Melihat daftar orang tua dan guru
 
 ## 🕒 Batasan & Asumsi
 
@@ -86,9 +81,6 @@ pawpaw/
 - **Frontend**: React / Next.js
 - **Backend**: Express.js
 - **Database**: MongoDB
-- **API**: Weather API (untuk prediksi cuaca)
-
-## 📌 Notes
-
-- Repo ini digunakan untuk pengembangan project kuliah kelompok.
-- Semua fitur dan jadwal masih bisa berubah sesuai kebutuhan dan hasil diskusi tim.
+- **Cloud**: Cloudinary
+- **API UI**: Swagger UI
+- **API Eksternal**: Weather API (untuk prediksi cuaca)

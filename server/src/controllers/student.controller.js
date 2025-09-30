@@ -1,3 +1,4 @@
+const mongoose = require("mongoose");
 const Student = require('../models/Student');
 
 const studentController = {
@@ -14,8 +15,13 @@ const studentController = {
 
   getStudentById: async (req, res) => {
     try {
+      if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+        return res.status(400).json({ message: "ID tidak valid" });
+      }
+
       const student = await Student.findById(req.params.id)
         .populate("classroom", "name teacher");
+
       if (!student) return res.status(404).json({ message: "Siswa tidak ditemukan" });
       res.status(200).json(student);
     } catch (error) {
@@ -43,11 +49,16 @@ const studentController = {
 
   updateStudent: async (req, res) => {
     try {
+      if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+        return res.status(400).json({ message: "ID tidak valid" });
+      }
+
       const updated = await Student.findByIdAndUpdate(
         req.params.id,
         req.body,
         { new: true, runValidators: true }
       );
+      
       if (!updated) return res.status(404).json({ message: "Siswa tidak ditemukan" });
       res.status(200).json(updated);
     } catch (error) {
@@ -57,7 +68,12 @@ const studentController = {
 
   deleteStudent: async (req, res) => {
     try {
+      if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+        return res.status(400).json({ message: "ID tidak valid" });
+      }
+
       const deleted = await Student.findByIdAndDelete(req.params.id);
+      
       if (!deleted) return res.status(404).json({ message: "Siswa tidak ditemukan" });
       res.status(200).json({ message: "Siswa berhasil dihapus" });
     } catch (error) {

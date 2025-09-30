@@ -1,3 +1,4 @@
+const mongoose = require("mongoose");
 const Message = require('../models/message');
 
 const messageController = {
@@ -19,6 +20,10 @@ const messageController = {
 
   getMessageById: async (req, res) => {
     try {
+      if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+        return res.status(400).json({ message: "ID tidak valid" });
+      }
+
       const message = await Message.findById(req.params.id)
         .populate('sender receiver', 'name username email');
 

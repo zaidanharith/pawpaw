@@ -1,10 +1,11 @@
+const mongoose = require("mongoose");
 const LiveReport = require('../models/LiveReport');
 const uploadController = require('./upload.controller');
 
 const liveReportController = {
     getAllLiveReports: async (req, res) => {
         try {
-            const liveReports = await LiveReport.find().populate('photo'); 
+            const liveReports = await LiveReport.find().populate('photos'); 
             res.json(liveReports);
         } catch (err) {
             res.status(500).json({ message: err.message });
@@ -13,7 +14,10 @@ const liveReportController = {
 
     getLiveReportById: async (req, res) => {
         try {
-            const liveReport = await LiveReport.findById(req.params.id).populate('photo');
+            if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+                return res.status(400).json({ message: "ID tidak valid" });
+            }
+            const liveReport = await LiveReport.findById(req.params.id).populate('photos');
             if (!liveReport) {
                 return res.status(404).json({ message: 'Live report tidak ditemukan' });
             }
@@ -47,6 +51,10 @@ const liveReportController = {
 
     updateLiveReport: async (req, res) => {
         try {
+            if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+                return res.status(400).json({ message: "ID tidak valid" });
+            }
+
             const liveReport = await LiveReport.findById(req.params.id);
             if (!liveReport) {
                 return res.status(404).json({ message: 'Live report tidak ditemukan' });
@@ -70,6 +78,10 @@ const liveReportController = {
 
     deleteLiveReport: async (req, res) => {
         try {
+            if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+                return res.status(400).json({ message: "ID tidak valid" });
+            }
+            
             const liveReport = await LiveReport.findById(req.params.id);
             if (!liveReport) {
                 return res.status(404).json({ message: 'Live report tidak ditemukan' });

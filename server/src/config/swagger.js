@@ -26,20 +26,24 @@ const options = {
         Upload: {
           type: "object",
           properties: {
-            file: {
-              type: "string",
-              format: "binary",
-              description: "File yang diunggah",
-            },
-            url: {
-              type: "string",
-              description: "URL file setelah diunggah",
-            },
+            file: { type: "string", format: "binary", description: "File yang diunggah" },
+            url: { type: "string", description: "URL file setelah diunggah" },
           },
           required: ["file"],
         },
+        Student: {
+          type: "object",
+          properties: {
+            id: { type: "string", description: "ID mahasiswa" },
+            name: { type: "string", description: "Nama mahasiswa" },
+            email: { type: "string", description: "Email mahasiswa" },
+            age: { type: "integer", description: "Umur mahasiswa" },
+          },
+          required: ["name", "email"],
+        },
       },
     },
+
     security: [
       {
         bearerAuth: [],
