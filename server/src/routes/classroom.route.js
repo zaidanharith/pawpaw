@@ -14,7 +14,7 @@ const { protect, roleCheck } = require('../middleware/auth.middleware');
  * @swagger
  * /classroom:
  *   get:
- *     summary: Ambil data classroom
+ *     summary: Ambil semua data classroom
  *     tags: [Classroom]
  *     security:
  *       - bearerAuth: []
@@ -25,9 +25,9 @@ const { protect, roleCheck } = require('../middleware/auth.middleware');
  *         description: Akses ditolak
  */
 router.get(
-  '/classroom',
+  '/',
   protect,
-  roleCheck('parent', 'teacher', 'admin'),
+  roleCheck(['PARENT', 'TEACHER', 'ADMIN']),
   classroomController.getAllClassrooms
 );
 
@@ -45,7 +45,7 @@ router.get(
  *         schema:
  *           type: string
  *         required: true
- *         description: ID kelas
+ *         description: ID kelas (MongoDB ObjectId)
  *     responses:
  *       200:
  *         description: Detail kelas
@@ -53,15 +53,15 @@ router.get(
  *         description: Kelas tidak ditemukan
  */
 router.get(
-  '/classroom/:id',
+  '/:id',
   protect,
-  roleCheck('parent', 'teacher', 'admin'),
+  roleCheck(['PARENT', 'TEACHER', 'ADMIN']),
   classroomController.getClassroomById
 );
 
 /**
  * @swagger
- * /classroom/create:
+ * /classroom:
  *   post:
  *     summary: Buat data kelas baru
  *     tags: [Classroom]
@@ -73,19 +73,17 @@ router.get(
  *         application/json:
  *           schema:
  *             type: object
+ *             required:
+ *               - name
+ *               - teacherId
  *             properties:
  *               name:
  *                 type: string
  *                 example: TK-A
- *               student:
- *                 type: array
- *                 items:
- *                   type: string
- *                 example: ["64d4e8b1d165537831aeca91"]
- *               teacher:
+ *               teacherId:
  *                 type: string
  *                 example: "64d4e8b1d165537831aeca90"
- *               activity:
+ *               activityIds:
  *                 type: array
  *                 items:
  *                   type: string
@@ -97,9 +95,9 @@ router.get(
  *         description: Data tidak valid
  */
 router.post(
-  '/classroom/create',
+  '/',
   protect,
-  roleCheck('teacher', 'admin'),
+  roleCheck(['TEACHER', 'ADMIN']),
   classroomController.createClassroom
 );
 
@@ -117,7 +115,7 @@ router.post(
  *         schema:
  *           type: string
  *         required: true
- *         description: ID classroom
+ *         description: ID classroom (MongoDB ObjectId)
  *     requestBody:
  *       required: true
  *       content:
@@ -128,15 +126,10 @@ router.post(
  *               name:
  *                 type: string
  *                 example: "TK-B"
- *               student:
- *                 type: array
- *                 items:
- *                   type: string
- *                 example: ["64d4e8b1d165537831aeca91", "64d4e8b1d165537831aeca92"]
- *               teacher:
+ *               teacherId:
  *                 type: string
  *                 example: "64d4e8b1d165537831aeca90"
- *               activity:
+ *               activityIds:
  *                 type: array
  *                 items:
  *                   type: string
@@ -148,9 +141,9 @@ router.post(
  *         description: Kelas tidak ditemukan
  */
 router.put(
-  '/classroom/:id',
+  '/:id',
   protect,
-  roleCheck('teacher', 'admin'),
+  roleCheck(['TEACHER', 'ADMIN']),
   classroomController.updateClassroom
 );
 
@@ -168,7 +161,7 @@ router.put(
  *         schema:
  *           type: string
  *         required: true
- *         description: ID kelas
+ *         description: ID kelas (MongoDB ObjectId)
  *     responses:
  *       200:
  *         description: Kelas berhasil dihapus
@@ -176,9 +169,9 @@ router.put(
  *         description: Kelas tidak ditemukan
  */
 router.delete(
-  '/classroom/:id',
+  '/:id',
   protect,
-  roleCheck('admin'),
+  roleCheck(['ADMIN']),
   classroomController.deleteClassroom
 );
 

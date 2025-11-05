@@ -27,7 +27,7 @@ const { protect, roleCheck } = require('../middleware/auth.middleware');
 router.get(
   '/messages',
   protect,
-  roleCheck('parent', 'teacher'),
+  roleCheck('PARENT', 'TEACHER'),
   messageController.getUserMessages
 );
 
@@ -55,7 +55,7 @@ router.get(
 router.get(
   '/messages/:id',
   protect,
-  roleCheck('parent', 'teacher'),
+  roleCheck('PARENT', 'TEACHER'),
   messageController.getMessageById
 );
 
@@ -89,7 +89,7 @@ router.get(
 router.post(
   '/messages',
   protect,
-  roleCheck('parent', 'teacher'),
+  roleCheck('PARENT', 'TEACHER'),
   messageController.sendMessage
 );
 
@@ -117,7 +117,7 @@ router.post(
 router.delete(
   '/messages/:id',
   protect,
-  roleCheck('parent', 'teacher'),
+  roleCheck('PARENT', 'TEACHER'),
   messageController.deleteMessage
 );
 

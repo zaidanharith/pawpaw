@@ -2,14 +2,23 @@ const jwt = require('jsonwebtoken');
 
 const generateToken = (userId, username, role) => {
   return jwt.sign(
-    { userId, username, role },
+    { 
+      id: userId,
+      username, 
+      role 
+    },
     process.env.JWT_SECRET, 
-    { expiresIn: process.env.JWT_EXPIRES_IN }
+    { expiresIn: process.env.JWT_EXPIRES_IN || '24h' }
   );
 };
 
 const verifyToken = (token) => {
-  return jwt.verify(token, process.env.JWT_SECRET);
+  try {
+    return jwt.verify(token, process.env.JWT_SECRET);
+  } catch (error) {
+    console.error('Token verification failed:', error.message);
+    throw new Error('Token tidak valid');
+  }
 };
 
 module.exports = { 

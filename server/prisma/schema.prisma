@@ -1,0 +1,294 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+// ===== USER MODEL =====
+model User {
+  id          String  @id @default(auto()) @map("_id") @db.ObjectId
+  username    String  @unique
+  name        String?
+  email       String  @unique
+  phoneNumber String?
+  password    String?
+  role        Role
+  isLogin     Boolean @default(false)
+
+  googleId      String?
+  emailVerified DateTime?
+  provider      AuthProvider @default(LOCAL)
+
+  pictureId String? @db.ObjectId
+
+  // Relations
+  announcements       Announcement[]
+  classroomsAsTeacher Classroom[]
+  attendancesCreated  Attendance[]
+  liveReports         LiveReport[]
+  sentMessages        Message[]         @relation("SentMessages")
+  receivedMessages    Message[]         @relation("ReceivedMessages")
+  quarterlyReports    QuarterlyReport[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("users")
+}
+
+enum Role {
+  ADMIN
+  TEACHER
+  PARENT
+}
+
+enum AuthProvider {
+  LOCAL
+  GOOGLE
+}
+
+// ===== UPLOAD MODEL =====
+model Upload {
+  id           String     @id @default(auto()) @map("_id") @db.ObjectId
+  filename     String
+  originalName String
+  mimeType     String
+  size         Int
+  path         String
+  uploadType   UploadType @default(OTHER)
+
+  // Live Report Photos
+  liveReportId String?     @db.ObjectId
+  liveReport   LiveReport? @relation("LiveReportPhotos", fields: [liveReportId], references: [id], onDelete: SetNull)
+
+  // Announcement Attachments
+  announcementId String?       @db.ObjectId
+  announcement   Announcement? @relation("AnnouncementAttachments", fields: [announcementId], references: [id], onDelete: SetNull)
+
+  // General uploads (documents, etc)
+  uploadedBy String? @db.ObjectId
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("uploads")
+}
+
+enum UploadType {
+  PROFILE_PICTURE
+  LIVE_REPORT_PHOTO
+  ANNOUNCEMENT_ATTACHMENT
+  DOCUMENT
+  OTHER
+}
+
+// ===== ANNOUNCEMENT MODEL =====
+model Announcement {
+  id      String @id @default(auto()) @map("_id") @db.ObjectId
+  title   String
+  content String
+
+  createdBy String? @db.ObjectId
+  creator   User?   @relation(fields: [createdBy], references: [id], onDelete: SetNull)
+
+  isImportant Boolean @default(false)
+
+  // ✅ Attachments relation
+  attachments Upload[] @relation("AnnouncementAttachments")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("announcements")
+}
+
+// ===== CLASSROOM MODEL =====
+model Classroom {
+  id        String @id @default(auto()) @map("_id") @db.ObjectId
+  name      String @unique
+  teacherId String @db.ObjectId
+  teacher   User   @relation(fields: [teacherId], references: [id], onDelete: Cascade)
+
+  // Relations
+  students    Student[]
+  activityIds String[]   @db.ObjectId
+  activities  Activity[] @relation(fields: [activityIds], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("classrooms")
+}
+
+// ===== STUDENT MODEL =====
+model Student {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  name      String
+  gender    Gender
+  address   String?
+  birthDate DateTime
+  isActive  Boolean
+
+  // Relations
+  classroomId String    @db.ObjectId
+  classroom   Classroom @relation(fields: [classroomId], references: [id], onDelete: Cascade)
+
+  activityIds String[]   @db.ObjectId
+  activities  Activity[] @relation(fields: [activityIds], references: [id])
+
+  attendances      Attendance[]
+  messages         Message[]
+  quarterlyReports QuarterlyReport[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("students")
+}
+
+enum Gender {
+  MALE
+  FEMALE
+}
+
+// ===== ACTIVITY MODEL =====
+model Activity {
+  id          String       @id @default(auto()) @map("_id") @db.ObjectId
+  name        ActivityName
+  description String?
+  date        DateTime     @default(now())
+
+  // Relations (Many-to-Many with Student via array)
+  studentIds String[]  @db.ObjectId
+  students   Student[] @relation(fields: [studentIds], references: [id])
+
+  classroomIds String[]    @db.ObjectId
+  classrooms   Classroom[] @relation(fields: [classroomIds], references: [id])
+
+  liveReportIds String[]     @db.ObjectId
+  liveReports   LiveReport[] @relation(fields: [liveReportIds], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("activities")
+}
+
+enum ActivityName {
+  SENAM
+  BERMAIN
+  BERCERITA
+  MAKAN_SIANG
+}
+
+// ===== ATTENDANCE MODEL =====
+model Attendance {
+  id     String           @id @default(auto()) @map("_id") @db.ObjectId
+  date   DateTime         @default(now())
+  status AttendanceStatus
+  notes  String?
+
+  // Relations
+  studentId String  @db.ObjectId
+  student   Student @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
+  createdBy String? @db.ObjectId
+  creator   User?   @relation(fields: [createdBy], references: [id], onDelete: SetNull)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("attendances")
+}
+
+enum AttendanceStatus {
+  HADIR
+  ALFA
+  SAKIT
+  IZIN
+}
+
+// ===== LIVE REPORT MODEL =====
+model LiveReport {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  title       String
+  date        DateTime
+  description String?
+
+  teacherId String @db.ObjectId
+  teacher   User   @relation(fields: [teacherId], references: [id], onDelete: Cascade)
+
+  activityIds String[]   @db.ObjectId
+  activities  Activity[] @relation(fields: [activityIds], references: [id])
+
+  // ✅ Photos relation
+  photos Upload[] @relation("LiveReportPhotos")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("live_reports")
+}
+
+// ===== MESSAGE MODEL =====
+model Message {
+  id     String  @id @default(auto()) @map("_id") @db.ObjectId
+  title  String
+  body   String
+  isRead Boolean @default(false)
+
+  // Relations
+  senderId String @db.ObjectId
+  sender   User   @relation("SentMessages", fields: [senderId], references: [id], onDelete: Cascade)
+
+  receiverId String @db.ObjectId
+  receiver   User   @relation("ReceivedMessages", fields: [receiverId], references: [id], onDelete: Cascade)
+
+  studentId String?  @db.ObjectId
+  student   Student? @relation(fields: [studentId], references: [id], onDelete: SetNull)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("messages")
+}
+
+// ===== QUARTERLY REPORT MODEL =====
+model QuarterlyReport {
+  id                String   @id @default(auto()) @map("_id") @db.ObjectId
+  quarter           Quarter
+  year              Int
+  activitiesSummary String[]
+  notes             String?
+  meetingReminder   Boolean  @default(false)
+
+  // Relations
+  studentId String  @db.ObjectId
+  student   Student @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
+  teacherId String @db.ObjectId
+  teacher   User   @relation(fields: [teacherId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([studentId, quarter, year])
+  @@map("quarterly_reports")
+}
+
+enum Quarter {
+  Q1
+  Q2
+  Q3
+  Q4
+}

@@ -1,62 +1,37 @@
-const swaggerJSDoc = require("swagger-jsdoc");
-const swaggerUi = require("swagger-ui-express");
+const swaggerJsDoc = require('swagger-jsdoc');
+const swaggerUi = require('swagger-ui-express');
 
-const options = {
+const swaggerOptions = {
   definition: {
-    openapi: "3.0.0",
+    openapi: '3.0.0',
     info: {
-      title: "KidConnect API",
-      version: "1.0.0",
-      description: "API untuk aplikasi KidConnect oleh Kelompok 13",
+      title: 'KidConnect API',
+      version: '1.0.0',
+      description: 'API Documentation for KidConnect Application'
     },
     servers: [
       {
-        url: "http://localhost:3000/api",
-      },
+        url: `http://localhost:${process.env.PORT || 5000}/api`,
+        description: 'Development Server'
+      }
     ],
     components: {
       securitySchemes: {
         bearerAuth: {
-          type: "http",
-          scheme: "bearer",
-          bearerFormat: "JWT",
-        },
-      },
-      schemas: {
-        Upload: {
-          type: "object",
-          properties: {
-            file: { type: "string", format: "binary", description: "File yang diunggah" },
-            url: { type: "string", description: "URL file setelah diunggah" },
-          },
-          required: ["file"],
-        },
-        Student: {
-          type: "object",
-          properties: {
-            id: { type: "string", description: "ID mahasiswa" },
-            name: { type: "string", description: "Nama mahasiswa" },
-            email: { type: "string", description: "Email mahasiswa" },
-            age: { type: "integer", description: "Umur mahasiswa" },
-          },
-          required: ["name", "email"],
-        },
-      },
-    },
-
-    security: [
-      {
-        bearerAuth: [],
-      },
-    ],
+          type: 'http',
+          scheme: 'bearer',
+          bearerFormat: 'JWT'
+        }
+      }
+    }
   },
-  apis: ["./src/routes/*.js"],
+  apis: ['./src/routes/*.js', './src/controllers/*.js']
 };
 
-const swaggerSpec = swaggerJSDoc(options);
+const swaggerDocs = swaggerJsDoc(swaggerOptions);
 
 const setupSwagger = (app) => {
-  app.use("/api/docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+  app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 };
 
 module.exports = setupSwagger;

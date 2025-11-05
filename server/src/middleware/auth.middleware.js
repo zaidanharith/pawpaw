@@ -1,31 +1,80 @@
+const prisma = require('../config/prisma');
 const { verifyToken } = require('../utils/jwt');
 
-const protect = (req, res, next) => {
+const authMiddleware = async (req, res, next) => {
   try {
     const token = req.header('Authorization')?.replace('Bearer ', '');
+
     if (!token) {
-      return res.status(401).json({ message: 'Token tidak terdeteksi' });
+      return res.status(401).json({
+        success: false,
+        message: 'Token tidak ditemukan'
+      });
     }
 
     const decoded = verifyToken(token);
-    if (!decoded) {
-      return res.status(401).json({ message: 'Token tidak valid' });
+
+    const user = await prisma.user.findUnique({
+      where: { id: decoded.id },
+      select: {
+        id: true,
+        username: true,
+        email: true,
+        role: true,
+        isLogin: true
+      }
+    });
+
+    if (!user) {
+      return res.status(401).json({
+        success: false,
+        message: 'Pengguna tidak ditemukan'
+      });
     }
 
-    req.user = decoded;
+    req.user = {
+      id: user.id,
+      username: user.username,
+      role: user.role,
+      email: user.email
+    };
 
     next();
   } catch (error) {
-    res.status(401).json({ message: 'Token tidak valid' });
+    console.error('Auth middleware error:', error);
+    res.status(401).json({
+      success: false,
+      message: 'Token tidak valid'
+    });
   }
 };
 
-const roleCheck = (...allowedRoles) => (req, res, next) => {
-  if (!req.user || !allowedRoles.map(r => r.toLowerCase()).includes(req.user.role?.toLowerCase())) {
-    return res.status(403).json({ message: 'Akses ditolak. Role tidak diizinkan' });
-  }
-  next();
+const requireRole = (...allowedRoles) => {
+  return (req, res, next) => {
+    if (!req.user) {
+      return res.status(401).json({
+        success: false,
+        message: 'Unauthorized'
+      });
+    }
+
+    if (!allowedRoles.includes(req.user.role)) {
+      return res.status(403).json({
+        success: false,
+        message: 'Akses ditolak: Izin tidak mencukupi'
+      });
+    }
+
+    next();
+  };
 };
 
+const protect = authMiddleware;
+const roleCheck = requireRole;
 
-module.exports = { protect, roleCheck };
+module.exports = { 
+  authMiddleware, 
+  requireRole,
+  protect,
+  roleCheck
+};

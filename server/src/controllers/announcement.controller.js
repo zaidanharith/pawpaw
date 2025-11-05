@@ -1,65 +1,239 @@
-const Announcement = require('../models/Announcement');
+const prisma = require('../config/prisma');
 
 const announcementController = {
 
+  // Get all announcements
   getAnnouncements: async (req, res) => {
     try {
-      const announcements = await Announcement.find()
-        .populate("createdBy", "name role");
-      res.status(200).json(announcements);
-    } catch (error) {
-      res.status(500).json({ message: error.message });
-    }
-  },
-
-  getAnnouncementById: async (req, res) => {
-    try {
-      const announcement = await Announcement.findById(req.params.id)
-        .populate("createdBy", "name role");
-      if (!announcement) return res.status(404).json({ message: "Pengumuman tidak ditemukan" });
-      res.status(200).json(announcement);
-    } catch (error) {
-      res.status(500).json({ message: error.message });
-    }
-  },
-
-  createAnnouncement: async (req, res) => {
-    try {
-      const announcement = new Announcement({
-        title: req.body.title,
-        content: req.body.content,
-        isImportant: req.body.isImportant || false,
-        createdBy: req.user._id
+      const announcements = await prisma.announcement.findMany({
+        include: {
+          creator: {
+            select: {
+              id: true,
+              name: true,
+              role: true,
+              email: true
+            }
+          }
+        },
+        orderBy: {
+          createdAt: 'desc'
+        }
       });
 
-      const newAnnouncement = await announcement.save();
-      res.status(201).json(newAnnouncement);
+      res.status(200).json({
+        success: true,
+        count: announcements.length,
+        data: announcements
+      });
     } catch (error) {
-      res.status(400).json({ message: error.message });
+      console.error('Get announcements error:', error);
+      res.status(500).json({ 
+        success: false,
+        message: 'Gagal mengambil data pengumuman'
+      });
     }
   },
 
+  // Get announcement by ID
+  getAnnouncementById: async (req, res) => {
+    try {
+      const { id } = req.params;
+
+      // Validate ObjectId
+      if (!id || id.length !== 24) {
+        return res.status(400).json({ 
+          success: false,
+          message: 'ID tidak valid'
+        });
+      }
+
+      const announcement = await prisma.announcement.findUnique({
+        where: { id },
+        include: {
+          creator: {
+            select: {
+              id: true,
+              name: true,
+              role: true,
+              email: true
+            }
+          }
+        }
+      });
+
+      if (!announcement) {
+        return res.status(404).json({ 
+          success: false,
+          message: 'Pengumuman tidak ditemukan'
+        });
+      }
+
+      res.status(200).json({
+        success: true,
+        data: announcement
+      });
+    } catch (error) {
+      console.error('Get announcement error:', error);
+      res.status(500).json({ 
+        success: false,
+        message: 'Gagal mengambil data pengumuman'
+      });
+    }
+  },
+
+  // Create announcement
+  createAnnouncement: async (req, res) => {
+    try {
+      const { title, content, isImportant } = req.body;
+
+      // Validate required fields
+      if (!title || !content) {
+        return res.status(400).json({
+          success: false,
+          message: 'Judul dan konten wajib diisi'
+        });
+      }
+
+      // Validate user exists (req.user dari auth middleware)
+      if (!req.user || !req.user.id) {
+        return res.status(401).json({
+          success: false,
+          message: 'Unauthorized: Pengguna tidak ditemukan'
+        });
+      }
+
+      const announcement = await prisma.announcement.create({
+        data: {
+          title,
+          content,
+          isImportant: isImportant || false,
+          createdBy: req.user.id
+        },
+        include: {
+          creator: {
+            select: {
+              id: true,
+              name: true,
+              role: true
+            }
+          }
+        }
+      });
+
+      res.status(201).json({
+        success: true,
+        message: 'Pengumuman berhasil dibuat',
+        data: announcement
+      });
+    } catch (error) {
+      console.error('Create announcement error:', error);
+      res.status(400).json({ 
+        success: false,
+        message: 'Gagal membuat pengumuman'
+      });
+    }
+  },
+
+  // Update announcement
   updateAnnouncement: async (req, res) => {
     try {
-      const updated = await Announcement.findByIdAndUpdate(
-        req.params.id,
-        req.body,
-        { new: true }
-      );
-      if (!updated) return res.status(404).json({ message: "Pengumuman tidak ditemukan" });
-      res.status(200).json(updated);
+      const { id } = req.params;
+      const { title, content, isImportant } = req.body;
+
+      // Validate ObjectId
+      if (!id || id.length !== 24) {
+        return res.status(400).json({ 
+          success: false,
+          message: 'ID tidak valid'
+        });
+      }
+
+      // Check if announcement exists
+      const existing = await prisma.announcement.findUnique({
+        where: { id }
+      });
+
+      if (!existing) {
+        return res.status(404).json({ 
+          success: false,
+          message: 'Pengumuman tidak ditemukan'
+        });
+      }
+
+      // Build update data
+      const updateData = {};
+      if (title) updateData.title = title;
+      if (content) updateData.content = content;
+      if (isImportant !== undefined) updateData.isImportant = isImportant;
+
+      const updated = await prisma.announcement.update({
+        where: { id },
+        data: updateData,
+        include: {
+          creator: {
+            select: {
+              id: true,
+              name: true,
+              role: true
+            }
+          }
+        }
+      });
+
+      res.status(200).json({
+        success: true,
+        message: 'Pengumuman berhasil diperbarui',
+        data: updated
+      });
     } catch (error) {
-      res.status(400).json({ message: error.message });
+      console.error('Update announcement error:', error);
+      res.status(400).json({ 
+        success: false,
+        message: 'Gagal memperbarui pengumuman'
+      });
     }
   },
 
+  // Delete announcement
   deleteAnnouncement: async (req, res) => {
     try {
-      const deleted = await Announcement.findByIdAndDelete(req.params.id);
-      if (!deleted) return res.status(404).json({ message: "Pengumuman tidak ditemukan" });
-      res.status(200).json({ message: "Pengumuman berhasil dihapus" });
+      const { id } = req.params;
+
+      // Validate ObjectId
+      if (!id || id.length !== 24) {
+        return res.status(400).json({ 
+          success: false,
+          message: 'ID tidak valid'
+        });
+      }
+
+      // Check if announcement exists
+      const announcement = await prisma.announcement.findUnique({
+        where: { id }
+      });
+
+      if (!announcement) {
+        return res.status(404).json({ 
+          success: false,
+          message: 'Pengumuman tidak ditemukan'
+        });
+      }
+
+      await prisma.announcement.delete({
+        where: { id }
+      });
+
+      res.status(200).json({ 
+        success: true,
+        message: 'Pengumuman berhasil dihapus'
+      });
     } catch (error) {
-      res.status(500).json({ message: error.message });
+      console.error('Delete announcement error:', error);
+      res.status(500).json({ 
+        success: false,
+        message: 'Gagal menghapus pengumuman'
+      });
     }
   }
 };

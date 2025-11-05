@@ -27,7 +27,7 @@ npm run dev
     - **Backend API**: <a href="http://localhost:5000" target="_blank" rel="noopener noreferrer">http://localhost:5000</a>  
     - **API Documentation (Swagger)**: <a href="http://localhost:5000/api/docs" target="_blank" rel="noopener noreferrer">http://localhost:5000/api/docs</a>
 
-## 📝 Penjelasan Detail Tentang Aplikasi
+## 📝 Penjelasan Detail Tentang Aplikasi (Back-End)
 
 🔗 [Laporan Kelompok 13 PAW_US3 : KidConnect Application](https://drive.google.com/drive/folders/1BU8iePVpYhGK1ela7MJdZAZUS7w8tawK?usp=sharing)
 
@@ -38,12 +38,18 @@ pawpaw/
 ├── server/
 │   ├── .env
 │   ├── .env.example
+│   ├── .gitignore
 │   ├── package.json
+│   ├── prisma.config.ts
 │   ├── README.md
+│   ├── prisma/
+│   │   ├── reset.js
+│   │   ├── schema.prisma
+│   │   └── seed.js
 │   └── src/
 │       ├── config/
 │       │   ├── cloudinary.js
-│       │   ├── database.js
+│       │   ├── prisma.js
 │       │   └── swagger.js
 │       ├── controllers/
 │       │   ├── activity.controller.js
@@ -61,18 +67,6 @@ pawpaw/
 │       ├── middleware/
 │       │   ├── auth.middleware.js
 │       │   └── upload.middleware.js
-│       ├── models/
-│       │   ├── Activity.js
-│       │   ├── Announcement.js
-│       │   ├── Attendance.js
-│       │   ├── Classroom.js
-│       │   ├── index.js
-│       │   ├── LiveReport.js
-│       │   ├── Message.js
-│       │   ├── QuarterlyReport.js
-│       │   ├── Student.js
-│       │   ├── Upload.js
-│       │   └── User.js
 │       ├── routes/
 │       │   ├── activity.route.js
 │       │   ├── announcement.route.js
@@ -97,19 +91,53 @@ pawpaw/
 │   ├── .env.example
 │   ├── .gitignore
 │   ├── eslint.config.mjs
+│   ├── middleware.ts
 │   ├── next.config.ts
 │   ├── package.json
 │   ├── postcss.config.mjs
 │   ├── tsconfig.json
-│   ├── tailwind.config.ts
 │   ├── public/
+│   │   └── images/
 │   └── src/
 │       ├── app/
 │       │   ├── globals.css
 │       │   ├── layout.tsx
-│       │   └── page.tsx
+│       │   ├── page.tsx
+│       │   ├── api/
+│       │   │   └── auth/
+│       │   │       └── [...nextauth]/
+│       │   │           └── route.ts
+│       │   ├── auth/
+│       │   │   ├── layout.tsx
+│       │   │   ├── login/
+│       │   │   │   └── page.tsx
+│       │   │   └── register/
+│       │   │       └── page.tsx
+│       │   └── dashboard/
+│       │       ├── layout.tsx
+│       │       └── page.tsx
 │       ├── components/
-│       └── styles/
+│       │   ├── auth/
+│       │   │   ├── LoginForm.tsx
+│       │   │   └── RegisterForm.tsx
+│       │   ├── layout/
+│       │   │   ├── Navbar.tsx
+│       │   │   └── Sidebar.tsx
+│       │   ├── providers/
+│       │   │   └── SessionProvider.tsx
+│       │   └── ui/
+│       │       ├── Button.tsx
+│       │       ├── Card.tsx
+│       │       └── Input.tsx
+│       ├── hooks/
+│       │   └── auth.ts
+│       ├── lib/
+│       │   └── api.ts
+│       ├── services/
+│       │   └── auth.service.ts
+│       ├── styles/
+│       └── types/
+│           └── next-auth.d.ts
 │
 ├── package.json
 ├── .gitignore
@@ -153,6 +181,7 @@ pawpaw/
 <p>
   <img src="https://img.shields.io/badge/-Node.js-339933?style=for-the-badge&logo=node.js&logoColor=white"/>
   <img src="https://img.shields.io/badge/-Express-000000?style=for-the-badge&logo=express&logoColor=white"/>
+  <img src="https://img.shields.io/badge/-Prisma-2D3748?style=for-the-badge&logo=prisma&logoColor=white"/>
   <img src="https://img.shields.io/badge/-MongoDB-47A248?style=for-the-badge&logo=mongodb&logoColor=white"/>
   <img src="https://img.shields.io/badge/-Cloudinary-3448C5?style=for-the-badge&logo=cloudinary&logoColor=white"/>
   <img src="https://img.shields.io/badge/-Swagger-85EA2D?style=for-the-badge&logo=swagger&logoColor=black"/>
@@ -165,6 +194,14 @@ pawpaw/
   <img src="https://img.shields.io/badge/-React-61DAFB?style=for-the-badge&logo=react&logoColor=black"/>
   <img src="https://img.shields.io/badge/-TypeScript-3178C6?style=for-the-badge&logo=typescript&logoColor=white"/>
   <img src="https://img.shields.io/badge/-Tailwind%20CSS-06B6D4?style=for-the-badge&logo=tailwindcss&logoColor=white"/>
+  <img src="https://img.shields.io/badge/-NextAuth.js-000000?style=for-the-badge&logo=next.js&logoColor=white"/>
+</p>
+
+### Authentication & Authorization
+<p>
+  <img src="https://img.shields.io/badge/-Google%20OAuth-4285F4?style=for-the-badge&logo=google&logoColor=white"/>
+  <img src="https://img.shields.io/badge/-JWT-000000?style=for-the-badge&logo=jsonwebtokens&logoColor=white"/>
+  <img src="https://img.shields.io/badge/-NextAuth.js-000000?style=for-the-badge&logo=next.js&logoColor=white"/>
 </p>
 
 ## 📄 License

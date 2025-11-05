@@ -48,7 +48,7 @@
   "license": "ISC",
   "type": "commonjs",
   "scripts": {
-    "server": "cd server && npm run start",
+    "server": "cd server && npm run dev",
     "client": "cd client && npm run dev",
     "dev": "concurrently -n \"SERVER,CLIENT\" -c \"bgBlue.bold,bgMagenta.bold\" \"npm run server\" \"npm run client\"",
     "build": "cd client && npm run build",
@@ -57,6 +57,10 @@
     "install:server": "cd server && npm install",
     "install:client": "cd client && npm install",
     "install:all": "npm run install:server && npm run install:client",
+    "prisma:generate": "cd server && npm run prisma:generate",
+    "prisma:push": "cd server && npm run prisma:push",
+    "prisma:studio": "cd server && npm run prisma:studio",
+    "prisma:seed": "cd server && npm run prisma:seed",
     "clean": "rm -rf server/.next client/.next server/node_modules client/node_modules node_modules",
     "clean:cache": "rm -rf server/.next client/.next",
     "test": "echo \"Error: no test specified\" && exit 1"

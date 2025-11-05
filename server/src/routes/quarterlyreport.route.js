@@ -25,7 +25,7 @@ const { protect, roleCheck } = require("../middleware/auth.middleware");
 router.get(
   "/report",
   protect,
-  roleCheck("admin", "teacher"),
+  roleCheck("ADMIN", "TEACHER"),
   quarterlyReportController.getQuarterlyReports
 );
 
@@ -53,7 +53,7 @@ router.get(
 router.get(
   "/report/:id",
   protect,
-  roleCheck("admin", "teacher"),
+  roleCheck("ADMIN", "TEACHER"),
   quarterlyReportController.getQuarterlyReportById
 );
 
@@ -90,7 +90,7 @@ router.get(
 router.post(
   "/report",
   protect,
-  roleCheck("teacher"),
+  roleCheck("TEACHER"),
   quarterlyReportController.generateQuarterlyReport
 );
 
@@ -118,7 +118,7 @@ router.post(
 router.delete(
   "/report/:id",
   protect,
-  roleCheck("admin", "teacher"),
+  roleCheck("ADMIN", "TEACHER"),
   quarterlyReportController.deleteQuarterlyReport
 );
 

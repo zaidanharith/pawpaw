@@ -4,14 +4,27 @@ const weatherController = {
   fetchWeather: async (req, res) => {
     try {
       const { location } = req.params;
+      
       if (!location) {
-        return res.status(400).json({ message: 'Lokasi tidak ditemukan' });
+        return res.status(400).json({ 
+          success: false,
+          message: 'Lokasi wajib diisi' 
+        });
       }
 
       const data = await getWeather(location);
-      res.json({ message: 'Data cuaca berhasil diambil', data });
+      
+      res.status(200).json({ 
+        success: true,
+        message: 'Data cuaca berhasil diambil', 
+        data 
+      });
     } catch (error) {
-      res.status(500).json({ message: error.message });
+      console.error('Fetch weather error:', error);
+      res.status(500).json({ 
+        success: false,
+        message: 'Gagal mengambil data cuaca'
+      });
     }
   }
 };

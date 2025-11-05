@@ -1,6 +1,6 @@
 const express = require('express');
 const authController = require('../controllers/auth.controller');
-const { protect, roleCheck } = require('../middleware/auth.middleware');
+const { authMiddleware, requireRole } = require('../middleware/auth.middleware');
 
 const router = express.Router();
 
@@ -27,18 +27,30 @@ const router = express.Router();
  *             type: object
  *             required:
  *               - username
+ *               - email
+ *               - phoneNumber
  *               - password
  *               - role
  *             properties:
  *               username:
  *                 type: string
  *                 example: syahroni127
+ *               name:
+ *                 type: string
+ *                 example: Syahroni
+ *               email:
+ *                 type: string
+ *                 example: syahroni@example.com
+ *               phoneNumber:
+ *                 type: string
+ *                 example: "08123456789"
  *               password:
  *                 type: string
  *                 example: rahasia1234
  *               role:
  *                 type: string
- *                 enum: [admin, teacher, parent]
+ *                 enum: [ADMIN, TEACHER, PARENT]
+ *                 example: TEACHER
  *     responses:
  *       201:
  *         description: User berhasil didaftarkan
@@ -49,7 +61,7 @@ const router = express.Router();
  *       403:
  *         description: Hanya admin yang dapat mendaftarkan user baru
  */
-router.post('/auth/register', protect, roleCheck('admin'), authController.register);
+router.post('/auth/register', authMiddleware, requireRole('ADMIN'), authController.register);
 
 /**
  * @swagger
@@ -76,6 +88,19 @@ router.post('/auth/register', protect, roleCheck('admin'), authController.regist
  *     responses:
  *       200:
  *         description: User berhasil login
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 message:
+ *                   type: string
+ *                 token:
+ *                   type: string
+ *                 user:
+ *                   type: object
  *       401:
  *         description: Username atau password salah
  */
@@ -95,7 +120,7 @@ router.post('/auth/login', authController.login);
  *       401:
  *         description: Akses ditolak
  */
-router.post('/auth/logout', protect, authController.logout);
+router.post('/auth/logout', authMiddleware, authController.logout);
 
 /**
  * @swagger
@@ -141,6 +166,6 @@ router.post('/auth/reset-password', authController.resetPassword);
  *       401:
  *         description: Akses ditolak
  */
-router.get('/auth/profile', protect, authController.getProfile);
+router.get('/auth/profile', authMiddleware, authController.getProfile);
 
 module.exports = router;

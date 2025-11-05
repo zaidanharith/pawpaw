@@ -1,6 +1,4 @@
-const mongoose = require("mongoose");
-const QuarterlyReport = require('../models/QuarterlyReport');
-const LiveReport = require('../models/LiveReport');
+const prisma = require('../config/prisma');
 
 const getQuarter = (month) => {
   if (month < 3) return 'Q1';
@@ -11,14 +9,78 @@ const getQuarter = (month) => {
 
 const quarterlyReportController = {
 
+  // Generate quarterly report
   generateQuarterlyReport: async (req, res) => {
     try {
       const { studentId, teacherId } = req.body;
+
+      // Validate required fields
+      if (!studentId || !teacherId) {
+        return res.status(400).json({
+          success: false,
+          message: "Student ID dan Teacher ID wajib diisi"
+        });
+      }
+
+      // Validate ObjectIds
+      if (!studentId || studentId.length !== 24) {
+        return res.status(400).json({
+          success: false,
+          message: "Student ID tidak valid"
+        });
+      }
+
+      if (!teacherId || teacherId.length !== 24) {
+        return res.status(400).json({
+          success: false,
+          message: "Teacher ID tidak valid"
+        });
+      }
+
+      // Check if student exists
+      const student = await prisma.student.findUnique({
+        where: { id: studentId }
+      });
+
+      if (!student) {
+        return res.status(404).json({
+          success: false,
+          message: "Siswa tidak ditemukan"
+        });
+      }
+
+      // Check if teacher exists
+      const teacher = await prisma.user.findUnique({
+        where: { id: teacherId }
+      });
+
+      if (!teacher) {
+        return res.status(404).json({
+          success: false,
+          message: "Guru tidak ditemukan"
+        });
+      }
+
+      if (teacher.role !== 'TEACHER' && teacher.role !== 'ADMIN') {
+        return res.status(400).json({
+          success: false,
+          message: "User bukan guru"
+        });
+      }
+
       const now = new Date();
       const quarter = getQuarter(now.getMonth());
       const year = now.getFullYear();
 
-      const existing = await QuarterlyReport.findOne({ student: studentId, quarter, year });
+      // Check if report already exists
+      const existing = await prisma.quarterlyReport.findFirst({
+        where: {
+          studentId,
+          quarter,
+          year
+        }
+      });
+
       if (existing) {
         return res.status(400).json({
           success: false,
@@ -26,34 +88,81 @@ const quarterlyReportController = {
         });
       }
 
+      // Calculate date range for the quarter
       const startDate = new Date(now);
       startDate.setMonth(startDate.getMonth() - 3);
 
-      const liveReports = await LiveReport.find({
-        student: studentId,
-        date: { $gte: startDate, $lte: now }
-      }).populate('activity', 'title');
-
-      const activitiesSummary = liveReports.flatMap(r => {
-        if (Array.isArray(r.activity)) {
-          return r.activity.map(a => a.title);
-        } else if (r.activity) {
-          return [r.activity.title];
+      // Get live reports for this student in the quarter
+      const liveReports = await prisma.liveReport.findMany({
+        where: {
+          date: {
+            gte: startDate,
+            lte: now
+          },
+          activities: {
+            some: {
+              students: {
+                some: {
+                  id: studentId
+                }
+              }
+            }
+          }
+        },
+        include: {
+          activities: {
+            select: {
+              name: true,
+              description: true
+            }
+          }
         }
-        return [];
       });
 
-      const newReport = new QuarterlyReport({
-        student: studentId,
-        teacher: teacherId,
-        quarter,
-        year,
-        activitiesSummary,
-        notes: `Rangkuman laporan untuk ${quarter} ${year}`,
-        meetingReminder: true
-      });
+      // Aggregate activities summary
+      const activitiesSummary = liveReports.flatMap(report => 
+        report.activities.map(activity => 
+          `${activity.name}${activity.description ? `: ${activity.description}` : ''}`
+        )
+      );
 
-      await newReport.save();
+      // Remove duplicates
+      const uniqueActivities = [...new Set(activitiesSummary)];
+
+      const newReport = await prisma.quarterlyReport.create({
+        data: {
+          studentId,
+          teacherId,
+          quarter,
+          year,
+          activitiesSummary: uniqueActivities,
+          notes: `Rangkuman laporan untuk ${quarter} ${year}`,
+          meetingReminder: true
+        },
+        include: {
+          student: {
+            select: {
+              id: true,
+              name: true,
+              gender: true,
+              classroom: {
+                select: {
+                  id: true,
+                  name: true
+                }
+              }
+            }
+          },
+          teacher: {
+            select: {
+              id: true,
+              name: true,
+              email: true,
+              role: true
+            }
+          }
+        }
+      });
 
       res.status(201).json({
         success: true,
@@ -61,43 +170,111 @@ const quarterlyReportController = {
         data: newReport
       });
       
-    } catch (err) {
+    } catch (error) {
+      console.error('Generate quarterly report error:', error);
       res.status(500).json({
         success: false,
-        message: 'Gagal membuat laporan triwulan',
-        error: err.message
+        message: 'Gagal membuat laporan triwulan'
       });
     }
   },
 
+  // Get all quarterly reports
   getQuarterlyReports: async (req, res) => {
     try {
-      const reports = await QuarterlyReport.find()
-        .populate('student', 'name')
-        .populate('teacher', 'name email');
+      const reports = await prisma.quarterlyReport.findMany({
+        include: {
+          student: {
+            select: {
+              id: true,
+              name: true,
+              gender: true,
+              classroom: {
+                select: {
+                  id: true,
+                  name: true
+                }
+              }
+            }
+          },
+          teacher: {
+            select: {
+              id: true,
+              name: true,
+              email: true,
+              role: true
+            }
+          }
+        },
+        orderBy: [
+          { year: 'desc' },
+          { quarter: 'desc' },
+          { createdAt: 'desc' }
+        ]
+      });
 
       res.status(200).json({
         success: true,
+        count: reports.length,
         data: reports
       });
-    } catch (err) {
+    } catch (error) {
+      console.error('Get quarterly reports error:', error);
       res.status(500).json({
         success: false,
-        message: 'Gagal mengambil laporan triwulan',
-        error: err.message
+        message: 'Gagal mengambil laporan triwulan'
       });
     }
   },
 
+  // Get quarterly report by ID
   getQuarterlyReportById: async (req, res) => {
     try {
-      if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
-        return res.status(400).json({ message: "ID tidak valid" });
+      const { id } = req.params;
+
+      // Validate ObjectId
+      if (!id || id.length !== 24) {
+        return res.status(400).json({ 
+          success: false,
+          message: "ID tidak valid" 
+        });
       }
 
-      const report = await QuarterlyReport.findById(req.params.id)
-        .populate('student', 'name')
-        .populate('teacher', 'name email');
+      const report = await prisma.quarterlyReport.findUnique({
+        where: { id },
+        include: {
+          student: {
+            select: {
+              id: true,
+              name: true,
+              gender: true,
+              birthDate: true,
+              address: true,
+              classroom: {
+                select: {
+                  id: true,
+                  name: true,
+                  teacher: {
+                    select: {
+                      id: true,
+                      name: true
+                    }
+                  }
+                }
+              }
+            }
+          },
+          teacher: {
+            select: {
+              id: true,
+              name: true,
+              email: true,
+              phoneNumber: true,
+              role: true
+            }
+          }
+        }
+      });
 
       if (!report) {
         return res.status(404).json({
@@ -110,18 +287,157 @@ const quarterlyReportController = {
         success: true,
         data: report
       });
-    } catch (err) {
+    } catch (error) {
+      console.error('Get quarterly report error:', error);
       res.status(500).json({
         success: false,
-        message: 'Gagal mengambil laporan',
-        error: err.message
+        message: 'Gagal mengambil laporan triwulan'
       });
     }
   },
 
+  // Get quarterly reports by student
+  getQuarterlyReportsByStudent: async (req, res) => {
+    try {
+      const { studentId } = req.params;
+
+      // Validate ObjectId
+      if (!studentId || studentId.length !== 24) {
+        return res.status(400).json({ 
+          success: false,
+          message: "Student ID tidak valid" 
+        });
+      }
+
+      // Check if student exists
+      const student = await prisma.student.findUnique({
+        where: { id: studentId }
+      });
+
+      if (!student) {
+        return res.status(404).json({
+          success: false,
+          message: "Siswa tidak ditemukan"
+        });
+      }
+
+      const reports = await prisma.quarterlyReport.findMany({
+        where: { studentId },
+        include: {
+          teacher: {
+            select: {
+              id: true,
+              name: true,
+              email: true
+            }
+          }
+        },
+        orderBy: [
+          { year: 'desc' },
+          { quarter: 'desc' }
+        ]
+      });
+
+      res.status(200).json({
+        success: true,
+        count: reports.length,
+        student: {
+          id: student.id,
+          name: student.name
+        },
+        data: reports
+      });
+    } catch (error) {
+      console.error('Get quarterly reports by student error:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Gagal mengambil laporan siswa'
+      });
+    }
+  },
+
+  // Update quarterly report
+  updateQuarterlyReport: async (req, res) => {
+    try {
+      const { id } = req.params;
+      const { notes, meetingReminder, activitiesSummary } = req.body;
+
+      // Validate ObjectId
+      if (!id || id.length !== 24) {
+        return res.status(400).json({ 
+          success: false,
+          message: "ID tidak valid" 
+        });
+      }
+
+      // Check if report exists
+      const existing = await prisma.quarterlyReport.findUnique({
+        where: { id }
+      });
+
+      if (!existing) {
+        return res.status(404).json({
+          success: false,
+          message: 'Laporan triwulan tidak ditemukan'
+        });
+      }
+
+      // Build update data
+      const updateData = {};
+      if (notes !== undefined) updateData.notes = notes;
+      if (meetingReminder !== undefined) updateData.meetingReminder = meetingReminder;
+      if (activitiesSummary) updateData.activitiesSummary = activitiesSummary;
+
+      const updatedReport = await prisma.quarterlyReport.update({
+        where: { id },
+        data: updateData,
+        include: {
+          student: {
+            select: {
+              id: true,
+              name: true
+            }
+          },
+          teacher: {
+            select: {
+              id: true,
+              name: true,
+              email: true
+            }
+          }
+        }
+      });
+
+      res.status(200).json({
+        success: true,
+        message: 'Laporan triwulan berhasil diperbarui',
+        data: updatedReport
+      });
+    } catch (error) {
+      console.error('Update quarterly report error:', error);
+      res.status(400).json({
+        success: false,
+        message: 'Gagal memperbarui laporan triwulan'
+      });
+    }
+  },
+
+  // Delete quarterly report
   deleteQuarterlyReport: async (req, res) => {
     try {
-      const report = await QuarterlyReport.findByIdAndDelete(req.params.id);
+      const { id } = req.params;
+
+      // Validate ObjectId
+      if (!id || id.length !== 24) {
+        return res.status(400).json({ 
+          success: false,
+          message: "ID tidak valid" 
+        });
+      }
+
+      const report = await prisma.quarterlyReport.findUnique({
+        where: { id }
+      });
 
       if (!report) {
         return res.status(404).json({
@@ -130,15 +446,19 @@ const quarterlyReportController = {
         });
       }
 
+      await prisma.quarterlyReport.delete({
+        where: { id }
+      });
+
       res.status(200).json({
         success: true,
         message: 'Laporan triwulan berhasil dihapus'
       });
-    } catch (err) {
+    } catch (error) {
+      console.error('Delete quarterly report error:', error);
       res.status(500).json({
         success: false,
-        message: 'Gagal menghapus laporan',
-        error: err.message
+        message: 'Gagal menghapus laporan triwulan'
       });
     }
   }

@@ -27,7 +27,7 @@ const { protect, roleCheck } = require('../middleware/auth.middleware');
 router.get(
   '/activity',
   protect,
-  roleCheck('parent', 'teacher', 'admin'),
+  roleCheck('PARENT', 'TEACHER', 'ADMIN'),
   activityController.getAllActivities
 );
 
@@ -55,7 +55,7 @@ router.get(
 router.get(
   '/activity/:id',
   protect,
-  roleCheck('parent', 'teacher', 'admin'),
+  roleCheck('PARENT', 'TEACHER', 'ADMIN'),
   activityController.getActivityById
 );
 
@@ -94,7 +94,7 @@ router.get(
 router.post(
   '/activity/create',
   protect,
-  roleCheck('teacher', 'admin'),
+  roleCheck('TEACHER', 'ADMIN'),
   activityController.createActivity
 );
 
@@ -140,7 +140,7 @@ router.post(
 router.put(
   '/activity/:id',
   protect,
-  roleCheck('teacher', 'admin'),
+  roleCheck('TEACHER', 'ADMIN'),
   activityController.updateActivity
 );
 
@@ -168,7 +168,7 @@ router.put(
 router.delete(
   '/activity/:id',
   protect,
-  roleCheck('admin'),
+  roleCheck('ADMIN'),
   activityController.deleteActivity
 );
 

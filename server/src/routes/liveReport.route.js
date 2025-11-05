@@ -28,7 +28,7 @@ const upload = require('../middleware/upload.middleware');
 router.get(
   '/livereport',
   protect,
-  roleCheck('parent', 'teacher', 'admin'),
+  roleCheck('PARENT', 'TEACHER', 'ADMIN'),
   liveReportController.getAllLiveReports
 );
 
@@ -56,7 +56,7 @@ router.get(
 router.get(
   '/livereport/:id',
   protect,
-  roleCheck('parent', 'teacher', 'admin'),
+  roleCheck('PARENT', 'TEACHER', 'ADMIN'),
   liveReportController.getLiveReportById
 );
 
@@ -105,7 +105,7 @@ router.get(
 router.post(
   '/livereport/create',
   protect,
-  roleCheck('teacher', 'admin'),
+  roleCheck('TEACHER', 'ADMIN'),
   upload.single('photo'),
   liveReportController.createLiveReport
 );
@@ -162,7 +162,7 @@ router.post(
 router.put(
   '/livereport/:id',
   protect,
-  roleCheck('teacher', 'admin'),
+  roleCheck('TEACHER', 'ADMIN'),
   upload.single('photo'),
   liveReportController.updateLiveReport
 );
@@ -191,7 +191,7 @@ router.put(
 router.delete(
   '/livereport/:id',
   protect,
-  roleCheck('teacher', 'admin'),
+  roleCheck('TEACHER', 'ADMIN'),
   liveReportController.deleteLiveReport
 );
 

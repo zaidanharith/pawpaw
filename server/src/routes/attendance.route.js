@@ -27,7 +27,7 @@ const { protect, roleCheck } = require('../middleware/auth.middleware');
 router.get(
   '/attendance',
   protect,
-  roleCheck('teacher', 'admin'),
+  roleCheck('TEACHER', 'ADMIN'),
   attendanceController.getAllAttendances
 );
 
@@ -55,7 +55,7 @@ router.get(
 router.get(
   '/attendance/:id',
   protect,
-  roleCheck('parent', 'teacher', 'admin'),
+  roleCheck('PARENT', 'TEACHER', 'ADMIN'),
   attendanceController.getAttendanceById
 );
 
@@ -93,7 +93,7 @@ router.get(
 router.post(
   '/attendance/create',
   protect,
-  roleCheck('teacher', 'admin'),
+  roleCheck('TEACHER', 'ADMIN'),
   attendanceController.createAttendance
 );
 
@@ -121,7 +121,7 @@ router.post(
 router.get(
   '/attendance/student/:studentId',
   protect,
-  roleCheck('parent', 'teacher', 'admin'),
+  roleCheck('PARENT', 'TEACHER', 'ADMIN'),
   attendanceController.getAttendanceByStudent
 );
 
@@ -161,7 +161,7 @@ router.get(
 router.put(
   '/attendance/:id',
   protect,
-  roleCheck('teacher', 'admin'),
+  roleCheck('TEACHER', 'ADMIN'),
   attendanceController.updateAttendance
 );
 
@@ -189,7 +189,7 @@ router.put(
 router.delete(
   '/attendance/:id',
   protect,
-  roleCheck('admin', 'teacher'),
+  roleCheck('ADMIN', 'TEACHER'),
   attendanceController.deleteAttendance
 );
 
