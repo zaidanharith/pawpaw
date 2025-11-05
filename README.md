@@ -11,21 +11,25 @@ Orang tua bisa melihat aktivitas harian anak, cuaca, hingga laporan berkala, sem
 - Zaidan Harith (23/512629/TK/56334)
 - Zaki Fadhila Rahman (23/520148/TK/57327)
 
-## Penjelasan Detail Tentang Aplikasi
+## ⚙️ Cara Menjalankan Program
 
-🔗 [Laporan Kelompok 13 PAW_US3 : KidConnect Application](https://drive.google.com/drive/folders/1BU8iePVpYhGK1ela7MJdZAZUS7w8tawK?usp=sharing)
+1. Pastikan file `.env` sudah ada di folder `/server` dan file `.env.local` sudah ada di folder `/client`. Jika belum, silakan buat dengan _template_ di `.env.example` di setiap foldernya.
 
-## ⚙️ Cara Menjalankan Program **(Back-End Only)**
+2. Jalankan _command prompt_ berikut di folder root (`/pawpaw`).
 
-1. Pastikan file `.env` sudah ada di folder `/server`. Jika belum, silakan buat dengan _template_ di `.env.example`.
-
-2. Program hanya bisa dijalankan melalui folder `/server`. Maka, jalankan _command prompt_ berikut di folder root.
-
-```
-cd server
-npm install
+```bash
+npm run install:all
 npm run dev
 ```
+
+3. Akses aplikasi:
+   - **Frontend**: http://localhost:3000
+   - **Backend API**: http://localhost:5000
+   - **API Documentation (Swagger)**: http://localhost:5000/api/docs
+
+## 📝 Penjelasan Detail Tentang Aplikasi
+
+🔗 [Laporan Kelompok 13 PAW_US3 : KidConnect Application](https://drive.google.com/drive/folders/1BU8iePVpYhGK1ela7MJdZAZUS7w8tawK?usp=sharing)
 
 ## 📂 File Directory
 
@@ -87,8 +91,27 @@ pawpaw/
 │       ├── utils/
 │       │   └── jwt.js
 │       └── server.js
+│
 ├── client/
+│   ├── .env.local
+│   ├── .env.example
+│   ├── .gitignore
+│   ├── eslint.config.mjs
+│   ├── next.config.ts
 │   ├── package.json
+│   ├── postcss.config.mjs
+│   ├── tsconfig.json
+│   ├── tailwind.config.ts
+│   ├── public/
+│   └── src/
+│       ├── app/
+│       │   ├── globals.css
+│       │   ├── layout.tsx
+│       │   └── page.tsx
+│       ├── components/
+│       └── styles/
+│
+├── package.json
 ├── .gitignore
 └── README.md
 ```
@@ -126,10 +149,71 @@ pawpaw/
 
 ## 🛠️ Tech Stack yang Digunakan
 
+### Backend
 <p>
+  <img src="https://img.shields.io/badge/-Node.js-339933?style=for-the-badge&logo=node.js&logoColor=white"/>
   <img src="https://img.shields.io/badge/-Express-000000?style=for-the-badge&logo=express&logoColor=white"/>
   <img src="https://img.shields.io/badge/-MongoDB-47A248?style=for-the-badge&logo=mongodb&logoColor=white"/>
   <img src="https://img.shields.io/badge/-Cloudinary-3448C5?style=for-the-badge&logo=cloudinary&logoColor=white"/>
   <img src="https://img.shields.io/badge/-Swagger-85EA2D?style=for-the-badge&logo=swagger&logoColor=black"/>
   <img src="https://img.shields.io/badge/-Weather%20API-FF9A00?style=for-the-badge&logo=openweathermap&logoColor=white"/>
 </p>
+
+### Frontend
+<p>
+  <img src="https://img.shields.io/badge/-Next.js-000000?style=for-the-badge&logo=next.js&logoColor=white"/>
+  <img src="https://img.shields.io/badge/-React-61DAFB?style=for-the-badge&logo=react&logoColor=black"/>
+  <img src="https://img.shields.io/badge/-TypeScript-3178C6?style=for-the-badge&logo=typescript&logoColor=white"/>
+  <img src="https://img.shields.io/badge/-Tailwind%20CSS-06B6D4?style=for-the-badge&logo=tailwindcss&logoColor=white"/>
+</p>
+
+## 📜 Available Scripts
+
+```bash
+# Install semua dependencies (frontend + backend)
+npm run install:all
+
+# Development mode (jalankan frontend + backend sekaligus)
+npm run dev
+
+# Jalankan backend saja
+npm run server
+
+# Jalankan frontend saja
+npm run client
+
+# Build untuk production
+npm run build
+
+# Build frontend + backend
+npm run build:all
+
+# Hapus cache
+npm run clean:cache
+
+# Hapus semua dependencies dan cache
+npm run clean
+```
+
+## 🔐 Environment Variables
+
+### Backend (server/.env)
+```env
+MONGO_URI=your_mongodb_uri
+PORT=5000
+JWT_SECRET=your_jwt_secret
+JWT_EXPIRES_IN=24h
+WEATHER_API_KEY=your_weather_api_key
+CLOUD_NAME=your_cloudinary_name
+CLOUD_API_KEY=your_cloudinary_key
+CLOUD_API_SECRET=your_cloudinary_secret
+```
+
+### Frontend (client/.env.local)
+```env
+NEXT_PUBLIC_API_URL=http://localhost:5000/api
+```
+
+## 📄 License
+
+ISC © Kelompok 13

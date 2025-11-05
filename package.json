@@ -1,0 +1,67 @@
+{
+  "name": "kidconnect",
+  "version": "1.0.0",
+  "description": "Aplikasi web untuk memberikan live update kegiatan siswa TK kepada orang tua secara langsung. Orang tua bisa melihat aktivitas harian anak, cuaca, hingga laporan berkala, sementara guru dapat mengunggah laporan kegiatan dan pengumuman.",
+  "homepage": "https://github.com/zaidanharith/pawpaw#readme",
+  "bugs": {
+    "url": "https://github.com/zaidanharith/pawpaw/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zaidanharith/pawpaw.git"
+  },
+  "keywords": [
+    "kidconnect",
+    "education",
+    "school-management",
+    "kindergarten",
+    "parent-teacher-communication"
+  ],
+  "author": "Kelompok 13",
+  "contributors": [
+    {
+      "name": "Agatha Husna Amalia",
+      "email": "agathahusnaamalia2004@mail.ugm.ac.id",
+      "url": "https://github.com/agathaamalia"
+    },
+    {
+      "name": "Amira Syafika Pohan",
+      "email": "amirasyafikapohan@mail.ugm.ac.id",
+      "url": "https://github.com/amirapohan"
+    },
+    {
+      "name": "Joecelyn Aurora Majesty",
+      "email": "joecelynauroramajesty@mail.ugm.ac.id",
+      "url": "https://github.com/Joecelyn0"
+    },
+    {
+      "name": "Zaidan Harith",
+      "email": "zaidanharith@mail.ugm.ac.id",
+      "url": "https://github.com/zaidanharith"
+    },
+    {
+      "name": "Zaki Fadhila Rahman",
+      "email": "zakifadhilarahman@mail.ugm.ac.id",
+      "url": "https://github.com/zaki2414"
+    }
+  ],
+  "license": "ISC",
+  "type": "commonjs",
+  "scripts": {
+    "server": "cd server && npm run start",
+    "client": "cd client && npm run dev",
+    "dev": "concurrently -n \"SERVER,CLIENT\" -c \"bgBlue.bold,bgMagenta.bold\" \"npm run server\" \"npm run client\"",
+    "build": "cd client && npm run build",
+    "build:server": "cd server && npm run build",
+    "build:all": "npm run build:server && npm run build",
+    "install:server": "cd server && npm install",
+    "install:client": "cd client && npm install",
+    "install:all": "npm run install:server && npm run install:client",
+    "clean": "rm -rf server/.next client/.next server/node_modules client/node_modules node_modules",
+    "clean:cache": "rm -rf server/.next client/.next",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "devDependencies": {
+    "concurrently": "^9.2.1"
+  }
+}
