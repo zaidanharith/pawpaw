@@ -23,9 +23,9 @@ npm run dev
 ```
 
 3. Akses aplikasi:
-   - **Frontend**: http://localhost:3000
-   - **Backend API**: http://localhost:5000
-   - **API Documentation (Swagger)**: http://localhost:5000/api/docs
+  - **Frontend**: <a href="http://localhost:3000" target="_blank" rel="noopener noreferrer">http://localhost:3000</a>  
+    - **Backend API**: <a href="http://localhost:5000" target="_blank" rel="noopener noreferrer">http://localhost:5000</a>  
+    - **API Documentation (Swagger)**: <a href="http://localhost:5000/api/docs" target="_blank" rel="noopener noreferrer">http://localhost:5000/api/docs</a>
 
 ## 📝 Penjelasan Detail Tentang Aplikasi
 
@@ -166,53 +166,6 @@ pawpaw/
   <img src="https://img.shields.io/badge/-TypeScript-3178C6?style=for-the-badge&logo=typescript&logoColor=white"/>
   <img src="https://img.shields.io/badge/-Tailwind%20CSS-06B6D4?style=for-the-badge&logo=tailwindcss&logoColor=white"/>
 </p>
-
-## 📜 Available Scripts
-
-```bash
-# Install semua dependencies (frontend + backend)
-npm run install:all
-
-# Development mode (jalankan frontend + backend sekaligus)
-npm run dev
-
-# Jalankan backend saja
-npm run server
-
-# Jalankan frontend saja
-npm run client
-
-# Build untuk production
-npm run build
-
-# Build frontend + backend
-npm run build:all
-
-# Hapus cache
-npm run clean:cache
-
-# Hapus semua dependencies dan cache
-npm run clean
-```
-
-## 🔐 Environment Variables
-
-### Backend (server/.env)
-```env
-MONGO_URI=your_mongodb_uri
-PORT=5000
-JWT_SECRET=your_jwt_secret
-JWT_EXPIRES_IN=24h
-WEATHER_API_KEY=your_weather_api_key
-CLOUD_NAME=your_cloudinary_name
-CLOUD_API_KEY=your_cloudinary_key
-CLOUD_API_SECRET=your_cloudinary_secret
-```
-
-### Frontend (client/.env.local)
-```env
-NEXT_PUBLIC_API_URL=http://localhost:5000/api
-```
 
 ## 📄 License
 
