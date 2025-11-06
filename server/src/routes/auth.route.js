@@ -108,6 +108,58 @@ router.post('/auth/login', authController.login);
 
 /**
  * @swagger
+ * /auth/google:
+ *   post:
+ *     summary: Login/Register dengan Google OAuth
+ *     tags: [Auth]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - email
+ *               - name
+ *               - googleId
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 example: user@gmail.com
+ *               name:
+ *                 type: string
+ *                 example: John Doe
+ *               googleId:
+ *                 type: string
+ *                 example: "1234567890"
+ *               picture:
+ *                 type: string
+ *                 example: https://lh3.googleusercontent.com/a/default-user
+ *     responses:
+ *       200:
+ *         description: Login/Register dengan Google berhasil
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 message:
+ *                   type: string
+ *                 token:
+ *                   type: string
+ *                 user:
+ *                   type: object
+ *       400:
+ *         description: Bad request
+ *       500:
+ *         description: Server error
+ */
+router.post('/auth/google', authController.googleAuth);
+
+/**
+ * @swagger
  * /auth/logout:
  *   post:
  *     summary: Logout user
@@ -167,5 +219,21 @@ router.post('/auth/reset-password', authController.resetPassword);
  *         description: Akses ditolak
  */
 router.get('/auth/profile', authMiddleware, authController.getProfile);
+
+/**
+ * @swagger
+ * /auth/me:
+ *   get:
+ *     summary: Melihat profil user (alias)
+ *     tags: [Auth]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Berhasil mendapatkan profil user
+ *       401:
+ *         description: Akses ditolak
+ */
+router.get('/auth/me', authMiddleware, authController.getProfile);
 
 module.exports = router;

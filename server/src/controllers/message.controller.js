@@ -2,10 +2,8 @@ const prisma = require('../config/prisma');
 
 const messageController = {
 
-  // Get user messages (sent & received)
   getUserMessages: async (req, res) => {
     try {
-      // Validate user from auth middleware
       if (!req.user || !req.user.id) {
         return res.status(401).json({
           success: false,
@@ -72,12 +70,10 @@ const messageController = {
     }
   },
 
-  // Get message by ID
   getMessageById: async (req, res) => {
     try {
       const { id } = req.params;
 
-      // Validate ObjectId
       if (!id || id.length !== 24) {
         return res.status(400).json({ 
           success: false,
@@ -85,7 +81,6 @@ const messageController = {
         });
       }
 
-      // Validate user
       if (!req.user || !req.user.id) {
         return res.status(401).json({
           success: false,
@@ -137,7 +132,6 @@ const messageController = {
         });
       }
 
-      // Check authorization (sender or receiver only)
       if (message.senderId !== req.user.id && message.receiverId !== req.user.id) {
         return res.status(403).json({ 
           success: false,
@@ -158,12 +152,10 @@ const messageController = {
     }
   },
 
-  // Send message
   sendMessage: async (req, res) => {
     try {
       const { receiver, title, body, studentId } = req.body;
 
-      // Validate required fields
       if (!receiver || !title || !body) {
         return res.status(400).json({
           success: false,
@@ -171,7 +163,6 @@ const messageController = {
         });
       }
 
-      // Validate user
       if (!req.user || !req.user.id) {
         return res.status(401).json({
           success: false,
@@ -179,7 +170,6 @@ const messageController = {
         });
       }
 
-      // Validate receiver ID
       if (!receiver || receiver.length !== 24) {
         return res.status(400).json({
           success: false,
@@ -187,7 +177,6 @@ const messageController = {
         });
       }
 
-      // Check if receiver exists
       const receiverUser = await prisma.user.findUnique({
         where: { id: receiver }
       });
@@ -199,7 +188,6 @@ const messageController = {
         });
       }
 
-      // Validate studentId if provided
       if (studentId) {
         if (studentId.length !== 24) {
           return res.status(400).json({
@@ -272,12 +260,10 @@ const messageController = {
     }
   },
 
-  // Mark message as read
   markAsRead: async (req, res) => {
     try {
       const { id } = req.params;
 
-      // Validate ObjectId
       if (!id || id.length !== 24) {
         return res.status(400).json({ 
           success: false,
@@ -285,7 +271,6 @@ const messageController = {
         });
       }
 
-      // Validate user
       if (!req.user || !req.user.id) {
         return res.status(401).json({
           success: false,
@@ -304,7 +289,6 @@ const messageController = {
         });
       }
 
-      // Only receiver can mark as read
       if (message.receiverId !== req.user.id) {
         return res.status(403).json({ 
           success: false,
@@ -347,12 +331,10 @@ const messageController = {
     }
   },
 
-  // Delete message
   deleteMessage: async (req, res) => {
     try {
       const { id } = req.params;
 
-      // Validate ObjectId
       if (!id || id.length !== 24) {
         return res.status(400).json({ 
           success: false,
@@ -360,7 +342,6 @@ const messageController = {
         });
       }
 
-      // Validate user
       if (!req.user || !req.user.id) {
         return res.status(401).json({
           success: false,
@@ -379,7 +360,6 @@ const messageController = {
         });
       }
 
-      // Check authorization (sender or receiver only)
       if (message.senderId !== req.user.id && message.receiverId !== req.user.id) {
         return res.status(403).json({ 
           success: false,
@@ -404,7 +384,6 @@ const messageController = {
     }
   },
 
-  // Get inbox (received messages)
   getInbox: async (req, res) => {
     try {
       if (!req.user || !req.user.id) {
@@ -455,7 +434,6 @@ const messageController = {
     }
   },
 
-  // Get sent messages
   getSentMessages: async (req, res) => {
     try {
       if (!req.user || !req.user.id) {

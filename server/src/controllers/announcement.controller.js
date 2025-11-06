@@ -2,7 +2,6 @@ const prisma = require('../config/prisma');
 
 const announcementController = {
 
-  // Get all announcements
   getAnnouncements: async (req, res) => {
     try {
       const announcements = await prisma.announcement.findMany({
@@ -35,12 +34,10 @@ const announcementController = {
     }
   },
 
-  // Get announcement by ID
   getAnnouncementById: async (req, res) => {
     try {
       const { id } = req.params;
 
-      // Validate ObjectId
       if (!id || id.length !== 24) {
         return res.status(400).json({ 
           success: false,
@@ -82,12 +79,10 @@ const announcementController = {
     }
   },
 
-  // Create announcement
   createAnnouncement: async (req, res) => {
     try {
       const { title, content, isImportant } = req.body;
 
-      // Validate required fields
       if (!title || !content) {
         return res.status(400).json({
           success: false,
@@ -95,7 +90,6 @@ const announcementController = {
         });
       }
 
-      // Validate user exists (req.user dari auth middleware)
       if (!req.user || !req.user.id) {
         return res.status(401).json({
           success: false,
@@ -135,13 +129,11 @@ const announcementController = {
     }
   },
 
-  // Update announcement
   updateAnnouncement: async (req, res) => {
     try {
       const { id } = req.params;
       const { title, content, isImportant } = req.body;
 
-      // Validate ObjectId
       if (!id || id.length !== 24) {
         return res.status(400).json({ 
           success: false,
@@ -149,7 +141,6 @@ const announcementController = {
         });
       }
 
-      // Check if announcement exists
       const existing = await prisma.announcement.findUnique({
         where: { id }
       });
@@ -161,7 +152,6 @@ const announcementController = {
         });
       }
 
-      // Build update data
       const updateData = {};
       if (title) updateData.title = title;
       if (content) updateData.content = content;
@@ -195,7 +185,6 @@ const announcementController = {
     }
   },
 
-  // Delete announcement
   deleteAnnouncement: async (req, res) => {
     try {
       const { id } = req.params;
@@ -208,7 +197,6 @@ const announcementController = {
         });
       }
 
-      // Check if announcement exists
       const announcement = await prisma.announcement.findUnique({
         where: { id }
       });

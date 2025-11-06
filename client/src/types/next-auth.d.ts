@@ -16,6 +16,7 @@ declare module "next-auth" {
     username: string;
     role: "ADMIN" | "TEACHER" | "PARENT";
     accessToken?: string;
+    loginErrorMessage?: string;
   }
 }
 

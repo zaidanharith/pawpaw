@@ -38,7 +38,7 @@ export function useAuth() {
 
   const logout = async () => {
     try {
-      await signOut({ callbackUrl: "/auth/login" });
+      await signOut({ callbackUrl: "/login" });
     } catch (error) {
       console.error("Logout error:", error);
       throw error;
@@ -60,7 +60,7 @@ export function useAuth() {
   };
 }
 
-export function useRequireAuth(redirectUrl = "/auth/login") {
+export function useRequireAuth(redirectUrl = "/login") {
   const { isAuthenticated, isLoading } = useAuth();
   const router = useRouter();
 

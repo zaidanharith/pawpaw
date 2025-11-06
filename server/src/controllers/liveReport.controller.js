@@ -2,7 +2,6 @@ const prisma = require('../config/prisma');
 const uploadController = require('./upload.controller');
 
 const liveReportController = {
-  // Get all live reports
   getAllLiveReports: async (req, res) => {
     try {
       const liveReports = await prisma.liveReport.findMany({
@@ -53,12 +52,10 @@ const liveReportController = {
     }
   },
 
-  // Get live report by ID
   getLiveReportById: async (req, res) => {
     try {
       const { id } = req.params;
 
-      // Validate ObjectId
       if (!id || id.length !== 24) {
         return res.status(400).json({ 
           success: false,
@@ -127,12 +124,10 @@ const liveReportController = {
     }
   },
 
-  // Create live report
   createLiveReport: async (req, res) => {
     try {
       const { title, description, date, teacher, activityIds } = req.body;
 
-      // Validate required fields
       if (!title || !date || !teacher) {
         return res.status(400).json({
           success: false,
@@ -140,7 +135,6 @@ const liveReportController = {
         });
       }
 
-      // Validate teacher ID
       if (!teacher || teacher.length !== 24) {
         return res.status(400).json({
           success: false,
@@ -148,7 +142,6 @@ const liveReportController = {
         });
       }
 
-      // Check if teacher exists
       const teacherExists = await prisma.user.findUnique({
         where: { id: teacher }
       });
@@ -160,7 +153,6 @@ const liveReportController = {
         });
       }
 
-      // Validate teacher role
       if (teacherExists.role !== 'TEACHER' && teacherExists.role !== 'ADMIN') {
         return res.status(400).json({
           success: false,
@@ -168,7 +160,6 @@ const liveReportController = {
         });
       }
 
-      // Validate activityIds if provided
       if (activityIds && activityIds.length > 0) {
         const invalidIds = activityIds.filter(id => !id || id.length !== 24);
         if (invalidIds.length > 0) {
@@ -179,7 +170,6 @@ const liveReportController = {
         }
       }
 
-      // Handle file upload
       let uploadedPhotos = [];
       if (req.file) {
         const uploadedFile = await uploadController._saveFile(req.file);
@@ -246,13 +236,11 @@ const liveReportController = {
     }
   },
 
-  // Update live report
   updateLiveReport: async (req, res) => {
     try {
       const { id } = req.params;
       const { title, description, date, teacher, activityIds } = req.body;
 
-      // Validate ObjectId
       if (!id || id.length !== 24) {
         return res.status(400).json({ 
           success: false,
@@ -260,7 +248,6 @@ const liveReportController = {
         });
       }
 
-      // Check if live report exists
       const existing = await prisma.liveReport.findUnique({
         where: { id },
         include: {
@@ -275,7 +262,6 @@ const liveReportController = {
         });
       }
 
-      // Validate teacher if provided
       if (teacher) {
         if (teacher.length !== 24) {
           return res.status(400).json({
@@ -303,7 +289,6 @@ const liveReportController = {
         }
       }
 
-      // Build update data
       const updateData = {};
       if (title) updateData.title = title;
       if (description !== undefined) updateData.description = description;
@@ -311,16 +296,13 @@ const liveReportController = {
       if (teacher) updateData.teacherId = teacher;
       if (activityIds) updateData.activityIds = activityIds;
 
-      // Handle new photo upload
       if (req.file) {
         const uploadedFile = await uploadController._saveFile(req.file);
         
-        // Update photo relation
         updateData.photos = {
           connect: { id: uploadedFile.id }
         };
       } else if (req.files && req.files.length > 0) {
-        // Multiple files
         const uploadedPhotos = [];
         for (const file of req.files) {
           const uploadedFile = await uploadController._saveFile(file);
@@ -376,7 +358,6 @@ const liveReportController = {
     }
   },
 
-  // Delete live report
   deleteLiveReport: async (req, res) => {
     try {
       const { id } = req.params;
@@ -389,7 +370,6 @@ const liveReportController = {
         });
       }
 
-      // Check if live report exists
       const liveReport = await prisma.liveReport.findUnique({
         where: { id },
         include: {
@@ -404,7 +384,6 @@ const liveReportController = {
         });
       }
 
-      // Delete live report (photos will be set to null via onDelete: SetNull)
       await prisma.liveReport.delete({
         where: { id }
       });

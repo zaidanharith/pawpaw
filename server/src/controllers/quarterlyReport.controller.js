@@ -9,12 +9,10 @@ const getQuarter = (month) => {
 
 const quarterlyReportController = {
 
-  // Generate quarterly report
   generateQuarterlyReport: async (req, res) => {
     try {
       const { studentId, teacherId } = req.body;
 
-      // Validate required fields
       if (!studentId || !teacherId) {
         return res.status(400).json({
           success: false,
@@ -22,7 +20,6 @@ const quarterlyReportController = {
         });
       }
 
-      // Validate ObjectIds
       if (!studentId || studentId.length !== 24) {
         return res.status(400).json({
           success: false,
@@ -37,7 +34,6 @@ const quarterlyReportController = {
         });
       }
 
-      // Check if student exists
       const student = await prisma.student.findUnique({
         where: { id: studentId }
       });
@@ -49,7 +45,6 @@ const quarterlyReportController = {
         });
       }
 
-      // Check if teacher exists
       const teacher = await prisma.user.findUnique({
         where: { id: teacherId }
       });
@@ -72,7 +67,6 @@ const quarterlyReportController = {
       const quarter = getQuarter(now.getMonth());
       const year = now.getFullYear();
 
-      // Check if report already exists
       const existing = await prisma.quarterlyReport.findFirst({
         where: {
           studentId,
@@ -88,11 +82,9 @@ const quarterlyReportController = {
         });
       }
 
-      // Calculate date range for the quarter
       const startDate = new Date(now);
       startDate.setMonth(startDate.getMonth() - 3);
 
-      // Get live reports for this student in the quarter
       const liveReports = await prisma.liveReport.findMany({
         where: {
           date: {
@@ -119,14 +111,12 @@ const quarterlyReportController = {
         }
       });
 
-      // Aggregate activities summary
       const activitiesSummary = liveReports.flatMap(report => 
         report.activities.map(activity => 
           `${activity.name}${activity.description ? `: ${activity.description}` : ''}`
         )
       );
 
-      // Remove duplicates
       const uniqueActivities = [...new Set(activitiesSummary)];
 
       const newReport = await prisma.quarterlyReport.create({
@@ -179,7 +169,6 @@ const quarterlyReportController = {
     }
   },
 
-  // Get all quarterly reports
   getQuarterlyReports: async (req, res) => {
     try {
       const reports = await prisma.quarterlyReport.findMany({
@@ -227,12 +216,10 @@ const quarterlyReportController = {
     }
   },
 
-  // Get quarterly report by ID
   getQuarterlyReportById: async (req, res) => {
     try {
       const { id } = req.params;
 
-      // Validate ObjectId
       if (!id || id.length !== 24) {
         return res.status(400).json({ 
           success: false,
@@ -296,12 +283,10 @@ const quarterlyReportController = {
     }
   },
 
-  // Get quarterly reports by student
   getQuarterlyReportsByStudent: async (req, res) => {
     try {
       const { studentId } = req.params;
 
-      // Validate ObjectId
       if (!studentId || studentId.length !== 24) {
         return res.status(400).json({ 
           success: false,
@@ -309,7 +294,6 @@ const quarterlyReportController = {
         });
       }
 
-      // Check if student exists
       const student = await prisma.student.findUnique({
         where: { id: studentId }
       });
@@ -356,13 +340,11 @@ const quarterlyReportController = {
     }
   },
 
-  // Update quarterly report
   updateQuarterlyReport: async (req, res) => {
     try {
       const { id } = req.params;
       const { notes, meetingReminder, activitiesSummary } = req.body;
 
-      // Validate ObjectId
       if (!id || id.length !== 24) {
         return res.status(400).json({ 
           success: false,
@@ -370,7 +352,6 @@ const quarterlyReportController = {
         });
       }
 
-      // Check if report exists
       const existing = await prisma.quarterlyReport.findUnique({
         where: { id }
       });
@@ -382,7 +363,6 @@ const quarterlyReportController = {
         });
       }
 
-      // Build update data
       const updateData = {};
       if (notes !== undefined) updateData.notes = notes;
       if (meetingReminder !== undefined) updateData.meetingReminder = meetingReminder;
@@ -422,12 +402,10 @@ const quarterlyReportController = {
     }
   },
 
-  // Delete quarterly report
   deleteQuarterlyReport: async (req, res) => {
     try {
       const { id } = req.params;
 
-      // Validate ObjectId
       if (!id || id.length !== 24) {
         return res.status(400).json({ 
           success: false,

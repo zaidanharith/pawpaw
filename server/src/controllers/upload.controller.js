@@ -34,7 +34,6 @@ const uploadController = {
         }
     },
 
-    // Get all uploads
     getAllUploads: async (req, res) => {
         try {
             const uploads = await prisma.upload.findMany({
@@ -66,7 +65,6 @@ const uploadController = {
         }
     },
 
-    // Get upload by ID
     getUploadById: async (req, res) => {
         try {
             const { id } = req.params;
@@ -118,7 +116,6 @@ const uploadController = {
         }
     },
 
-    // Delete upload
     deleteUpload: async (req, res) => {
         try {
             const { id } = req.params;
@@ -167,7 +164,6 @@ const uploadController = {
         }
     },
 
-    // Helper function for internal use
     _saveFile: async (file) => {
         return await prisma.upload.create({
             data: {

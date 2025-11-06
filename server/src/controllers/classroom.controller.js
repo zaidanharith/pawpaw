@@ -2,7 +2,6 @@ const prisma = require('../config/prisma');
 
 const classroomController = {
 
-  // Get all classrooms
   getAllClassrooms: async (req, res) => {
     try {
       const classrooms = await prisma.classroom.findMany({
@@ -52,12 +51,10 @@ const classroomController = {
     }
   },
 
-  // Get classroom by ID
   getClassroomById: async (req, res) => {
     try {
       const { id } = req.params;
 
-      // Validate ObjectId
       if (!id || id.length !== 24) {
         return res.status(400).json({ 
           success: false,
@@ -131,12 +128,10 @@ const classroomController = {
     }
   },
 
-  // Create classroom
   createClassroom: async (req, res) => {
     try {
       const { name, teacher, activityIds } = req.body;
 
-      // Validate required fields
       if (!name || !teacher) {
         return res.status(400).json({
           success: false,
@@ -144,7 +139,6 @@ const classroomController = {
         });
       }
 
-      // Validate teacher ID
       if (!teacher || teacher.length !== 24) {
         return res.status(400).json({
           success: false,
@@ -152,7 +146,6 @@ const classroomController = {
         });
       }
 
-      // Check if teacher exists
       const teacherExists = await prisma.user.findUnique({
         where: { id: teacher }
       });
@@ -164,7 +157,6 @@ const classroomController = {
         });
       }
 
-      // Validate teacher role
       if (teacherExists.role !== 'TEACHER' && teacherExists.role !== 'ADMIN') {
         return res.status(400).json({
           success: false,
@@ -172,7 +164,6 @@ const classroomController = {
         });
       }
 
-      // Check if classroom name already exists
       const existingClassroom = await prisma.classroom.findFirst({
         where: { name }
       });
@@ -184,7 +175,6 @@ const classroomController = {
         });
       }
 
-      // Validate activityIds if provided
       if (activityIds && activityIds.length > 0) {
         const invalidIds = activityIds.filter(id => !id || id.length !== 24);
         if (invalidIds.length > 0) {
@@ -234,13 +224,11 @@ const classroomController = {
     }
   },
 
-  // Update classroom
   updateClassroom: async (req, res) => {
     try {
       const { id } = req.params;
       const { name, teacher, activityIds } = req.body;
 
-      // Validate ObjectId
       if (!id || id.length !== 24) {
         return res.status(400).json({ 
           success: false,
@@ -248,7 +236,6 @@ const classroomController = {
         });
       }
 
-      // Check if classroom exists
       const existing = await prisma.classroom.findUnique({
         where: { id }
       });
@@ -260,7 +247,6 @@ const classroomController = {
         });
       }
 
-      // Validate teacher if provided
       if (teacher) {
         if (teacher.length !== 24) {
           return res.status(400).json({
@@ -288,7 +274,6 @@ const classroomController = {
         }
       }
 
-      // Check if name is unique (if changed)
       if (name && name !== existing.name) {
         const nameExists = await prisma.classroom.findFirst({
           where: { 
@@ -305,7 +290,6 @@ const classroomController = {
         }
       }
 
-      // Validate activityIds if provided
       if (activityIds && activityIds.length > 0) {
         const invalidIds = activityIds.filter(id => !id || id.length !== 24);
         if (invalidIds.length > 0) {
@@ -316,7 +300,6 @@ const classroomController = {
         }
       }
 
-      // Build update data
       const updateData = {};
       if (name) updateData.name = name;
       if (teacher) updateData.teacherId = teacher;
@@ -365,12 +348,10 @@ const classroomController = {
     }
   },
 
-  // Delete classroom
   deleteClassroom: async (req, res) => {
     try {
       const { id } = req.params;
 
-      // Validate ObjectId
       if (!id || id.length !== 24) {
         return res.status(400).json({ 
           success: false,
@@ -378,7 +359,6 @@ const classroomController = {
         });
       }
 
-      // Check if classroom exists
       const classroom = await prisma.classroom.findUnique({
         where: { id },
         include: {

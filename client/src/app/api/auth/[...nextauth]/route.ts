@@ -46,7 +46,7 @@ const handler = NextAuth({
             };
           }
 
-          throw new Error("Login gagal");
+          throw new Error(data.message || "Login gagal");
         } catch (error) {
           console.error("Credentials authorize error:", error);
           throw error;
@@ -73,7 +73,12 @@ const handler = NextAuth({
             picture: googleProfile.picture
           });
 
-          if (data.success && data.user) {
+          if (!data.success) {
+            user.loginErrorMessage = data.message;
+            return false;
+          }
+
+          if (data.user) {
             user.id = data.user.id;
             user.username = data.user.username;
             user.role = data.user.role;
@@ -81,11 +86,10 @@ const handler = NextAuth({
             return true;
           }
 
-          console.error("Google auth failed:", data.message);
           return false;
         } catch (error) {
-          console.error("Google signIn callback error:", error);
-          return false;
+          user.loginErrorMessage = "Terjadi kesalahan pada server";
+          return true;
         }
       }
 
@@ -114,8 +118,8 @@ const handler = NextAuth({
   },
 
   pages: {
-    signIn: "/auth/login",
-    error: "/auth/login"
+    signIn: "/login",
+    error: "/login"
   },
 
   session: {

@@ -16,20 +16,21 @@ datasource db {
 
 // ===== USER MODEL =====
 model User {
-  id          String  @id @default(auto()) @map("_id") @db.ObjectId
-  username    String  @unique
-  name        String?
-  email       String  @unique
-  phoneNumber String?
-  password    String?
-  role        Role
-  isLogin     Boolean @default(false)
-
-  googleId      String?
-  emailVerified DateTime?
-  provider      AuthProvider @default(LOCAL)
-
-  pictureId String? @db.ObjectId
+  id            String    @id @default(auto()) @map("_id") @db.ObjectId
+  username      String    @unique
+  name          String
+  email         String    @unique
+  password      String?
+  phoneNumber   String?
+  googleId      String?   @unique @map("google_id")
+  picture       String?
+  provider      Provider  @default(LOCAL)
+  role          Role      @default(PARENT)
+  emailVerified DateTime? @map("email_verified")
+  isActive      Boolean   @default(true) @map("is_active")
+  isLogin       Boolean   @default(false) @map("is_login")
+  createdAt     DateTime  @default(now()) @map("created_at")
+  updatedAt     DateTime  @updatedAt @map("updated_at")
 
   // Relations
   announcements       Announcement[]
@@ -40,9 +41,6 @@ model User {
   receivedMessages    Message[]         @relation("ReceivedMessages")
   quarterlyReports    QuarterlyReport[]
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
   @@map("users")
 }
 
@@ -52,7 +50,7 @@ enum Role {
   PARENT
 }
 
-enum AuthProvider {
+enum Provider {
   LOCAL
   GOOGLE
 }
@@ -103,7 +101,7 @@ model Announcement {
 
   isImportant Boolean @default(false)
 
-  // ✅ Attachments relation
+  // Attachments relation
   attachments Upload[] @relation("AnnouncementAttachments")
 
   createdAt DateTime @default(now())
@@ -137,7 +135,7 @@ model Student {
   gender    Gender
   address   String?
   birthDate DateTime
-  isActive  Boolean
+  isActive  Boolean  @default(true)
 
   // Relations
   classroomId String    @db.ObjectId
@@ -231,7 +229,7 @@ model LiveReport {
   activityIds String[]   @db.ObjectId
   activities  Activity[] @relation(fields: [activityIds], references: [id])
 
-  // ✅ Photos relation
+  // Photos relation
   photos Upload[] @relation("LiveReportPhotos")
 
   createdAt DateTime @default(now())

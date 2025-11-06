@@ -1,6 +1,7 @@
 const express = require('express');
 const dotenv = require('dotenv');
 const cors = require('cors');
+const helmet = require('helmet');
 const routes = require('./routes'); 
 const setupSwagger = require('./config/swagger');
 const prisma = require('./config/prisma');
@@ -10,6 +11,12 @@ dotenv.config();
 const app = express();
 
 const PORT = process.env.PORT || 5000;
+
+app.use(helmet({
+  contentSecurityPolicy: process.env.NODE_ENV === 'production' ? undefined : false,
+  crossOriginEmbedderPolicy: false,
+  crossOriginResourcePolicy: { policy: "cross-origin" }
+}));
 
 const allowedOrigins = [
   'http://localhost:3000',
@@ -30,81 +37,57 @@ app.use(cors({
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
   allowedHeaders: ['Content-Type', 'Authorization']
 }));
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+
+app.use(express.json({ limit: '10mb' }));
+app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
 setupSwagger(app);
 
 app.use('/api', routes);
 
-app.get('/', (req, res) => {
-  res.json({ 
-    message: 'Selamat Datang di Aplikasi KidConnect!',
-    version: '1.0.0',
-    database: 'Prisma + MongoDB',
-    endpoints: {
-      health: '/health',
-      docs: '/api/docs',
-      api: '/api'
-    }
-  });
-});
-
 app.get('/health', async (req, res) => {
   try {
     await prisma.$connect();
-    res.json({ 
+    res.json({
       status: 'Baik',
       database: 'Terhubung',
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
+      helmet: 'Enabled'
     });
   } catch (error) {
-    res.status(500).json({ 
+    res.status(500).json({
       status: 'Error',
-      database: 'Terputus',
-      pesan: error.message
+      database: 'Tidak terhubung',
+      error: error.message
     });
   }
-});
-
-app.use((err, req, res, next) => {
-  console.error('Error:', err.stack);
-  res.status(err.status || 500).json({ 
-    success: false,
-    pesan: err.message || 'Kesalahan Server Internal',
-    ...(process.env.NODE_ENV === 'development' && { stack: err.stack })
-  });
 });
 
 app.use((req, res) => {
   res.status(404).json({
     success: false,
-    pesan: 'Rute tidak ditemukan'
+    message: 'Rute tidak ditemukan'
   });
 });
 
-const server = app.listen(PORT, () => {
-  console.log(`🚀 Server running on: http://localhost:${PORT}`);
+app.use((err, req, res, next) => {
+  console.error('Error:', err.stack);
+  
+  res.status(err.status || 500).json({
+    success: false,
+    message: err.message || 'Terjadi kesalahan pada server',
+    ...(process.env.NODE_ENV === 'development' && { stack: err.stack })
+  });
+});
+
+app.listen(PORT, () => {
+  console.log(`🚀 Server berjalan di http://localhost:${PORT}`);
+  console.log(`📚 API Docs: http://localhost:${PORT}/api/docs`);
+  console.log(`🔒 Helmet: Enabled`);
 });
 
 process.on('SIGTERM', async () => {
-  console.log('🔴 SIGTERM received. Closing server...');
-  server.close(async () => {
-    console.log('🔌 Server closed');
-    await prisma.$disconnect();
-    console.log('🔌 Database disconnected');
-    process.exit(0);
-  });
+  console.log('SIGTERM signal diterima, menutup server...');
+  await prisma.$disconnect();
+  process.exit(0);
 });
-
-process.on('SIGINT', async () => {
-  console.log('\n🔴 SIGINT received. Closing server...');
-  server.close(async () => {
-    console.log('🔌 Server closed');
-    await prisma.$disconnect();
-    console.log('🔌 Database disconnected');
-    process.exit(0);
-  });
-});
-
-module.exports = app;

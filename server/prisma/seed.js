@@ -1,42 +1,73 @@
 const { PrismaClient } = require('../src/generated/prisma');
-const bcrypt = require('bcrypt');
 require('dotenv').config();
 
 const prisma = new PrismaClient();
 
-async function main() {
-  const existingAdmin = await prisma.user.findFirst({
-    where: { role: 'ADMIN' }
-  });
-
-  if (existingAdmin) {
-    console.log('Admin user already exists');
-    return;
+const adminTeam = [
+  {
+    username: 'agathahusnaamalia',
+    name: 'Agatha Husna Amalia',
+    email: 'agathahusnaamalia2004@mail.ugm.ac.id',
+    role: 'ADMIN'
+  },
+  {
+    username: 'amirasyafikapohan',
+    name: 'Amira Syafika Pohan',
+    email: 'amirasyafikapohan@mail.ugm.ac.id',
+    role: 'ADMIN'
+  },
+  {
+    username: 'joecelynauroramajesty',
+    name: 'Joecelyn Aurora Majesty',
+    email: 'joecelynauroramajesty@mail.ugm.ac.id',
+    role: 'ADMIN'
+  },
+  {
+    username: 'zaidanharith',
+    name: 'Zaidan Harith',
+    email: 'zaidanharith@mail.ugm.ac.id',
+    role: 'ADMIN'
+  },
+  {
+    username: 'zakifadhilarahman',
+    name: 'Zaki Fadhila Rahman',
+    email: 'zakifadhilarahman@mail.ugm.ac.id',
+    role: 'ADMIN'
   }
+];
 
-  const adminUsername = process.env.ADMIN_USERNAME;
-  const adminName = process.env.ADMIN_NAME;
-  const adminEmail = process.env.ADMIN_EMAIL;
-  const adminPassword = process.env.ADMIN_PASSWORD;
-  const adminPhone = process.env.ADMIN_PHONE;
+async function main() {
+  for (const admin of adminTeam) {
+    try {
+      const existing = await prisma.user.findUnique({
+        where: { email: admin.email }
+      });
 
-  const hashedPassword = await bcrypt.hash(adminPassword, 10);
-
-  await prisma.user.create({
-    data: {
-      username: adminUsername,
-      name: adminName,
-      email: adminEmail,
-      password: hashedPassword,
-      role: 'ADMIN',
-      phoneNumber: adminPhone
+      if (!existing) {
+        await prisma.user.create({
+          data: {
+            username: admin.username,
+            name: admin.name,
+            email: admin.email,
+            role: admin.role,
+            provider: 'GOOGLE',
+            emailVerified: new Date(),
+            isActive: true,
+            isLogin: false
+          }
+        });
+      } else {
+        console.log(`   ⏭️  ${admin.name} (already exists)`);
+      }
+    } catch (error) {
+      console.error(`   ❌ Error creating ${admin.name}:`, error.message);
     }
-  });
+  }
 }
 
 main()
   .catch((e) => {
-    console.error('Error during seed:', e);
+    console.error('\n❌ Error during seed:', e);
     process.exit(1);
   })
   .finally(async () => {

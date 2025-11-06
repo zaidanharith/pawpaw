@@ -65,8 +65,8 @@ const authController = {
           password: hashedPassword,
           role,
           provider: 'LOCAL',
-          pictureId: null,
-          isLogin: false
+          isLogin: false,
+          isActive: true
         },
         select: {
           id: true,
@@ -100,7 +100,6 @@ const authController = {
     try {
       const { username, password } = req.body;
 
-      // Validate required fields
       if (!username || !password) {
         return res.status(400).json({
           success: false,
@@ -116,6 +115,13 @@ const authController = {
         return res.status(401).json({
           success: false,
           message: 'Username/Password salah'
+        });
+      }
+
+      if (!user.isActive) {
+        return res.status(403).json({
+          success: false,
+          message: 'Akun Anda telah dinonaktifkan. Hubungi administrator.'
         });
       }
 
@@ -147,15 +153,6 @@ const authController = {
         data: { isLogin: true }
       });
 
-      // ✅ Manual join to get picture
-      let pictureUrl = null;
-      if (user.pictureId) {
-        const upload = await prisma.upload.findUnique({
-          where: { id: user.pictureId }
-        });
-        pictureUrl = upload?.path || null;
-      }
-
       const token = generateToken(user.id, user.username, user.role);
 
       res.status(200).json({
@@ -169,7 +166,7 @@ const authController = {
           email: user.email,
           role: user.role,
           phoneNumber: user.phoneNumber,
-          picture: pictureUrl, // ✅ Return picture URL
+          picture: user.picture,
           provider: user.provider
         }
       });
@@ -195,107 +192,52 @@ const authController = {
         });
       }
 
-      let user = await prisma.user.findFirst({
-        where: {
-          OR: [
-            { email },
-            { googleId }
-          ]
-        }
+      let user = await prisma.user.findUnique({
+        where: { email }
       });
 
-      if (user) {
-        // ✅ Update existing user with Google data
-        let uploadId = user.pictureId;
-
-        // If picture URL changed, create/update upload record
-        if (picture) {
-          let existingUpload = uploadId 
-            ? await prisma.upload.findUnique({ where: { id: uploadId } }) 
-            : null;
-
-          if (!existingUpload || existingUpload.path !== picture) {
-            // Create new upload record for Google profile picture
-            const upload = await prisma.upload.create({
-              data: {
-                filename: `google-profile-${googleId}.jpg`,
-                originalName: `${name || 'user'}-profile.jpg`,
-                mimeType: 'image/jpeg',
-                size: 0, // Unknown size for external URLs
-                path: picture, // Google CDN URL
-                uploadType: 'PROFILE_PICTURE',
-                uploadedBy: user.id
-              }
-            });
-            uploadId = upload.id;
-          }
-        }
-
-        user = await prisma.user.update({
-          where: { id: user.id },
-          data: {
-            googleId,
-            pictureId: uploadId,
-            emailVerified: new Date(),
-            provider: 'GOOGLE',
-            isLogin: true
-          }
+      if (!user) {
+        return res.status(200).json({
+          success: false,
+          message: 'Email Anda tidak terdaftar dalam sistem. Silakan hubungi administrator untuk mendapatkan akses.',
+          userNotFound: true
         });
-
-        console.log('✅ Existing user logged in with Google:', user.email);
-      } else {
-        // ✅ Create new user from Google
-        const username = email.split('@')[0] + '_' + Math.random().toString(36).substring(2, 9);
-
-        // Create upload record for Google profile picture
-        let uploadId = null;
-        if (picture) {
-          const upload = await prisma.upload.create({
-            data: {
-              filename: `google-profile-${googleId}.jpg`,
-              originalName: `${name || 'user'}-profile.jpg`,
-              mimeType: 'image/jpeg',
-              size: 0,
-              path: picture,
-              uploadType: 'PROFILE_PICTURE'
-            }
-          });
-          uploadId = upload.id;
-        }
-
-        user = await prisma.user.create({
-          data: {
-            username,
-            name: name || 'Google User',
-            email,
-            phoneNumber: null,
-            password: null,
-            role: 'PARENT',
-            googleId,
-            pictureId: uploadId,
-            provider: 'GOOGLE',
-            emailVerified: new Date(),
-            isLogin: true
-          }
-        });
-
-        console.log('✅ New user created from Google:', user.email);
       }
 
-      // ✅ Manual join to get picture URL
-      let pictureUrl = null;
-      if (user.pictureId) {
-        const upload = await prisma.upload.findUnique({
-          where: { id: user.pictureId }
+      if (!user.isActive) {
+        return res.status(200).json({
+          success: false,
+          message: 'Akun Anda telah dinonaktifkan. Silakan hubungi administrator.',
+          accountInactive: true
         });
-        pictureUrl = upload?.path || null;
+      }
+
+      if (!user.googleId) {
+        user = await prisma.user.update({
+          where: { email },
+          data: {
+            googleId,
+            picture,
+            provider: 'GOOGLE',
+            emailVerified: new Date(),
+            isLogin: true
+          }
+        });
+      } else {
+        user = await prisma.user.update({
+          where: { email },
+          data: {
+            picture,
+            isLogin: true
+          }
+        });
       }
 
       const token = generateToken(user.id, user.username, user.role);
 
       res.status(200).json({
         success: true,
-        message: user.emailVerified ? 'Google login berhasil' : 'Akun Google berhasil dibuat',
+        message: `Selamat datang, ${user.name}!`,
         token,
         user: {
           id: user.id,
@@ -303,7 +245,7 @@ const authController = {
           name: user.name,
           email: user.email,
           role: user.role,
-          picture: pictureUrl, // ✅ Return picture URL
+          picture: user.picture,
           provider: user.provider,
           emailVerified: user.emailVerified,
           phoneNumber: user.phoneNumber
@@ -314,8 +256,8 @@ const authController = {
       console.error('Google auth error:', error);
       res.status(500).json({
         success: false,
-        message: 'Google authentication failed',
-        error: error.message
+        message: 'Terjadi kesalahan pada server. Silakan coba lagi.',
+        serverError: true
       });
     }
   },
@@ -404,15 +346,6 @@ const authController = {
         });
       }
 
-      // ✅ Manual join to get picture URL
-      let pictureUrl = null;
-      if (user.pictureId) {
-        const upload = await prisma.upload.findUnique({
-          where: { id: user.pictureId }
-        });
-        pictureUrl = upload?.path || null;
-      }
-
       res.status(200).json({
         success: true,
         data: {
@@ -422,10 +355,11 @@ const authController = {
           email: user.email,
           phoneNumber: user.phoneNumber,
           role: user.role,
-          picture: pictureUrl, // ✅ Return picture URL
+          picture: user.picture,
           provider: user.provider,
           emailVerified: user.emailVerified,
           isLogin: user.isLogin,
+          isActive: user.isActive,
           createdAt: user.createdAt,
           updatedAt: user.updatedAt
         }

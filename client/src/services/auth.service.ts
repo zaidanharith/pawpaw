@@ -25,19 +25,31 @@ export interface GoogleAuthData {
 export interface AuthResponse {
   success: boolean;
   message: string;
-  token: string;
-  user: {
+  token?: string;
+  user?: {
     id: string;
     username: string;
     name: string;
     email: string;
     role: "ADMIN" | "TEACHER" | "PARENT";
     picture?: string;
+    phoneNumber?: string;
+    provider?: string;
+    emailVerified?: Date;
   };
+  userNotFound?: boolean;
+  accountInactive?: boolean;
+  serverError?: boolean;
+  invalidPassword?: boolean;
 }
 
 interface ErrorResponse {
   message?: string;
+  success?: boolean;
+  userNotFound?: boolean;
+  accountInactive?: boolean;
+  serverError?: boolean;
+  invalidPassword?: boolean;
 }
 
 export const authService = {
@@ -48,7 +60,15 @@ export const authService = {
     } catch (error) {
       console.error("Login service error:", error);
       const axiosError = error as AxiosError<ErrorResponse>;
-      throw new Error(axiosError.response?.data?.message || "Login gagal");
+      
+      return {
+        success: false,
+        message: axiosError.response?.data?.message || "Login gagal",
+        userNotFound: axiosError.response?.data?.userNotFound,
+        accountInactive: axiosError.response?.data?.accountInactive,
+        invalidPassword: axiosError.response?.data?.invalidPassword,
+        serverError: !axiosError.response
+      };
     }
   },
 
@@ -59,7 +79,12 @@ export const authService = {
     } catch (error) {
       console.error("Register service error:", error);
       const axiosError = error as AxiosError<ErrorResponse>;
-      throw new Error(axiosError.response?.data?.message || "Registrasi gagal");
+      
+      return {
+        success: false,
+        message: axiosError.response?.data?.message || "Registrasi gagal",
+        serverError: !axiosError.response
+      };
     }
   },
 
@@ -70,7 +95,14 @@ export const authService = {
     } catch (error) {
       console.error("Google auth service error:", error);
       const axiosError = error as AxiosError<ErrorResponse>;
-      throw new Error(axiosError.response?.data?.message || "Google authentication gagal");
+      
+      return {
+        success: false,
+        message: axiosError.response?.data?.message || "Google authentication gagal",
+        userNotFound: axiosError.response?.data?.userNotFound,
+        accountInactive: axiosError.response?.data?.accountInactive,
+        serverError: !axiosError.response
+      };
     }
   },
 

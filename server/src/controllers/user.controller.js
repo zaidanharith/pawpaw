@@ -2,7 +2,6 @@ const prisma = require('../config/prisma');
 const bcrypt = require('bcrypt');
 
 const userController = {
-    // Get all users
     getAllUsers: async (req, res) => {
         try {
             const users = await prisma.user.findMany({
@@ -36,7 +35,6 @@ const userController = {
         }
     },
 
-    // Get user by ID
     getUserById: async (req, res) => {
         try {
             const { id } = req.params;
@@ -95,7 +93,6 @@ const userController = {
         }
     },
 
-    // Create user
     createUser: async (req, res) => {
         try {
             const { username, name, email, phoneNumber, password, role } = req.body;
@@ -175,7 +172,6 @@ const userController = {
         }
     },
 
-    // Update user
     updateUser: async (req, res) => {
         try {
             const { id } = req.params;
@@ -281,7 +277,6 @@ const userController = {
         }
     },
 
-    // Delete user
     deleteUser: async (req, res) => {
         try {
             const { id } = req.params;

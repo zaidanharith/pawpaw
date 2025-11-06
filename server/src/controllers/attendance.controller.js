@@ -2,12 +2,10 @@ const prisma = require('../config/prisma');
 
 const attendanceController = {
 
-  // Create attendance
   createAttendance: async (req, res) => {
     try {
       const { student, status, notes } = req.body;
 
-      // Validate required fields
       if (!student || !status) {
         return res.status(400).json({
           success: false,
@@ -15,7 +13,6 @@ const attendanceController = {
         });
       }
 
-      // Validate student ID
       if (!student || student.length !== 24) {
         return res.status(400).json({
           success: false,
@@ -23,7 +20,6 @@ const attendanceController = {
         });
       }
 
-      // Validate enum status
       const validStatus = ['HADIR', 'ALFA', 'SAKIT', 'IZIN'];
       if (!validStatus.includes(status)) {
         return res.status(400).json({
@@ -32,7 +28,6 @@ const attendanceController = {
         });
       }
 
-      // Check if student exists
       const studentExists = await prisma.student.findUnique({
         where: { id: student }
       });
@@ -44,7 +39,6 @@ const attendanceController = {
         });
       }
 
-      // Validate user (dari auth middleware)
       if (!req.user || !req.user.id) {
         return res.status(401).json({
           success: false,
@@ -98,7 +92,6 @@ const attendanceController = {
     }
   },
 
-  // Get all attendances
   getAllAttendances: async (req, res) => {
     try {
       const attendances = await prisma.attendance.findMany({
@@ -144,12 +137,10 @@ const attendanceController = {
     }
   },
 
-  // Get attendance by ID
   getAttendanceById: async (req, res) => {
     try {
       const { id } = req.params;
 
-      // Validate ObjectId
       if (!id || id.length !== 24) {
         return res.status(400).json({ 
           success: false,
@@ -212,13 +203,11 @@ const attendanceController = {
     }
   },
 
-  // Update attendance
   updateAttendance: async (req, res) => {
     try {
       const { id } = req.params;
       const { status, notes, date } = req.body;
 
-      // Validate ObjectId
       if (!id || id.length !== 24) {
         return res.status(400).json({ 
           success: false,
@@ -226,7 +215,6 @@ const attendanceController = {
         });
       }
 
-      // Check if attendance exists
       const existing = await prisma.attendance.findUnique({
         where: { id }
       });
@@ -238,7 +226,6 @@ const attendanceController = {
         });
       }
 
-      // Validate enum status if provided
       if (status) {
         const validStatus = ['HADIR', 'ALFA', 'SAKIT', 'IZIN'];
         if (!validStatus.includes(status)) {
@@ -249,7 +236,6 @@ const attendanceController = {
         }
       }
 
-      // Build update data
       const updateData = {};
       if (status) updateData.status = status;
       if (notes !== undefined) updateData.notes = notes || null;
@@ -290,12 +276,10 @@ const attendanceController = {
     }
   },
 
-  // Delete attendance
   deleteAttendance: async (req, res) => {
     try {
       const { id } = req.params;
 
-      // Validate ObjectId
       if (!id || id.length !== 24) {
         return res.status(400).json({ 
           success: false,
@@ -303,7 +287,6 @@ const attendanceController = {
         });
       }
 
-      // Check if attendance exists
       const attendance = await prisma.attendance.findUnique({
         where: { id }
       });
@@ -332,12 +315,10 @@ const attendanceController = {
     }
   },
 
-  // Get attendance by student ID
   getAttendanceByStudent: async (req, res) => {
     try {
       const { studentId } = req.params;
 
-      // Validate ObjectId
       if (!studentId || studentId.length !== 24) {
         return res.status(400).json({ 
           success: false,
@@ -345,7 +326,6 @@ const attendanceController = {
         });
       }
 
-      // Check if student exists
       const student = await prisma.student.findUnique({
         where: { id: studentId }
       });
@@ -386,7 +366,6 @@ const attendanceController = {
         }
       });
 
-      // Calculate statistics
       const stats = {
         total: attendances.length,
         hadir: attendances.filter(a => a.status === 'HADIR').length,
