@@ -3,6 +3,7 @@
 import { signIn, useSession } from "next-auth/react";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/dist/client/link";
 
 export default function LoginPage() {
   const [loading, setLoading] = useState(false);
@@ -41,6 +42,9 @@ export default function LoginPage() {
   return (
     <div className="min-h-screen flex items-center justify-center">
       <div className="p-8 rounded-lg shadow-lg w-full max-w-md">
+        <Link href="/" className="mb-4 text-center text-blue-500 hover:underline">
+          Kembali ke Beranda
+        </Link>
         <h1 className="text-2xl font-bold mb-6 text-center">Login</h1>
         {loginError && (
           <div className="mb-4 text-red-600 text-center">{loginError}</div>

@@ -7,32 +7,27 @@ const adminTeam = [
   {
     username: 'agathahusnaamalia',
     name: 'Agatha Husna Amalia',
-    email: 'agathahusnaamalia2004@mail.ugm.ac.id',
-    role: 'ADMIN'
+    email: 'agathahusnaamalia2004@mail.ugm.ac.id'
   },
   {
     username: 'amirasyafikapohan',
     name: 'Amira Syafika Pohan',
-    email: 'amirasyafikapohan@mail.ugm.ac.id',
-    role: 'ADMIN'
+    email: 'amirasyafikapohan@mail.ugm.ac.id'
   },
   {
     username: 'joecelynauroramajesty',
     name: 'Joecelyn Aurora Majesty',
-    email: 'joecelynauroramajesty@mail.ugm.ac.id',
-    role: 'ADMIN'
+    email: 'joecelynauroramajesty@mail.ugm.ac.id'
   },
   {
     username: 'zaidanharith',
     name: 'Zaidan Harith',
-    email: 'zaidanharith@mail.ugm.ac.id',
-    role: 'ADMIN'
+    email: 'zaidanharith@mail.ugm.ac.id'
   },
   {
     username: 'zakifadhilarahman',
     name: 'Zaki Fadhila Rahman',
-    email: 'zakifadhilarahman@mail.ugm.ac.id',
-    role: 'ADMIN'
+    email: 'zakifadhilarahman@mail.ugm.ac.id'
   }
 ];
 
@@ -49,7 +44,7 @@ async function main() {
             username: admin.username,
             name: admin.name,
             email: admin.email,
-            role: admin.role,
+            role: 'ADMIN',
             provider: 'GOOGLE',
             emailVerified: new Date(),
             isActive: true,
