@@ -18,7 +18,21 @@ const LoginGoogleButton = ({ setLoginError }: { setLoginError: (msg: string | nu
   }
 
   return (
-    <button onClick={handleGoogleLogin} className="bg-blue-400 cursor-pointer">Login dengan Google</button>
+        <div>
+          <button
+            type="button"
+            onClick={handleGoogleLogin}
+            className="flex items-center cursor-pointer justify-center w-full py-2 border border-gray-300 rounded-lg hover:bg-gray-100 transition-colors"
+            
+          >
+            <img
+              src="https://www.svgrepo.com/show/475656/google-color.svg"
+              alt="Google"
+              className="w-5 h-5 mr-2"
+            />
+            Masuk dengan Google
+          </button>
+        </div>
   );
 };
 
