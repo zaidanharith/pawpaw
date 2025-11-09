@@ -1,6 +1,7 @@
 import Navbar from '../components/layout/Navbar';
 import FeatureCard from '../components/ui/FeatureCard';
 import Link from 'next/link';
+import Gallery from '../components/gallery/gallery';
 
 export default function Home() {
   return (
@@ -10,13 +11,13 @@ export default function Home() {
         <section id="hero" className="px-4">
           <h1 className="text-3xl text-center font-bold text-black">Tetap <span className="text-(--color-green-admin)">Terhubung</span> dengan Kegiatan Belajar Anak Anda</h1>
           <p className="mt-4 text-center">Pantau kehadiran, perkembangan, dan kegiatan anak, serta berkomunikasi langsung dengan guru.</p>
-          <div>
-            {/* ISI GALLERY NYA DISINI */}
+          <div className='mt-8'>
+            <Gallery />
           </div>
         </section>
-        <section id="feature" className="my-5 px-4 py-7 bg-(--color-yellow-light)">
+        <section id="feature" className="w-full my-5 px-4 py-7 bg-(--color-yellow-light)">
           <p className='text-center'>Beberapa hal yang Anda butuhkan untuk mendampingi perjalanan belajar anak.</p>
-          <div className='my-7'>
+          <div className='mx-60 my-7'>
             <FeatureCard
               title="Live Report"
               description="Guru mengirimkan laporan kegiatan harian siswa lengkap dengan foto atau video, sehingga orang tua dapat memantau perkembangan anak secara langsung."
