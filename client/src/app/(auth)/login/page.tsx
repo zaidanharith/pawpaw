@@ -1,15 +1,17 @@
 "use client";
 
-import { signIn, useSession } from "next-auth/react";
-import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
-import Link from "next/dist/client/link";
+import { useSession } from "next-auth/react";
+import { useEffect, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import Link from "next/link";
+import LoginForm from "@/components/auth/LoginForm";
+import LoginGoogleButton from "@/components/auth/LoginGoogleButton";
 
 export default function LoginPage() {
-  const [loading, setLoading] = useState(false);
-  const [loginError, setLoginError] = useState<string | null>(null);
-  const { data: session, status } = useSession();
+  const { status } = useSession();
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const [loginError, setLoginError] = useState<string | null>(null);
 
   useEffect(() => {
     if (status === "authenticated") {
@@ -17,46 +19,33 @@ export default function LoginPage() {
     }
   }, [status, router]);
 
-  const handleGoogleLogin = async () => {
-    setLoading(true);
-    const result = await signIn("google", { callbackUrl: "/dashboard", redirect: false });
-    setLoading(false);
-
-    if (result && !result.ok) {
-      setLoginError("Login gagal. Email tidak terdaftar atau akun dinonaktifkan.");
+  useEffect(() => {
+    const error = searchParams.get("error");
+    let message: string | null = null;
+    if (error === "AccessDenied") {
+      message = "Login gagal. Email tidak terdaftar atau akun dinonaktifkan.";
+    } else if (error) {
+      message = "Login gagal.";
     }
-  };
-
-  if (status === "loading") {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <p>Loading...</p>
-      </div>
-    );
-  }
+    if (loginError !== message) {
+      setLoginError(message);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchParams]);
 
   if (status === "authenticated") {
     return null;
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center">
-      <div className="p-8 rounded-lg shadow-lg w-full max-w-md">
-        <Link href="/" className="mb-4 text-center text-blue-500 hover:underline">
-          Kembali ke Beranda
-        </Link>
-        <h1 className="text-2xl font-bold mb-6 text-center">Login</h1>
+      <div>
+        <Link href="/">← Kembali ke Dashboard</Link>
+        <h2 className="text-2xl font-bold mb-6 text-center">Login</h2>
         {loginError && (
           <div className="mb-4 text-red-600 text-center">{loginError}</div>
         )}
-        <button
-          onClick={handleGoogleLogin}
-          disabled={loading}
-          className="w-full bg-blue-600 text-white py-3 px-6 rounded-lg hover:bg-blue-700 disabled:opacity-50"
-        >
-          {loading ? "Loading..." : "Login dengan Google"}
-        </button>
+        <LoginForm setLoginError={setLoginError} />
+        <LoginGoogleButton setLoginError={setLoginError} />
       </div>
-    </div>
   );
 }

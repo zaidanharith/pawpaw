@@ -10,7 +10,7 @@ dotenv.config();
 
 const app = express();
 
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT;
 
 app.use(helmet({
   contentSecurityPolicy: process.env.NODE_ENV === 'production' ? undefined : false,

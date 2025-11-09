@@ -1,19 +1,23 @@
 "use client";
 
 import { signOut, useSession } from "next-auth/react";
-import Link from "next/dist/client/link";
+import Link from "next/link";
 import Navbar from "../../components/layout/Navbar";
+import authService from "@/services/auth.service";
 
-const handleLogout = async () => {
-    await signOut({ callbackUrl: "/login" });
-  };
-  
 export default function DashboardPage() {
   const { data: session } = useSession();
 
+  const handleLogout = async () => {
+    if (session?.accessToken) {
+      await authService.logout(session.accessToken);
+    }
+    await signOut({ callbackUrl: "/login" });
+  };
+
   return (
     <div>
-      <Navbar></Navbar>
+      <Navbar />
       <button
         onClick={handleLogout}
         className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 mt-4"
@@ -26,4 +30,4 @@ export default function DashboardPage() {
       <h2 className="text-xl">Selamat datang, {session?.user.name}</h2>
     </div>
   );
-} 
+}

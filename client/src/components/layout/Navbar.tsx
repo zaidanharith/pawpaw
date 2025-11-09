@@ -8,14 +8,14 @@ const Navbar = () => {
     const { data: session, status } = useSession();
 
     return (
-        <nav className="px-4 py-3 flex justify-between items-center font-sans fixed w-full top-0 left-0 bg-background/70 backdrop-blur-md z-50">
+        <nav className="px-4 py-3 flex justify-between items-center font-sans fixed inset-x-0 top-0 bg-background/70 backdrop-blur-md z-50 max-w-screen">
             <Link href="/" className="flex items-center gap-2">
                 <div className="w-10 h-10 bg-gray-300 rounded-full"></div>
                 <p className="font-bold text-xl text-gray-800">KidConnect</p>
             </Link>
             {status === "authenticated" && session?.user ? (
-            <Link href="/dashboard" className='flex items-center gap-2'>
-                <p className="font-semibold text-lg text-gray-800 max-w-[168px] truncate">
+            <Link href="/dashboard" className='flex items-center gap-1'>
+                <p className="font-semibold text-lg text-gray-800 truncate max-w-[168px]">
                     Halo, {session.user.name || "User"}!
                 </p>
                 <div className="w-10 h-10 bg-gray-300 rounded-full overflow-hidden">
