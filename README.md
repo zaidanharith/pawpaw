@@ -24,8 +24,8 @@ npm run dev
 
 3. Akses aplikasi:
   - **Frontend**: <a href="http://localhost:3000" target="_blank" rel="noopener noreferrer">http://localhost:3000</a>  
-    - **Backend API**: <a href="http://localhost:5000" target="_blank" rel="noopener noreferrer">http://localhost:5000</a>  
-    - **API Documentation (Swagger)**: <a href="http://localhost:5000/api/docs" target="_blank" rel="noopener noreferrer">http://localhost:5000/api/docs</a>
+    - **Backend API**: <a href="http://localhost:4000" target="_blank" rel="noopener noreferrer">http://localhost:4000</a>  
+    - **API Documentation (Swagger)**: <a href="http://localhost:4000/api/docs" target="_blank" rel="noopener noreferrer">http://localhost:4000/api/docs</a>
 
 ## 📝 Penjelasan Detail Tentang Aplikasi (Back-End)
 
