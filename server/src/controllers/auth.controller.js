@@ -2,9 +2,13 @@ const bcrypt = require('bcrypt');
 const { generateToken } = require('../utils/jwt');
 const prisma = require('../config/prisma');
 const { OAuth2Client } = require('google-auth-library');
-const { sendWelcomeEmail } = require('../utils/mailer'); // Tambahkan import mailer
+const { sendWelcomeEmail } = require('../utils/mailer');
 
 const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
+
+function euclideanDistance(d1, d2) {
+  return Math.sqrt(d1.reduce((sum, val, i) => sum + Math.pow(val - d2[i], 2), 0));
+}
 
 const authController = {
   register: async (req, res) => {
@@ -438,6 +442,59 @@ const authController = {
         message: 'Terjadi error di server',
         error: error.message
       });
+    }
+  },
+
+  faceLogin: async (req, res) => {
+    try {
+      const { descriptor } = req.body;
+      if (!descriptor || !Array.isArray(descriptor)) {
+        return res.status(400).json({ success: false, message: "Descriptor tidak valid" });
+      }
+
+      // Cari user dengan faceDescriptor terdekat
+      const users = await prisma.user.findMany({
+        where: {
+          faceDescriptor: { not: [] }
+        }
+      });
+
+      let matchedUser = null;
+      let minDistance = 0.6; // threshold face-api.js
+
+      for (const user of users) {
+        if (user.faceDescriptor && user.faceDescriptor.length === descriptor.length) {
+          const dist = euclideanDistance(user.faceDescriptor, descriptor);
+          if (dist < minDistance) {
+            minDistance = dist;
+            matchedUser = user;
+          }
+        }
+      }
+
+      if (matchedUser) {
+        // Login sukses, generate JWT
+        const token = generateToken(matchedUser.id, matchedUser.username, matchedUser.role);
+        return res.json({
+          success: true,
+          token,
+          user: {
+            id: matchedUser.id,
+            username: matchedUser.username,
+            name: matchedUser.name,
+            email: matchedUser.email,
+            role: matchedUser.role,
+            phoneNumber: matchedUser.phoneNumber,
+            picture: matchedUser.picture,
+            provider: matchedUser.provider
+          }
+        });
+      } else {
+        return res.status(401).json({ success: false, message: "Wajah tidak cocok" });
+      }
+    } catch (err) {
+      console.error("Face login error:", err);
+      res.status(500).json({ success: false, message: "Server error" });
     }
   }
 };

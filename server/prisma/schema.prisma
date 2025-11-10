@@ -22,7 +22,7 @@ model User {
   email         String    @unique
   password      String?
   phoneNumber   String?
-  googleId      String?   @unique @map("google_id")
+  googleId      String?   @map("google_id")
   picture       String?
   provider      Provider  @default(LOCAL)
   role          Role      @default(PARENT)
@@ -31,6 +31,8 @@ model User {
   isLogin       Boolean   @default(false) @map("is_login")
   createdAt     DateTime  @default(now()) @map("created_at")
   updatedAt     DateTime  @updatedAt @map("updated_at")
+
+  faceDescriptor Float[]
 
   // Relations
   announcements       Announcement[]

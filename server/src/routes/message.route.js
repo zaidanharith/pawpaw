@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const messageController = require('../controllers/message.controller');
-const { protect, roleCheck } = require('../middleware/auth.middleware');
+const { protect, requireRole } = require('../middleware/auth.middleware');
 
 /**
  * @swagger
@@ -27,7 +27,7 @@ const { protect, roleCheck } = require('../middleware/auth.middleware');
 router.get(
   '/messages',
   protect,
-  roleCheck('PARENT', 'TEACHER'),
+  requireRole('PARENT', 'TEACHER'),
   messageController.getUserMessages
 );
 
@@ -55,7 +55,7 @@ router.get(
 router.get(
   '/messages/:id',
   protect,
-  roleCheck('PARENT', 'TEACHER'),
+  requireRole('PARENT', 'TEACHER'),
   messageController.getMessageById
 );
 
@@ -89,7 +89,7 @@ router.get(
 router.post(
   '/messages',
   protect,
-  roleCheck('PARENT', 'TEACHER'),
+  requireRole('PARENT', 'TEACHER'),
   messageController.sendMessage
 );
 
@@ -117,7 +117,7 @@ router.post(
 router.delete(
   '/messages/:id',
   protect,
-  roleCheck('PARENT', 'TEACHER'),
+  requireRole('PARENT', 'TEACHER'),
   messageController.deleteMessage
 );
 

@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const studentController = require("../controllers/student.controller");
-const { protect, roleCheck } = require("../middleware/auth.middleware");
+const { protect, requireRole } = require("../middleware/auth.middleware");
 
 /**
  * @swagger
@@ -33,7 +33,7 @@ const { protect, roleCheck } = require("../middleware/auth.middleware");
 router.get(
   "/student",
   protect,
-  roleCheck("PARENT", "TEACHER", "ADMIN"),
+  requireRole("PARENT", "TEACHER", "ADMIN"),
   studentController.getAllStudents
 );
 
@@ -65,7 +65,7 @@ router.get(
 router.get(
   "/student/:id",
   protect,
-  roleCheck("PARENT", "TEACHER", "ADMIN"),
+  requireRole("PARENT", "TEACHER", "ADMIN"),
   studentController.getStudentById
 );
 
@@ -96,7 +96,7 @@ router.get(
 router.post(
   "/student/create",
   protect,
-  roleCheck("TEACHER", "ADMIN"),
+  requireRole("TEACHER", "ADMIN"),
   studentController.createStudent
 );
 
@@ -130,7 +130,7 @@ router.post(
 router.put(
   "/student/:id",
   protect,
-  roleCheck("TEACHER", "ADMIN"),
+  requireRole("TEACHER", "ADMIN"),
   studentController.updateStudent
 );
 
@@ -158,7 +158,7 @@ router.put(
 router.delete(
   "/student/:id",
   protect,
-  roleCheck("TEACHER", "ADMIN"),
+  requireRole("TEACHER", "ADMIN"),
   studentController.deleteStudent
 );
 

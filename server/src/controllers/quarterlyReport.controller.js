@@ -1,4 +1,5 @@
 const prisma = require('../config/prisma');
+const PDFDocument = require('pdfkit');
 
 const getQuarter = (month) => {
   if (month < 3) return 'Q1';
@@ -439,7 +440,56 @@ const quarterlyReportController = {
         message: 'Gagal menghapus laporan triwulan'
       });
     }
-  }
+  },
+
+  downloadQuarterlyReportPdf: async (req, res) => {
+    try {
+      const { id } = req.params;
+      if (!id || id.length !== 24) {
+        return res.status(400).json({ success: false, message: "ID tidak valid" });
+      }
+
+      const report = await prisma.quarterlyReport.findUnique({
+        where: { id },
+        include: {
+          student: {
+            select: { name: true, gender: true, classroom: { select: { name: true } } }
+          },
+          teacher: { select: { name: true, email: true } }
+        }
+      });
+
+      if (!report) {
+        return res.status(404).json({ success: false, message: 'Laporan triwulan tidak ditemukan' });
+      }
+
+      // Generate PDF
+      const doc = new PDFDocument();
+      res.setHeader('Content-Type', 'application/pdf');
+      res.setHeader('Content-Disposition', `attachment; filename=quarterly-report-${id}.pdf`);
+      doc.pipe(res);
+
+      doc.fontSize(20).text('Quarterly Report', { align: 'center' });
+      doc.moveDown();
+      doc.fontSize(14).text(`Student: ${report.student.name}`);
+      doc.text(`Classroom: ${report.student.classroom?.name || '-'}`);
+      doc.text(`Gender: ${report.student.gender}`);
+      doc.text(`Teacher: ${report.teacher.name}`);
+      doc.text(`Quarter: ${report.quarter} ${report.year}`);
+      doc.moveDown();
+      doc.fontSize(14).text('Activities Summary:', { underline: true });
+      report.activitiesSummary.forEach((act, i) => {
+        doc.text(`${i + 1}. ${act}`);
+      });
+      doc.moveDown();
+      doc.fontSize(12).text(`Notes: ${report.notes || '-'}`);
+      doc.end();
+
+    } catch (error) {
+      console.error('Download quarterly report PDF error:', error);
+      res.status(500).json({ success: false, message: 'Gagal membuat PDF laporan triwulan' });
+    }
+  },
 };
 
 module.exports = quarterlyReportController;

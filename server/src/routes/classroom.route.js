@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const classroomController = require('../controllers/classroom.controller');
-const { protect, roleCheck } = require('../middleware/auth.middleware');
+const { protect, requireRole } = require('../middleware/auth.middleware');
 
 /**
  * @swagger
@@ -25,9 +25,9 @@ const { protect, roleCheck } = require('../middleware/auth.middleware');
  *         description: Akses ditolak
  */
 router.get(
-  '/',
+  '/classroom/',
   protect,
-  roleCheck(['PARENT', 'TEACHER', 'ADMIN']),
+  requireRole('PARENT', 'TEACHER', 'ADMIN'),
   classroomController.getAllClassrooms
 );
 
@@ -53,9 +53,9 @@ router.get(
  *         description: Kelas tidak ditemukan
  */
 router.get(
-  '/:id',
+  '/classroom/:id',
   protect,
-  roleCheck(['PARENT', 'TEACHER', 'ADMIN']),
+  requireRole('PARENT', 'TEACHER', 'ADMIN'),
   classroomController.getClassroomById
 );
 
@@ -95,9 +95,9 @@ router.get(
  *         description: Data tidak valid
  */
 router.post(
-  '/',
+  '/classroom',
   protect,
-  roleCheck(['TEACHER', 'ADMIN']),
+  requireRole('TEACHER', 'ADMIN'),
   classroomController.createClassroom
 );
 
@@ -141,9 +141,9 @@ router.post(
  *         description: Kelas tidak ditemukan
  */
 router.put(
-  '/:id',
+  '/classroom/:id',
   protect,
-  roleCheck(['TEACHER', 'ADMIN']),
+  requireRole('TEACHER', 'ADMIN'),
   classroomController.updateClassroom
 );
 
@@ -169,9 +169,9 @@ router.put(
  *         description: Kelas tidak ditemukan
  */
 router.delete(
-  '/:id',
+  '/classroom/:id',
   protect,
-  roleCheck(['ADMIN']),
+  requireRole('ADMIN'),
   classroomController.deleteClassroom
 );
 

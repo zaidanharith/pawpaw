@@ -1,6 +1,6 @@
 const express = require('express');
 const authController = require('../controllers/auth.controller');
-const { authMiddleware, requireRole } = require('../middleware/auth.middleware');
+const { protect, requireRole } = require('../middleware/auth.middleware');
 
 const router = express.Router();
 
@@ -61,7 +61,7 @@ const router = express.Router();
  *       403:
  *         description: Hanya admin yang dapat mendaftarkan user baru
  */
-router.post('/auth/register', authMiddleware, requireRole('ADMIN'), authController.register);
+router.post('/auth/register', protect, requireRole('ADMIN'), authController.register);
 
 /**
  * @swagger
@@ -172,7 +172,7 @@ router.post('/auth/google', authController.googleAuth);
  *       401:
  *         description: Akses ditolak
  */
-router.post('/auth/logout', authMiddleware, authController.logout);
+router.post('/auth/logout', protect, authController.logout);
 
 /**
  * @swagger
@@ -218,7 +218,7 @@ router.post('/auth/reset-password', authController.resetPassword);
  *       401:
  *         description: Akses ditolak
  */
-router.get('/auth/profile', authMiddleware, authController.getProfile);
+router.get('/auth/profile', protect, authController.getProfile);
 
 /**
  * @swagger
@@ -234,6 +234,49 @@ router.get('/auth/profile', authMiddleware, authController.getProfile);
  *       401:
  *         description: Akses ditolak
  */
-router.get('/auth/me', authMiddleware, authController.getProfile);
+router.get('/auth/me', protect, authController.getProfile);
+
+/**
+ * @swagger
+ * /auth/face-login:
+ *   post:
+ *     summary: Login dengan Face Recognition
+ *     tags: [Auth]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - descriptor
+ *             properties:
+ *               descriptor:
+ *                 type: array
+ *                 items:
+ *                   type: number
+ *                 example: [0.123, -0.456, ...]
+ *     responses:
+ *       200:
+ *         description: Login berhasil
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 token:
+ *                   type: string
+ *                 user:
+ *                   type: object
+ *       401:
+ *         description: Wajah tidak cocok
+ *       400:
+ *         description: Descriptor tidak valid
+ *       500:
+ *         description: Server error
+ */
+router.post('/auth/face-login', authController.faceLogin);
 
 module.exports = router;

@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const activityController = require('../controllers/activity.controller');
-const { protect, roleCheck } = require('../middleware/auth.middleware');
+const { protect, requireRole } = require('../middleware/auth.middleware');
 
 /**
  * @swagger
@@ -27,7 +27,7 @@ const { protect, roleCheck } = require('../middleware/auth.middleware');
 router.get(
   '/activity',
   protect,
-  roleCheck('PARENT', 'TEACHER', 'ADMIN'),
+  requireRole('PARENT', 'TEACHER', 'ADMIN'),
   activityController.getAllActivities
 );
 
@@ -55,7 +55,7 @@ router.get(
 router.get(
   '/activity/:id',
   protect,
-  roleCheck('PARENT', 'TEACHER', 'ADMIN'),
+  requireRole('PARENT', 'TEACHER', 'ADMIN'),
   activityController.getActivityById
 );
 
@@ -94,7 +94,7 @@ router.get(
 router.post(
   '/activity/create',
   protect,
-  roleCheck('TEACHER', 'ADMIN'),
+  requireRole('TEACHER', 'ADMIN'),
   activityController.createActivity
 );
 
@@ -140,7 +140,7 @@ router.post(
 router.put(
   '/activity/:id',
   protect,
-  roleCheck('TEACHER', 'ADMIN'),
+  requireRole('TEACHER', 'ADMIN'),
   activityController.updateActivity
 );
 
@@ -168,7 +168,7 @@ router.put(
 router.delete(
   '/activity/:id',
   protect,
-  roleCheck('ADMIN'),
+  requireRole('ADMIN'),
   activityController.deleteActivity
 );
 

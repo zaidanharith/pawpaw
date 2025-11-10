@@ -1,7 +1,7 @@
 const prisma = require('../config/prisma');
 const { verifyToken } = require('../utils/jwt');
 
-const authMiddleware = async (req, res, next) => {
+const protect = async (req, res, next) => {
   try {
     const token = req.header('Authorization')?.replace('Bearer ', '');
 
@@ -57,7 +57,6 @@ const requireRole = (...allowedRoles) => {
         message: 'Unauthorized'
       });
     }
-
     if (!allowedRoles.includes(req.user.role)) {
       return res.status(403).json({
         success: false,
@@ -69,12 +68,8 @@ const requireRole = (...allowedRoles) => {
   };
 };
 
-const protect = authMiddleware;
-const roleCheck = requireRole;
 
 module.exports = { 
-  authMiddleware, 
   requireRole,
-  protect,
-  roleCheck
+  protect
 };

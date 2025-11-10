@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const quarterlyReportController = require("../controllers/quarterlyReport.controller");
-const { protect, roleCheck } = require("../middleware/auth.middleware");
+const { protect, requireRole } = require("../middleware/auth.middleware");
 
 /**
  * @swagger
@@ -25,7 +25,7 @@ const { protect, roleCheck } = require("../middleware/auth.middleware");
 router.get(
   "/report",
   protect,
-  roleCheck("ADMIN", "TEACHER"),
+  requireRole("ADMIN", "TEACHER"),
   quarterlyReportController.getQuarterlyReports
 );
 
@@ -53,7 +53,7 @@ router.get(
 router.get(
   "/report/:id",
   protect,
-  roleCheck("ADMIN", "TEACHER"),
+  requireRole("ADMIN", "TEACHER"),
   quarterlyReportController.getQuarterlyReportById
 );
 
@@ -90,7 +90,7 @@ router.get(
 router.post(
   "/report",
   protect,
-  roleCheck("TEACHER"),
+  requireRole("TEACHER"),
   quarterlyReportController.generateQuarterlyReport
 );
 
@@ -118,8 +118,36 @@ router.post(
 router.delete(
   "/report/:id",
   protect,
-  roleCheck("ADMIN", "TEACHER"),
+  requireRole("ADMIN", "TEACHER"),
   quarterlyReportController.deleteQuarterlyReport
+);
+
+/**
+ * @swagger
+ * /report/{id}/pdf:
+ *   get:
+ *     summary: Download laporan triwulan dalam bentuk PDF
+ *     tags: [Quarterly Report]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID quarterly report
+ *     responses:
+ *       200:
+ *         description: File PDF laporan triwulan
+ *       404:
+ *         description: Laporan tidak ditemukan
+ */
+router.get(
+  "/report/:id/pdf",
+  protect,
+  requireRole("ADMIN", "TEACHER"),
+  quarterlyReportController.downloadQuarterlyReportPdf
 );
 
 module.exports = router;

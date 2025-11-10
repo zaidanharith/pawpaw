@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const announcementController = require('../controllers/announcement.controller');
-const { protect, roleCheck } = require('../middleware/auth.middleware');
+const { protect, requireRole } = require('../middleware/auth.middleware');
 
 /**
  * @swagger
@@ -40,7 +40,7 @@ const { protect, roleCheck } = require('../middleware/auth.middleware');
 router.post(
   '/announcement/create',
   protect,
-  roleCheck('TEACHER', 'ADMIN'),
+  requireRole('TEACHER', 'ADMIN'),
   announcementController.createAnnouncement
 );
 
@@ -61,7 +61,7 @@ router.post(
 router.get(
   '/announcement',
   protect,
-  roleCheck('PARENT', 'TEACHER', 'ADMIN'),
+  requireRole('PARENT', 'TEACHER', 'ADMIN'),
   announcementController.getAnnouncements
 );
 
@@ -89,7 +89,7 @@ router.get(
 router.get(
   '/announcement/:id',
   protect,
-  roleCheck('PARENT', 'TEACHER', 'ADMIN'),
+  requireRole('PARENT', 'TEACHER', 'ADMIN'),
   announcementController.getAnnouncementById
 );
 
@@ -128,7 +128,7 @@ router.get(
 router.put(
   '/announcement/:id',
   protect,
-  roleCheck('TEACHER', 'ADMIN'),
+  requireRole('TEACHER', 'ADMIN'),
   announcementController.updateAnnouncement
 );
 
@@ -156,7 +156,7 @@ router.put(
 router.delete(
   '/announcement/:id',
   protect,
-  roleCheck('TEACHER', 'ADMIN'),
+  requireRole('TEACHER', 'ADMIN'),
   announcementController.deleteAnnouncement
 );
 

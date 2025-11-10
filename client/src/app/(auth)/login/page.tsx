@@ -6,6 +6,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import LoginForm from "@/components/auth/LoginForm";
 import LoginGoogleButton from "@/components/auth/LoginGoogleButton";
+import FaceLogin from "@/components/auth/FaceLogin"; // Tambahkan import FaceLogin
 
 export default function LoginPage() {
   const { status } = useSession();
@@ -38,29 +39,38 @@ export default function LoginPage() {
   }
 
   return (
-      <div className="flex flex-col gap-3 font-sans min-h-screen bg-[#FFF7EB]">
-        <div className="mx-5 mt-3">
-          <Link href="/">← Kembali ke Dashboard</Link>
-        </div>
+    <div className="flex flex-col gap-3 font-sans min-h-screen bg-[#FFF7EB]">
+      <div className="mx-5 mt-3">
+        <Link href="/">← Kembali ke Dashboard</Link>
+      </div>
 
-        {loginError && (
-          <div className="mb-4 text-red-600 text-center">{loginError}</div>
-        )}
+      {loginError && (
+        <div className="mb-4 text-red-600 text-center">{loginError}</div>
+      )}
 
-        <div className="flex flex-1 justify-center items-center">
-          <div className="bg-white p-8 rounded-2xl shadow-md w-[340px]">
-            <h1 className="text-3xl font-bold text-gray-800 mb-6 text-center">Login</h1>
-            <LoginForm setLoginError={setLoginError} />
+      <div className="flex flex-1 justify-center items-center">
+        <div className="bg-white p-8 rounded-2xl shadow-md w-[340px]">
+          <h1 className="text-3xl font-bold text-gray-800 mb-6 text-center">Login</h1>
+          <LoginForm setLoginError={setLoginError} />
 
-            <div className="my-4 flex items-center">
-              <hr className="grow border-gray-300" />
-              <span className="mx-2 text-gray-400 text-sm">Atau</span>
-              <hr className="grow border-gray-300" />
-            </div>
-
-            <LoginGoogleButton setLoginError={setLoginError} />
+          <div className="my-4 flex items-center">
+            <hr className="grow border-gray-300" />
+            <span className="mx-2 text-gray-400 text-sm">Atau</span>
+            <hr className="grow border-gray-300" />
           </div>
+
+          <LoginGoogleButton setLoginError={setLoginError} />
+
+          <div className="my-4 flex items-center">
+            <hr className="grow border-gray-300" />
+            <span className="mx-2 text-gray-400 text-sm">Atau</span>
+            <hr className="grow border-gray-300" />
+          </div>
+
+          {/* Tambahkan FaceLogin di bawah tombol Google */}
+          <FaceLogin />
         </div>
       </div>
+    </div>
   );
 }
