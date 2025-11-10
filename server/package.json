@@ -38,10 +38,12 @@
     "dotenv": "^16.6.1",
     "express": "^4.21.2",
     "google-auth-library": "^9.15.1",
+    "googleapis": "^165.0.0",
     "helmet": "^8.1.0",
     "jsonwebtoken": "^9.0.2",
     "multer": "^1.4.5-lts.1",
     "multer-storage-cloudinary": "^4.0.0",
+    "nodemailer": "^7.0.10",
     "swagger-jsdoc": "^6.2.8",
     "swagger-ui-express": "^5.0.1"
   },

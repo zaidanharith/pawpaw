@@ -2,6 +2,7 @@ const bcrypt = require('bcrypt');
 const { generateToken } = require('../utils/jwt');
 const prisma = require('../config/prisma');
 const { OAuth2Client } = require('google-auth-library');
+const { sendWelcomeEmail } = require('../utils/mailer'); // Tambahkan import mailer
 
 const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
@@ -80,9 +81,15 @@ const authController = {
         }
       });
 
+      try {
+        await sendWelcomeEmail(email, name || username);
+      } catch (mailError) {
+        console.error('Gagal mengirim email registrasi:', mailError);
+      }
+
       res.status(201).json({
         success: true,
-        message: 'User berhasil didaftarkan. Silakan login untuk melanjutkan.',
+        message: 'User berhasil didaftarkan. Email konfirmasi telah dikirim.',
         data: user
       });
 
