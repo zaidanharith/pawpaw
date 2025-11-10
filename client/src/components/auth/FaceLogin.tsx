@@ -49,7 +49,6 @@ export default function FaceLogin() {
     
     loadModelsAndStartVideo();
     
-    // Cleanup: stop camera saat component unmount
     return () => {
       if (videoRef.current?.srcObject) {
         const stream = videoRef.current.srcObject as MediaStream;
@@ -73,32 +72,38 @@ export default function FaceLogin() {
     }
 
     setMessage("Memverifikasi...");
-    // Lanjutkan dengan verifikasi...
   };
 
   return (
-    <div style={{ padding: "20px" }}>
-      <h2>Login dengan Face Recognition</h2>
-      <p style={{ color: message.includes("Error") ? "red" : "blue" }}>
-        {message}
-      </p>
-      {loading ? (
-        <p>Loading model...</p>
-      ) : (
-        <>
-          <video
-            ref={videoRef}
-            autoPlay
-            playsInline
-            muted
-            width={320}
-            height={240}
-            style={{ border: "1px solid #ccc", display: "block" }}
-          />
-          <br />
-          <button onClick={handleLogin}>Login dengan Wajah</button>
-        </>
-      )}
-    </div>
+    <>
+      <div className="my-4 flex items-center">
+        <hr className="grow border-gray-300" />
+        <span className="mx-2 text-gray-400 text-sm">Atau</span>
+        <hr className="grow border-gray-300" />
+      </div>
+      <div style={{ padding: "20px" }}>
+        <h2>Login dengan Face Recognition</h2>
+        <p style={{ color: message.includes("Error") ? "red" : "blue" }}>
+          {message}
+        </p>
+        {loading ? (
+          <p>Loading model...</p>
+        ) : (
+          <>
+            <video
+              ref={videoRef}
+              autoPlay
+              playsInline
+              muted
+              width={320}
+              height={240}
+              style={{ border: "1px solid #ccc", display: "block" }}
+            />
+            <br />
+            <button onClick={handleLogin}>Login dengan Wajah</button>
+          </>
+        )}
+      </div>
+    </>
   );
 }

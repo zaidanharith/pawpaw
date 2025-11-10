@@ -6,7 +6,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import LoginForm from "@/components/auth/LoginForm";
 import LoginGoogleButton from "@/components/auth/LoginGoogleButton";
-import FaceLogin from "@/components/auth/FaceLogin"; // Tambahkan import FaceLogin
+import FaceLogin from "@/components/auth/FaceLogin";
 
 export default function LoginPage() {
   const { status } = useSession();
@@ -61,14 +61,7 @@ export default function LoginPage() {
 
           <LoginGoogleButton setLoginError={setLoginError} />
 
-          <div className="my-4 flex items-center">
-            <hr className="grow border-gray-300" />
-            <span className="mx-2 text-gray-400 text-sm">Atau</span>
-            <hr className="grow border-gray-300" />
-          </div>
-
-          {/* Tambahkan FaceLogin di bawah tombol Google */}
-          <FaceLogin />
+          {/* <FaceLogin /> */}
         </div>
       </div>
     </div>
