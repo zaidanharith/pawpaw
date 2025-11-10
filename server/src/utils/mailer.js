@@ -14,7 +14,7 @@ const transporter = nodemailer.createTransport({
 
 function sendWelcomeEmail(to, name) {
   return transporter.sendMail({
-    from: `"KidConnect Admin" <${process.env.EMAIL_USER}>`,
+    from: `"KidConnect Application" <${process.env.EMAIL_USER}>`,
     to,
     subject: 'Akun KidConnect Anda Telah Dibuat',
     html: `
