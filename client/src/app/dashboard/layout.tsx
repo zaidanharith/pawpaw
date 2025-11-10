@@ -13,10 +13,24 @@ export default function DashboardLayout({
   const router = useRouter();
 
   useEffect(() => {
+    if (status === "loading") return; // tunggu dulu
+
     if (status === "unauthenticated") {
       router.push("/login");
+      return;
     }
-  }, [status, router]);
+
+    const role = session?.user?.role;
+    if (role === "ADMIN") {
+      router.push("/dashboard/admin");
+    } else if (role === "TEACHER") {
+      router.push("/dashboard/teacher");
+    } else if (role === "PARENT") {
+      router.push("/dashboard/parent");
+    } else {
+      router.push("/unauthorized");
+    }
+  }, [status, session, router]);
 
   if (status === "loading") {
     return (
@@ -26,13 +40,10 @@ export default function DashboardLayout({
     );
   }
 
-  if (!session) {
-    return null;
-  }
-
+  // render kosong sementara redirect
   return (
     <div className="min-h-screen px-4 pt-24">
-        {children}
+      {children}
     </div>
   );
 }
