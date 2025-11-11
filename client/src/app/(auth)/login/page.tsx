@@ -61,7 +61,7 @@ export default function LoginPage() {
 
           <LoginGoogleButton setLoginError={setLoginError} />
 
-          {/* <FaceLogin /> */}
+          <FaceLogin />
         </div>
       </div>
     </div>
