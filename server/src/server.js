@@ -19,6 +19,8 @@ app.use(helmet({
 }));
 
 const allowedOrigins = [
+  'https://kidconnect.vercel.app',
+  'https://api-kidconnect.vercel.app',
   'http://localhost:3000',
   `http://localhost:${PORT}`,
   'http://10.241.10.170:3000',
