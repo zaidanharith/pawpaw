@@ -1,5 +1,6 @@
 "use client";
 
+import { Suspense } from "react";
 import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -8,7 +9,7 @@ import LoginForm from "@/components/auth/LoginForm";
 import LoginGoogleButton from "@/components/auth/LoginGoogleButton";
 import FaceLogin from "@/components/auth/FaceLogin";
 
-export default function LoginPage() {
+function LoginContent() {
   const { status } = useSession();
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -61,9 +62,17 @@ export default function LoginPage() {
 
           <LoginGoogleButton setLoginError={setLoginError} />
 
-          <FaceLogin />
+          {/* <FaceLogin /> */}
         </div>
       </div>
     </div>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <LoginContent />
+    </Suspense>
   );
 }
