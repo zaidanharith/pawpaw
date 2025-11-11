@@ -10,7 +10,14 @@ const Navbar = () => {
     return (
         <nav className="px-4 py-3 flex justify-between items-center font-sans fixed inset-x-0 top-0 bg-background/70 backdrop-blur-md z-50 max-w-screen">
             <Link href="/" className="flex items-center gap-2">
-                <div className="w-10 h-10 bg-gray-300 rounded-full"></div>
+                <Image
+                    src="/logo.svg"
+                    alt="KidConnect Logo"
+                    width={36}
+                    height={36}
+                    className="object-contain"
+                    priority
+                />
                 <p className="font-bold text-xl text-gray-800">KidConnect</p>
             </Link>
             {status === "authenticated" && session?.user ? (
