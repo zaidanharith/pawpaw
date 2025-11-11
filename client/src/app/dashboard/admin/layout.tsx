@@ -15,9 +15,14 @@ export default function AdminLayout({
     return () => document.body.removeAttribute("data-page");
   }, []);
 
+  const [activeMenu, setActiveMenu] = React.useState("Dashboard");
 	return (
 		<div className="min-h-screen w-full flex flex-col">
-			<RoleNavbar role="Admin" />
+      <RoleNavbar
+        role="Admin"
+        activeMenu={activeMenu}
+        setActiveMenu={setActiveMenu}
+      />
 
 			{/* Main Content */}
 			<main className="flex-1 flex justify-center items-start p-2">

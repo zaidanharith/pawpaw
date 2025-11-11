@@ -1,18 +1,18 @@
 "use client";
-import React, { useState } from "react";
+import React from "react";
+import Image from "next/image";
 
 interface SidebarProps {
   isOpen: boolean;
   onClose: () => void;
+  activeMenu: string;
+  onSelectMenu: (menu: string) => void;
 }
 
-const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
-  // Simpan nama menu yang sedang aktif
-  const [activeMenu, setActiveMenu] = useState<string>("");
-
+const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, activeMenu, onSelectMenu }) => {
   const handleClick = (menu: string) => {
-    setActiveMenu(menu);
-    onClose(); // opsional: tutup sidebar setelah klik
+    onSelectMenu(menu);
+    onClose();
   };
 
   return (
@@ -31,21 +31,21 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
 
       {/* Sidebar */}
       <div
-        className={`top-0 left-0 h-full w-64 bg-[#2E6F4D] shadow-lg p-6 flex flex-col transform transition-transform duration-300 ease-in-out ${
+        className={`top-0 left-0 h-full w-64 bg-[#2E6F4D] gap-4 shadow-lg p-6 flex flex-col transform transition-transform duration-300 ease-in-out ${
           isOpen ? "translate-x-0" : "-translate-x-full"
         }`}
       >
         <button
-          className="self-end text-white hover:text-gray-200 text-2xl mb-4 cursor-pointer"
+          className="self-start text-white hover:text-gray-200 mx-1 text-2xl mb-4 cursor-pointer"
           onClick={onClose}
           aria-label="Close sidebar"
         >
-          &times;
+          <Image src="/x.svg" alt="Menu" width={20} height={20} />
         </button>
 
-        {/* Isi menu sidebar */}
+        {/* Menu sidebar */}
         <nav className="flex flex-col gap-4">
-          {["Dashboard", "User", "Siswa", "Laporan Kegiatan", "Pengumuman" ].map((menu) => (
+          {["Dashboard", "User", "Siswa", "Laporan Kegiatan", "Pengumuman"].map((menu) => (
             <button
               key={menu}
               onClick={() => handleClick(menu)}

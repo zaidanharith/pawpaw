@@ -1,28 +1,33 @@
 "use client";
 import { useState } from "react";
-import Link from "next/link";
 import Image from "next/image";
+import Link from "next/link";
 import { useSession } from "next-auth/react";
-import Sidebar from "./Sidebar"; // Import Sidebar yang benar
+import Sidebar from "@/components/layout/Sidebar"; // pastikan path-nya benar
 
-// Warna per role
 const roleColors: Record<string, string> = {
   admin: "#3f9065",
   teacher: "#f5bb00",
   parent: "#58baab",
 };
 
-export default function RoleNavbar({ role }: { role: string }) {
+export default function RoleNavbar({ role, activeMenu, setActiveMenu }: {
+  role: string;
+  activeMenu: string;
+  setActiveMenu: (menu: string) => void;
+}) {
   const { data: session } = useSession();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const bgColor = roleColors[role.toLowerCase()] || "#3f9065";
 
   return (
     <>
-      {/* Sidebar Component */}
-      <Sidebar 
-        isOpen={isSidebarOpen} 
-        onClose={() => setIsSidebarOpen(false)} 
+      {/* Sidebar */}
+      <Sidebar
+        isOpen={isSidebarOpen}
+        onClose={() => setIsSidebarOpen(false)}
+        activeMenu={activeMenu}
+        onSelectMenu={setActiveMenu}
       />
 
       {/* Navbar */}
@@ -30,7 +35,7 @@ export default function RoleNavbar({ role }: { role: string }) {
         className="px-4 py-3 flex justify-between items-center font-sans fixed inset-x-0 top-0 backdrop-blur-md z-40 w-full transition-colors duration-300"
         style={{ backgroundColor: bgColor }}
       >
-        {/* Tombol menu kiri */}
+        {/* Tombol menu kiri (buka sidebar) */}
         <button
           onClick={() => setIsSidebarOpen(true)}
           className="px-3 py-1 rounded-md text-white cursor-pointer bg-opacity-20 hover:bg-opacity-30 transition flex items-center justify-center"
@@ -39,7 +44,7 @@ export default function RoleNavbar({ role }: { role: string }) {
         </button>
 
         {/* Teks tengah */}
-        <h1 className="text-lg font-bold text-white">Halo {role}</h1>
+        <h1 className="text-lg font-bold text-white">Halo, {role}</h1>
 
         {/* Tombol profil kanan */}
         <Link href="/dashboard" className="flex items-center gap-2">
