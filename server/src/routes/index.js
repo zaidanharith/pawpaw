@@ -11,7 +11,7 @@ const uploadRoute = require('./upload.route');
 const weatherRoute = require('./weather.route');
 const liveReportRoute = require('./liveReport.route');
 const classroomRoute = require('./classroom.route');
-const quarterlyReportRoute = require('./quarterlyReport.route');
+const quarterlyReportRoute = require('./quarterlyreport.route');
 
 router.use('/', activityRoute);
 router.use('/', announcementRoute);
