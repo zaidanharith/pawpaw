@@ -2,6 +2,7 @@ import Navbar from '../components/layout/Navbar';
 import FeatureCard from '../components/ui/FeatureCard';
 import Link from 'next/link';
 import Gallery from '../components/gallery/gallery';
+import Image from "next/image";
 
 export default function Home() {
   return (
@@ -40,7 +41,14 @@ export default function Home() {
           <h1 className='text-center font-bold text-3xl mb-5'>Contact Us</h1>
           <p className='text-center'>Jika Anda memiliki pertanyaan atau masukan, jangan ragu untuk menghubungi kami melalui email di <a href="mailto:support@kidconnect.com" className='font-semibold text-blue-500 hover:underline'>kidconnect@gmail.com</a>.</p>
           <Link href="/" className="flex items-center justify-center my-7 gap-4">
-            <div className="w-15 h-15 bg-gray-300 rounded-full"></div>
+            <Image
+                src="/logo.svg"
+                alt="KidConnect Logo"
+                width={48}
+                height={48}
+                className="object-contain"
+                priority
+            />
             <p className="font-bold text-4xl text-gray-800">KidConnect</p>
           </Link>
           <p className="text-sm text-gray-500 text-center">&copy;2025 KidConnect. All rights reserved.</p>
