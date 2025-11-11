@@ -417,3 +417,198 @@ export const UploadReportButton = ({
     {label}
   </button>
 );
+
+// View Class Detail Button - untuk Lihat Detail Kelas
+export const ViewClassDetailButton = ({
+  label,
+  onClick,
+}: {
+  label: string;
+  onClick?: () => void;
+}) => (
+  <button
+    onClick={onClick}
+    className="text-gray-800 px-6 py-2 rounded-lg font-semibold text-sm transition-all duration-200 shadow-md hover:shadow-lg w-full"
+    style={{ backgroundColor: "#FDE047" }}
+    onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#FBBF24")}
+    onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "#FDE047")}
+  >
+    {label}
+  </button>
+);
+
+// Class Info Button - untuk Info Kelas
+export const ClassInfoButton = ({
+  label,
+  onClick,
+}: {
+  label: string;
+  onClick?: () => void;
+}) => (
+  <button
+    onClick={onClick}
+    className="text-gray-800 px-6 py-2 rounded-lg font-semibold text-sm transition-all duration-200 shadow-md hover:shadow-lg border-2"
+    style={{ borderColor: "#FDE047", backgroundColor: "transparent" }}
+    onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#FFFBEB")}
+    onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "transparent")}
+  >
+    <span className="mr-2">➜</span>
+    {label}
+  </button>
+);
+
+// Tab Button - untuk Info Kelas, Daftar Siswa, Kehadiran Siswa
+export const TabButton = ({
+  label,
+  isActive = false,
+  onClick,
+}: {
+  label: string;
+  isActive?: boolean;
+  onClick?: () => void;
+}) => (
+  <button
+    onClick={onClick}
+    className={`px-4 py-2 font-semibold text-sm transition-all duration-200 ${
+      isActive
+        ? "text-gray-800 border-b-2"
+        : "text-gray-600 border-b-2 border-transparent"
+    }`}
+    style={
+      isActive
+        ? { borderColor: "#FDE047" }
+        : {}
+    }
+  >
+    {label}
+  </button>
+);
+
+// Attendance Status Radio Button - untuk Hadir, Sakit, Izin, Alfa
+export const AttendanceRadioButton = ({
+  label,
+  isSelected = false,
+  onClick,
+}: {
+  label: string;
+  isSelected?: boolean;
+  onClick?: () => void;
+}) => (
+  <button
+    onClick={onClick}
+    className={`px-4 py-2 rounded-full font-semibold text-sm transition-all duration-200 border-2 ${
+      isSelected
+        ? "text-gray-800"
+        : "text-gray-600 border-gray-300 bg-white"
+    }`}
+    style={
+      isSelected
+        ? { backgroundColor: "#FDE047", borderColor: "#FDE047" }
+        : {}
+    }
+  >
+    {label}
+  </button>
+);
+
+// Logout/Keluar Button
+export const LogoutButton = ({
+  label,
+  onClick,
+}: {
+  label: string;
+  onClick?: () => void;
+}) => (
+  <button
+    onClick={onClick}
+    className="text-white px-6 py-2 rounded-lg font-semibold text-sm transition-all duration-200 shadow-md hover:shadow-lg"
+    style={{ backgroundColor: "#DC2626" }}
+    onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#991B1B")}
+    onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "#DC2626")}
+  >
+    {label}
+  </button>
+);
+
+// Tab Filter Button - untuk Semua, Belum Dibaca
+export const TabFilterButton = ({
+  label,
+  isActive = false,
+  onClick,
+}: {
+  label: string;
+  isActive?: boolean;
+  onClick?: () => void;
+}) => (
+  <button
+    onClick={onClick}
+    className={`px-6 py-2 font-semibold text-sm transition-all duration-200 ${
+      isActive
+        ? "text-gray-800 bg-white border-b-2"
+        : "text-gray-600 bg-gray-100 border-b-2 border-transparent"
+    }`}
+    style={
+      isActive
+        ? { borderColor: "#FDE047" }
+        : {}
+    }
+  >
+    {label}
+  </button>
+);
+
+// Reply Button - untuk Balas
+export const ReplyButton = ({
+  label,
+  onClick,
+}: {
+  label: string;
+  onClick?: () => void;
+}) => (
+  <button
+    onClick={onClick}
+    className="text-white px-6 py-2 rounded-lg font-semibold text-sm transition-all duration-200 shadow-md hover:shadow-lg w-full"
+    style={{ backgroundColor: "#FDE047" }}
+    onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#FBBF24")}
+    onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "#FDE047")}
+  >
+    {label}
+  </button>
+);
+
+// Send Message Button - untuk Kirim Pesan
+export const SendMessageButton = ({
+  label,
+  onClick,
+}: {
+  label: string;
+  onClick?: () => void;
+}) => (
+  <button
+    onClick={onClick}
+    className="text-white px-6 py-2 rounded-full font-semibold text-sm transition-all duration-200 shadow-md hover:shadow-lg flex items-center gap-2"
+    style={{ backgroundColor: "#FDE047" }}
+    onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#FBBF24")}
+    onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "#FDE047")}
+  >
+    <span>✈️</span>
+    {label}
+  </button>
+);
+
+// Send Message Icon Button - untuk Kirim Pesan dengan icon saja
+export const SendMessageIconButton = ({
+  onClick,
+}: {
+  onClick?: () => void;
+}) => (
+  <button
+    onClick={onClick}
+    className="text-white p-3 rounded-full font-semibold transition-all duration-200 shadow-md hover:shadow-lg flex items-center justify-center"
+    style={{ backgroundColor: "#FDE047" }}
+    onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#FBBF24")}
+    onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "#FDE047")}
+  >
+    <span className="text-lg">✈️</span>
+  </button>
+);
