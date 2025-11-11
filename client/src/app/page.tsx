@@ -39,7 +39,7 @@ export default function Home() {
         </section>
         <section id="footer"className='px-4 py-7 flex flex-col'>
           <h1 className='text-center font-bold text-3xl mb-5'>Contact Us</h1>
-          <p className='text-center'>Jika Anda memiliki pertanyaan atau masukan, jangan ragu untuk menghubungi kami melalui email di <a href="mailto:support@kidconnect.com" className='font-semibold text-blue-500 hover:underline'>kidconnect@gmail.com</a>.</p>
+          <p className='text-center'>Jika Anda memiliki pertanyaan atau masukan, jangan ragu untuk menghubungi kami melalui email di <a href="mailto:kidconnect.paw@gmail.com" className='font-semibold text-blue-500 hover:underline'>kidconnect.paw@gmail.com</a>.</p>
           <Link href="/" className="flex items-center justify-center my-7 gap-4">
             <Image
                 src="/logo.svg"

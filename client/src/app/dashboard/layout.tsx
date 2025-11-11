@@ -13,7 +13,7 @@ export default function DashboardLayout({
   const router = useRouter();
 
   useEffect(() => {
-    if (status === "loading") return; // tunggu dulu
+    if (status === "loading") return;
 
     if (status === "unauthenticated") {
       router.push("/login");
@@ -40,7 +40,6 @@ export default function DashboardLayout({
     );
   }
 
-  // render kosong sementara redirect
   return (
     <div className="min-h-screen px-4 pt-24">
       {children}
