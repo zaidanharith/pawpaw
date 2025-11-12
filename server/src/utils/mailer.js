@@ -30,7 +30,7 @@ function sendWelcomeEmail(to, name) {
             Silakan login menggunakan email ini untuk mengakses sistem manajemen sekolah TK.
           </p>
           <div style="text-align:center;margin-bottom:24px;">
-            <a href="https://kidconnect.app/login" style="display:inline-block;padding:12px 32px;background:#f5bb00;color:#282828;font-weight:bold;border-radius:8px;text-decoration:none;font-size:16px;">
+            <a href="https://kidconnect.vercel.app/login" style="display:inline-block;padding:12px 32px;background:#f5bb00;color:#282828;font-weight:bold;border-radius:8px;text-decoration:none;font-size:16px;">
               Login Sekarang
             </a>
           </div>
