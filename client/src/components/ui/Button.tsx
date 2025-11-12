@@ -80,16 +80,20 @@ export const GreenManageButton = ({
 export const ViewMoreButton = ({
   label,
   onClick,
+  bgColor = "#2E6F4D",
+  hoverColor = "#245839",
 }: {
   label: string;
   onClick?: () => void;
+  bgColor?: string;
+  hoverColor?: string;
 }) => (
   <button
     onClick={onClick}
     className="text-white px-4 py-2 rounded-md font-semibold text-sm transition-all duration-200 shadow-md hover:shadow-lg"
-    style={{ backgroundColor: "#2E6F4D" }}
-    onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#245839")}
-    onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "#2E6F4D")}
+    style={{ backgroundColor: bgColor }}
+    onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = hoverColor)}
+    onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = bgColor)}
   >
     {label}
   </button>
@@ -190,16 +194,20 @@ export const ResetPasswordButton = ({
 export const CreateAnnouncementButton = ({
   label,
   onClick,
+  bgColor = "#2E6F4D",
+  hoverColor = "#245839",
 }: {
   label: string;
   onClick?: () => void;
+  bgColor?: string;
+  hoverColor?: string;
 }) => (
   <button
     onClick={onClick}
     className="text-white px-6 py-3 rounded-lg font-semibold text-base transition-all duration-200 shadow-md hover:shadow-lg flex items-center gap-2 justify-center w-full"
-    style={{ backgroundColor: "#2E6F4D" }}
-    onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#245839")}
-    onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "#2E6F4D")}
+    style={{ backgroundColor: bgColor }}
+    onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = hoverColor)}
+    onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = bgColor)}
   >
     <span className="text-xl">+</span>
     {label}
@@ -247,16 +255,20 @@ export const FilterPillButton = ({
 export const ViewDetailButton = ({
   label,
   onClick,
+  bgColor = "#2E6F4D",
+  hoverColor = "#245839",
 }: {
   label: string;
   onClick?: () => void;
+  bgColor?: string;
+  hoverColor?: string;
 }) => (
   <button
     onClick={onClick}
     className="text-white px-6 py-2 rounded-lg font-semibold text-sm transition-all duration-200 shadow-md hover:shadow-lg"
-    style={{ backgroundColor: "#2E6F4D" }}
-    onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#245839")}
-    onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "#2E6F4D")}
+    style={{ backgroundColor: bgColor }}
+    onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = hoverColor)}
+    onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = bgColor)}
   >
     {label}
   </button>
@@ -266,16 +278,20 @@ export const ViewDetailButton = ({
 export const UploadAnnouncementButton = ({
   label,
   onClick,
+  bgColor = "#2E6F4D",
+  hoverColor = "#245839",
 }: {
   label: string;
   onClick?: () => void;
+  bgColor?: string;
+  hoverColor?: string;
 }) => (
   <button
     onClick={onClick}
     className="text-white px-6 py-2 rounded-lg font-semibold text-sm transition-all duration-200 shadow-md hover:shadow-lg"
-    style={{ backgroundColor: "#2E6F4D" }}
-    onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#245839")}
-    onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "#2E6F4D")}
+    style={{ backgroundColor: bgColor }}
+    onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = hoverColor)}
+    onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = bgColor)}
   >
     {label}
   </button>
@@ -285,16 +301,20 @@ export const UploadAnnouncementButton = ({
 export const SaveButton = ({
   label,
   onClick,
+  bgColor = "#2E6F4D",
+  hoverColor = "#245839",
 }: {
   label: string;
   onClick?: () => void;
+  bgColor?: string;
+  hoverColor?: string;
 }) => (
   <button
     onClick={onClick}
     className="text-white px-6 py-2 rounded-lg font-semibold text-sm transition-all duration-200 shadow-md hover:shadow-lg"
-    style={{ backgroundColor: "#2E6F4D" }}
-    onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#245839")}
-    onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "#2E6F4D")}
+    style={{ backgroundColor: bgColor }}
+    onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = hoverColor)}
+    onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = bgColor)}
   >
     {label}
   </button>
@@ -364,16 +384,20 @@ export const DeleteButton = ({
 export const CreateReportButton = ({
   label,
   onClick,
+  bgColor = "#2E6F4D",
+  hoverColor = "#245839",
 }: {
   label: string;
   onClick?: () => void;
+  bgColor?: string;
+  hoverColor?: string;
 }) => (
   <button
     onClick={onClick}
     className="text-white px-6 py-3 rounded-lg font-semibold text-base transition-all duration-200 shadow-md hover:shadow-lg flex items-center gap-2 justify-center w-full"
-    style={{ backgroundColor: "#2E6F4D" }}
-    onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#245839")}
-    onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "#2E6F4D")}
+    style={{ backgroundColor: bgColor }}
+    onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = hoverColor)}
+    onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = bgColor)}
   >
     <span className="text-xl">+</span>
     {label}
@@ -384,16 +408,20 @@ export const CreateReportButton = ({
 export const ViewDetailReportButton = ({
   label,
   onClick,
+  bgColor = "#2E6F4D",
+  hoverColor = "#245839",
 }: {
   label: string;
   onClick?: () => void;
+  bgColor?: string;
+  hoverColor?: string;
 }) => (
   <button
     onClick={onClick}
     className="text-white px-6 py-2 rounded-lg font-semibold text-sm transition-all duration-200 shadow-md hover:shadow-lg"
-    style={{ backgroundColor: "#2E6F4D" }}
-    onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#245839")}
-    onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "#2E6F4D")}
+    style={{ backgroundColor: bgColor }}
+    onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = hoverColor)}
+    onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = bgColor)}
   >
     {label}
   </button>
@@ -403,16 +431,20 @@ export const ViewDetailReportButton = ({
 export const UploadReportButton = ({
   label,
   onClick,
+  bgColor = "#2E6F4D",
+  hoverColor = "#245839",
 }: {
   label: string;
   onClick?: () => void;
+  bgColor?: string;
+  hoverColor?: string;
 }) => (
   <button
     onClick={onClick}
     className="text-white px-6 py-2 rounded-lg font-semibold text-sm transition-all duration-200 shadow-md hover:shadow-lg"
-    style={{ backgroundColor: "#2E6F4D" }}
-    onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#245839")}
-    onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "#2E6F4D")}
+    style={{ backgroundColor: bgColor }}
+    onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = hoverColor)}
+    onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = bgColor)}
   >
     {label}
   </button>
@@ -561,16 +593,20 @@ export const TabFilterButton = ({
 export const ReplyButton = ({
   label,
   onClick,
+  bgColor = "#FDE047",
+  hoverColor = "#FBBF24",
 }: {
   label: string;
   onClick?: () => void;
+  bgColor?: string;
+  hoverColor?: string;
 }) => (
   <button
     onClick={onClick}
     className="text-white px-6 py-2 rounded-lg font-semibold text-sm transition-all duration-200 shadow-md hover:shadow-lg w-full"
-    style={{ backgroundColor: "#FDE047" }}
-    onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#FBBF24")}
-    onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "#FDE047")}
+    style={{ backgroundColor: bgColor }}
+    onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = hoverColor)}
+    onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = bgColor)}
   >
     {label}
   </button>
@@ -580,16 +616,20 @@ export const ReplyButton = ({
 export const SendMessageButton = ({
   label,
   onClick,
+  bgColor = "#58BAAB",
+  hoverColor = "#4A9A94",
 }: {
   label: string;
   onClick?: () => void;
+  bgColor?: string;
+  hoverColor?: string;
 }) => (
   <button
     onClick={onClick}
     className="text-white px-6 py-2 rounded-full font-semibold text-sm transition-all duration-200 shadow-md hover:shadow-lg flex items-center gap-2"
-    style={{ backgroundColor: "#FDE047" }}
-    onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#FBBF24")}
-    onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "#FDE047")}
+    style={{ backgroundColor: bgColor }}
+    onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = hoverColor)}
+    onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = bgColor)}
   >
     <span>✈️</span>
     {label}
@@ -599,15 +639,19 @@ export const SendMessageButton = ({
 // Send Message Icon Button - untuk Kirim Pesan dengan icon saja
 export const SendMessageIconButton = ({
   onClick,
+  bgColor = "#58BAAB",
+  hoverColor = "#4A9A94",
 }: {
   onClick?: () => void;
+  bgColor?: string;
+  hoverColor?: string;
 }) => (
   <button
     onClick={onClick}
     className="text-white p-3 rounded-full font-semibold transition-all duration-200 shadow-md hover:shadow-lg flex items-center justify-center"
-    style={{ backgroundColor: "#FDE047" }}
-    onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#FBBF24")}
-    onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "#FDE047")}
+    style={{ backgroundColor: bgColor }}
+    onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = hoverColor)}
+    onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = bgColor)}
   >
     <span className="text-lg">✈️</span>
   </button>
