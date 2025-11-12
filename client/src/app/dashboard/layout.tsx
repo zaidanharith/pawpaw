@@ -3,8 +3,6 @@
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
-import Navbar from "../../components/layout/Navbar";
-import Footer from "../../components/layout/Footer";
 
 export default function DashboardLayout({
   children,
@@ -47,7 +45,7 @@ export default function DashboardLayout({
   }
 
   return (
-    <main className="flex flex-col min-h-screen flex-1 px-4 pt-24">
+    <main className="flex flex-col min-h-screen flex-1 px-4 pt-24 font-sans">
       {children}
     </main>
   );

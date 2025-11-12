@@ -3,7 +3,7 @@ import Image from "next/image";
 
 export default function Footer() {
   return (
-    <footer className='px-4 py-7 flex flex-col'>
+    <footer className='px-4 py-7 flex flex-col font-sans'>
       <h1 className='text-center font-bold text-3xl mb-5'>Contact Us</h1>
       <p className='text-center'>
         Jika Anda memiliki pertanyaan atau masukan, jangan ragu untuk menghubungi kami melalui email di{" "}
