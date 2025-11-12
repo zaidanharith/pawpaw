@@ -1,23 +1,27 @@
 "use client";
 
 import RoleNavbar from "../../../components/layout/RoleNavbar";
-import React from "react";
-import Link from "next/link";
-import { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 
 export default function TeacherLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-    useEffect(() => {
+  const [activeMenu, setActiveMenu] = useState<string>("");
+
+  useEffect(() => {
     document.body.setAttribute("data-page", "teacher");
     return () => document.body.removeAttribute("data-page");
   }, []);
 
   return (
     <div className="min-h-screen w-full flex flex-col">
-      <RoleNavbar role="Teacher" />
+      <RoleNavbar
+        role="Teacher"
+        activeMenu={activeMenu}
+        setActiveMenu={setActiveMenu}
+      />
 
       {/* Main Content */}
       <main className="flex-1 flex justify-center items-start p-8">

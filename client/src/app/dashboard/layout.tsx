@@ -27,9 +27,10 @@ export default function DashboardLayout({
       router.push("/dashboard/teacher");
     } else if (role === "PARENT") {
       router.push("/dashboard/parent");
-    } else {
+    } else if (role) {
       router.push("/unauthorized");
     }
+    // Jika tidak ada role, tetap di halaman ini
   }, [status, session, router]);
 
   if (status === "loading") {
@@ -38,6 +39,13 @@ export default function DashboardLayout({
         <p>Loading...</p>
       </div>
     );
+  }
+
+  if (
+    status === "unauthenticated" ||
+    (session?.user?.role && ["ADMIN", "TEACHER", "PARENT"].includes(session.user.role))
+  ) {
+    return null;
   }
 
   return (
