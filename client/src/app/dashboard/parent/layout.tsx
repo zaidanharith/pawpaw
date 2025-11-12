@@ -1,23 +1,27 @@
 "use client";
 
 import RoleNavbar from "../../../components/layout/RoleNavbar";
-import React from "react";
-import Link from "next/link";
-import { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 
 export default function ParentLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-    useEffect(() => {
+  const [activeMenu, setActiveMenu] = useState<string>("");
+
+  useEffect(() => {
     document.body.setAttribute("data-page", "parent");
     return () => document.body.removeAttribute("data-page");
   }, []);
 
   return (
     <div className="min-h-screen w-full flex flex-col">
-      <RoleNavbar role="Parent" />
+      <RoleNavbar
+        role="Parent"
+        activeMenu={activeMenu}
+        setActiveMenu={setActiveMenu}
+      />
 
       {/* Main Content */}
       <main className="flex-1 flex justify-center items-start p-8">
@@ -25,7 +29,7 @@ export default function ParentLayout({
           {children}
         </div>
       </main>
-3
+
       {/* Footer */}
       <footer className="bg-[#58baab] w-full flex flex-col text-center py-2 text-sm text-white rounded-t-lg">
         2025 KidConnect. All rights reserved.

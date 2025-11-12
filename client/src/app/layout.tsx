@@ -21,11 +21,11 @@ export default function RootLayout({
   return (
     <html lang="id" className="scroll-smooth">
       <body
-        className={`${inter.variable} antialiased`}
+      className={`${inter.variable} antialiased`}
       >
-        <SessionProvider>
-          {children}
-        </SessionProvider>
+      <SessionProvider>
+        {children}
+      </SessionProvider>
       </body>
     </html>
   );
