@@ -21,7 +21,7 @@ function sendWelcomeEmail(to, name) {
       <div style="background:#fefaef;padding:32px 0;">
         <div style="max-width:480px;margin:0 auto;background:#fff;border-radius:16px;box-shadow:0 2px 8px rgba(0,0,0,0.07);padding:32px;font-family:sans-serif;">
           <div style="text-align:center;">
-            <img src="https://i.ibb.co/6bJvYyH/kidconnect-logo.png" alt="KidConnect" style="width:80px;margin-bottom:16px;" />
+            <img src="https://res.cloudinary.com/daaeu39vt/image/upload/v1762916437/uploads/favicon-96x96-1762916430637.png" alt="KidConnect" style="width:80px;margin-bottom:16px;" />
             <h2 style="color:#3f9065;margin-bottom:8px;">Selamat Datang di KidConnect!</h2>
           </div>
           <p style="font-size:16px;color:#282828;margin-bottom:24px;">

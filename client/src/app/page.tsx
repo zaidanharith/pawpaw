@@ -1,8 +1,6 @@
-import Navbar from '../components/layout/Navbar';
 import FeatureCard from '../components/ui/FeatureCard';
-import Link from 'next/link';
 import Gallery from '../components/gallery/gallery';
-import Image from "next/image";
+import Navbar from '@/components/layout/Navbar';
 
 export default function Home() {
   return (
@@ -10,8 +8,12 @@ export default function Home() {
       <Navbar />
       <main className="flex flex-col min-h-screen pt-24 items-center font-sans">
         <section id="hero" className="px-4">
-          <h1 className="text-3xl text-center font-bold text-black">Tetap <span className="text-(--color-green-admin)">Terhubung</span> dengan Kegiatan Belajar Anak Anda</h1>
-          <p className="mt-4 text-center">Pantau kehadiran, perkembangan, dan kegiatan anak, serta berkomunikasi langsung dengan guru.</p>
+          <h1 className="text-3xl text-center font-bold text-black">
+            Tetap <span className="text-(--color-green-admin)">Terhubung</span> dengan Kegiatan Belajar Anak Anda
+          </h1>
+          <p className="mt-4 text-center">
+            Pantau kehadiran, perkembangan, dan kegiatan anak, serta berkomunikasi langsung dengan guru.
+          </p>
           <div>
             <Gallery />
           </div>
@@ -35,32 +37,9 @@ export default function Home() {
               imageAlt="Attendance"
             />
           </div>
-          <p className='text-center'>Masih ada fitur lainnya yang bisa Anda coba. <a href="/login" className='font-semibold text-blue-500 hover:underline'>Login</a> untuk mulai menggunakan KidConnect sekarang!</p>
-        </section>
-        <section id="footer" className='px-4 py-7 flex flex-col'>
-          <h1 className='text-center font-bold text-3xl mb-5'>Contact Us</h1>
-          <p className='text-center'>Jika Anda memiliki pertanyaan atau masukan, jangan ragu untuk menghubungi kami melalui email di <a href="mailto:kidconnect.paw@gmail.com" className='font-semibold text-blue-500 hover:underline'>kidconnect.paw@gmail.com</a>.</p>
-          <Link href="/" className="flex items-center justify-center my-7 gap-4">
-            <Image
-                src="/logo.svg"
-                alt="KidConnect Logo"
-                width={48}
-                height={48}
-                className="object-contain"
-                priority
-            />
-            <p className="font-bold text-4xl text-gray-800">KidConnect</p>
-          </Link>
-          <div className="flex flex-wrap justify-center gap-4 my-2">
-            <Link href="/privacy-policy" className="text-sm text-blue-500 hover:underline">
-              Privacy Policy
-            </Link>
-            <span className="text-gray-400">|</span>
-            <Link href="/terms-of-service" className="text-sm text-blue-500 hover:underline">
-              Terms of Service
-            </Link>
-          </div>
-          <p className="text-sm text-gray-500 text-center">&copy;2025 KidConnect. All rights reserved.</p>
+          <p className='text-center'>
+            Masih ada fitur lainnya yang bisa Anda coba. <a href="/login" className='font-semibold text-blue-500 hover:underline'>Login</a> untuk mulai menggunakan KidConnect sekarang!
+          </p>
         </section>
       </main>
     </>

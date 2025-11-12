@@ -3,6 +3,8 @@
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
+import Navbar from "../../components/layout/Navbar";
+import Footer from "../../components/layout/Footer";
 
 export default function DashboardLayout({
   children,
@@ -30,7 +32,6 @@ export default function DashboardLayout({
     } else if (role) {
       router.push("/unauthorized");
     }
-    // Jika tidak ada role, tetap di halaman ini
   }, [status, session, router]);
 
   if (status === "loading") {
@@ -41,16 +42,13 @@ export default function DashboardLayout({
     );
   }
 
-  if (
-    status === "unauthenticated" ||
-    (session?.user?.role && ["ADMIN", "TEACHER", "PARENT"].includes(session.user.role))
-  ) {
+  if (status === "unauthenticated") {
     return null;
   }
 
   return (
-    <div className="min-h-screen px-4 pt-24">
+    <main className="flex flex-col min-h-screen flex-1 px-4 pt-24">
       {children}
-    </div>
+    </main>
   );
 }

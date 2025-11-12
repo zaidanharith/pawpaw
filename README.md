@@ -23,9 +23,8 @@ npm run dev
 ```
 
 3. Akses aplikasi:
-  - **Frontend**: <a href="http://localhost:3000" target="_blank" rel="noopener noreferrer">http://localhost:3000</a>  
-    - **Backend API**: <a href="http://localhost:4000" target="_blank" rel="noopener noreferrer">http://localhost:4000</a>  
-    - **API Documentation (Swagger)**: <a href="http://localhost:4000/api/docs" target="_blank" rel="noopener noreferrer">http://localhost:4000/api/docs</a>
+  - **Frontend**: <a href="https://kidconnect.vercel.app" target="_blank" rel="noopener noreferrer">https://kidconnect.vercel.app</a>  
+  - **Backend API**: <a href="https://api-kidconnect.vercel.app" target="_blank" rel="noopener noreferrer">https://api-kidconnect.vercel.app</a>
 
 ## 📝 Penjelasan Detail Tentang Aplikasi (Back-End)
 

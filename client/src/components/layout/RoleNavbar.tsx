@@ -3,7 +3,7 @@ import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
-import Sidebar from "@/components/layout/Sidebar"; // pastikan path-nya benar
+import Sidebar from "@/components/layout/Sidebar";
 
 const roleColors: Record<string, string> = {
   admin: "#3f9065",

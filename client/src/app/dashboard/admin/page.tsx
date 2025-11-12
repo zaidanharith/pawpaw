@@ -1,11 +1,10 @@
 "use client";
+
 import { useState } from "react";
-import RoleNavbar from "@/components/layout/RoleNavbar";
 
 export default function AdminPage() {
   const [activeMenu, setActiveMenu] = useState("Dashboard");
 
-  // Fungsi render konten berdasarkan menu aktif
   const renderContent = () => {
     switch (activeMenu) {
       case "Dashboard":
@@ -184,11 +183,8 @@ export default function AdminPage() {
   };
 
   return (
-    <div className="relative min-h-screen flex flex-col">
-      <RoleNavbar role="Admin" activeMenu={activeMenu} setActiveMenu={setActiveMenu} />
-      <main className="flex-1 flex justify-center items-start py-6 sm:mt-2 md:mt-4">
-        {renderContent()}
-      </main>
-    </div>
+    <main className="flex-1 flex justify-center items-start py-6 sm:mt-2 md:mt-4">
+      {renderContent()}
+    </main>
   );
 }
