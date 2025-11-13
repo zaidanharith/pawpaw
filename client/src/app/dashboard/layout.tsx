@@ -3,50 +3,39 @@
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
+import Loading from "../../components/ui/Loading";
 
 export default function DashboardLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const { data: session, status } = useSession();
-  const router = useRouter();
+    const { data: session, status } = useSession();
+    const router = useRouter();
 
-  useEffect(() => {
-    if (status === "loading") return;
+    useEffect(() => {
+      if (status === "loading") return;
+
+      if (status === "unauthenticated") {
+        router.push("/login");
+        return;
+      }
+
+    }, [status, session, router]);
+
+    if (status === "loading") {
+      return (
+        <Loading/>
+      );
+    }
 
     if (status === "unauthenticated") {
-      router.push("/login");
-      return;
+      return null;
     }
 
-    const role = session?.user?.role;
-    if (role === "ADMIN") {
-      router.push("/dashboard/admin");
-    } else if (role === "TEACHER") {
-      router.push("/dashboard/teacher");
-    } else if (role === "PARENT") {
-      router.push("/dashboard/parent");
-    } else if (role) {3
-      router.push("/unauthorized");
-    }
-  }, [status, session, router]);
-
-  if (status === "loading") {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <p>Loading...</p>
-      </div>
+      <main className="font-sans">
+        {children}
+      </main>
     );
-  }
-
-  if (status === "unauthenticated") {
-    return null;
-  }
-
-  return (
-    <main className="flex flex-col min-h-screen flex-1 px-4 pt-24 font-sans">
-      {children}
-    </main>
-  );
 }

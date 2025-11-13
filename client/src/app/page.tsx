@@ -1,12 +1,10 @@
 import FeatureCard from '../components/ui/FeatureCard';
-import Gallery from '../components/gallery/gallery';
-import Navbar from '@/components/layout/Navbar';
+import Gallery from '@/components/ui/Gallery';
 
 export default function Home() {
   return (
     <>
-      <Navbar />
-      <main className="flex flex-col min-h-screen pt-24 items-center font-sans">
+      <main className="flex flex-col min-h-screen items-center font-sans">
         <section id="hero" className="px-4">
           <h1 className="text-3xl text-center font-bold text-black">
             Tetap <span className="text-(--color-green-admin)">Terhubung</span> dengan Kegiatan Belajar Anak Anda
@@ -39,6 +37,15 @@ export default function Home() {
           </div>
           <p className='text-center'>
             Masih ada fitur lainnya yang bisa Anda coba. <a href="/login" className='font-semibold text-blue-500 hover:underline'>Login</a> untuk mulai menggunakan KidConnect sekarang!
+          </p>
+        </section>
+        <section id="contact" className="px-4 py-7">
+          <h1 className='text-center font-bold text-3xl mb-5'>Kontak Kami</h1>
+          <p className='text-center'>
+            Jika Anda memiliki pertanyaan atau masukan, jangan ragu untuk menghubungi kami melalui email di{" "}
+            <a href="mailto:kidconnect.paw@gmail.com" className='font-semibold text-blue-500 hover:underline'>
+              kidconnect.paw@gmail.com
+            </a>.
           </p>
         </section>
       </main>

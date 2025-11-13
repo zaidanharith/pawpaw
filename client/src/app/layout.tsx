@@ -25,8 +25,8 @@ export default function RootLayout({
       <body className={`${inter.variable} antialiased`}>
         <SessionProvider>
           <Navbar />
-          <main className="min-h-screen font-sans">
-            {children}
+          <main className="pt-24 font-sans">
+          {children}
           </main>
           <Footer />
         </SessionProvider>

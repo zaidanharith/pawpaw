@@ -1,31 +1,29 @@
 "use client";
 
-import { signOut, useSession } from "next-auth/react";
-import Link from "next/link";
-import authService from "@/services/auth.service";
+import { useSession } from "next-auth/react";
+import RoleLabel from "../../components/ui/RoleLabel";
+import Admin from "../../components/dashboard/admin/Admin";
 
 export default function DashboardPage() {
   const { data: session } = useSession();
+  const role = session?.user?.role;
 
-  const handleLogout = async () => {
-    if (session?.accessToken) {
-      await authService.logout(session.accessToken);
-    }
-    await signOut({ callbackUrl: "/login" });
+  const roleColors: Record<string, string> = {
+    ADMIN: "#3f9065",
+    TEACHER: "#f5bb00",
+    PARENT: "#58baab",
   };
 
   return (
-    <div className="flex flex-col items-center">
-      <button
-        onClick={handleLogout}
-        className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 mt-4 cursor-pointer"
-      >
-        Logout
-      </button>
-      <Link href="/" className="mt-4 font-medium block text-blue-500 hover:underline">
-        Kembali ke Beranda
-      </Link>
-      <h2 className="text-xl">Selamat datang, {session?.user.name}</h2>
+    <div className="px-4">
+      <header className="flex items-center justify-start gap-2">
+        <h1 className="font-bold text-foreground text-2xl min-w-5">Halo, {(session?.user?.name) || "Joecelyn Aurora Majesty"}</h1>
+        <RoleLabel role={role || "Guest"} />
+      </header>
+
+      <section>
+        <Admin />
+      </section>
     </div>
   );
-}
+} 
