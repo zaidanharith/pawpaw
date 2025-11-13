@@ -24,8 +24,9 @@ export default function RootLayout({
     <html lang="id" className="scroll-smooth">
       <body className={`${inter.variable} antialiased`}>
         <SessionProvider>
-          <main className="min-h-screen font-sans">
-            {children}
+          <Navbar />
+          <main className="pt-24 font-sans">
+          {children}
           </main>
           <Footer />
         </SessionProvider>

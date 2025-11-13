@@ -8,6 +8,7 @@ const authRoute = require('./auth.route');
 const messageRoute = require('./message.route');
 const studentRoute = require('./student.route');
 const uploadRoute = require('./upload.route');
+const userRoute = require('./user.route');
 const weatherRoute = require('./weather.route');
 const liveReportRoute = require('./liveReport.route');
 const classroomRoute = require('./classroom.route');
@@ -22,6 +23,7 @@ router.use('/', liveReportRoute);
 router.use('/', messageRoute);
 router.use('/', studentRoute); 
 router.use('/', uploadRoute); 
+router.use('/', userRoute);
 router.use('/', weatherRoute);
 router.use('/', quarterlyReportRoute);
 
