@@ -34,8 +34,9 @@ export default function Profile() {
             const fetchProfile = async () => {
                 try {
                     const res = await authService.getProfile(session.accessToken ?? "");
-                    if (res) {
-                        setUser(res.data as UserProfile);
+                    const userData = (res && typeof res === "object" && "data" in res) ? res.data : res;
+                    if (userData) {
+                        setUser(userData as UserProfile);
                     } else {
                         setUser(null);
                         setError("Data profil tidak ditemukan");
@@ -70,19 +71,19 @@ export default function Profile() {
     }
 
     if (!user) {
-        return null; // Sudah di-redirect jika belum login
+        return null;
     }
 
     return (
         <div className="p-5 bg-white rounded-xl shadow">
             <div className="mb-6 flex gap-4 justify-center">
-                <Link href="/" className="px-4 py-2 bg-blue-50 text-blue-600 rounded hover:bg-blue-100 transition">Home</Link>
+                <Link href="/" className="px-4 py-2 bg-blue-50 text-blue-600 rounded hover:bg-blue-100 transition cursor-pointer">Beranda</Link>
                 <Link href="/dashboard" className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition cursor-pointer">Dashboard</Link>
                 <button
                     onClick={() => signOut({ callbackUrl: "/login" })}
-                    className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 transition"
+                    className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 transition cursor-pointer"
                 >
-                    Logout
+                    Keluar
                 </button>
             </div>
             <div className="flex flex-col items-center">
