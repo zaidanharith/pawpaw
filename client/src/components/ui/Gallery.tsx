@@ -1,4 +1,3 @@
-// src/components/Gallery.tsx
 import Image from "next/image";
 
 const Gallery = () => {
