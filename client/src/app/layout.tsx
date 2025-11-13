@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import SessionProvider from "@/components/providers/SessionProvider";
-import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import "./globals.css";
+import Navbar from "@/components/layout/Navbar";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -24,6 +24,7 @@ export default function RootLayout({
     <html lang="id" className="scroll-smooth">
       <body className={`${inter.variable} antialiased`}>
         <SessionProvider>
+          <Navbar />
           <main className="min-h-screen font-sans">
             {children}
           </main>

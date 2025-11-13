@@ -4,8 +4,8 @@ export default function AuthLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="min-h-screen">
+    <main className="min-h-screen">
       {children}
-    </div>
+    </main>
   );
 }
