@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useSession, signOut } from "next-auth/react";
+import { useRouter } from "next/navigation";
 import authService, { AuthResponse } from "@/services/auth.service";
 import Image from "next/image";
 import RoleLabel from "@/components/ui/RoleLabel";
@@ -19,16 +20,20 @@ type UserProfile = AuthResponse["user"] & {
 
 export default function Profile() {
     const { data: session, status } = useSession();
+    const router = useRouter();
     const [loading, setLoading] = useState(true);
     const [user, setUser] = useState<UserProfile | null>(null);
     const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
+        if (status === "unauthenticated") {
+            router.replace("/login");
+            return;
+        }
         if (status === "authenticated" && session?.accessToken) {
             const fetchProfile = async () => {
                 try {
                     const res = await authService.getProfile(session.accessToken ?? "");
-                    console.log(res);
                     if (res) {
                         setUser(res.data as UserProfile);
                     } else {
@@ -45,7 +50,7 @@ export default function Profile() {
         } else if (status !== "loading") {
             setLoading(false);
         }
-    }, [session?.accessToken, status]);
+    }, [session?.accessToken, status, router]);
 
     if (loading) {
         return (
@@ -65,12 +70,7 @@ export default function Profile() {
     }
 
     if (!user) {
-        return (
-            <div className="max-w-md mx-auto mt-10 p-6 bg-white rounded-lg shadow flex flex-col items-center justify-center h-64">
-                <span className="text-gray-500 mb-4">Anda belum login.</span>
-                <Link href="/login" className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition">Login</Link>
-            </div>
-        );
+        return null; // Sudah di-redirect jika belum login
     }
 
     return (
