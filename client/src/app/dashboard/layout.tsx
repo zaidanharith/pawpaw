@@ -27,7 +27,7 @@ export default function DashboardLayout({
       router.push("/dashboard/teacher");
     } else if (role === "PARENT") {
       router.push("/dashboard/parent");
-    } else if (role) {
+    } else if (role) {3
       router.push("/unauthorized");
     }
   }, [status, session, router]);
