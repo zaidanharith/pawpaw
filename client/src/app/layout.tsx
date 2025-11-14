@@ -3,7 +3,6 @@ import { Inter } from "next/font/google";
 import SessionProvider from "@/components/providers/SessionProvider";
 import Footer from "@/components/layout/Footer";
 import "./globals.css";
-import Navbar from "@/components/layout/Navbar";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -24,11 +23,12 @@ export default function RootLayout({
     <html lang="id" className="scroll-smooth">
       <body className={`${inter.variable} antialiased`}>
         <SessionProvider>
-          <Navbar />
-          <main className="pt-24 font-sans">
-          {children}
-          </main>
-          <Footer />
+          <div className="min-h-screen flex flex-col">
+            <main className="pt-24 font-sans flex-1">
+              {children}
+            </main>
+            <Footer />
+          </div>
         </SessionProvider>
       </body>
     </html>

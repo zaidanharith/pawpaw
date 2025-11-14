@@ -65,14 +65,14 @@ const Weather: React.FC = () => {
   }, []);
 
   return (
-    <section className="bg-white rounded-xl shadow py-4 flex flex-col items-center justify-center font-semibold font-sans">
+    <section className="bg-white rounded-xl shadow py-4 flex flex-col items-center justify-center font-semibold font-sans px-3">
       <div className="relative z-10 w-full flex flex-col items-center">
         {loading ? (
           <span className="animate-pulse text-lg font-medium">Memuat data cuaca...</span>
         ) : error ? (
           <span className="text-red-500 text-lg font-medium">{error}</span>
         ) : weather && weather.location && weather.current ? (
-          <div>
+          <div className="flex flex-col items-center">
             <div className="flex items-center justify-between gap-4 mb-3">
               <Image
                 src={weather.current.condition.icon.startsWith("//") ? `https:${weather.current.condition.icon}` : weather.current.condition.icon}

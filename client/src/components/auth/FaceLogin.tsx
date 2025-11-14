@@ -1,5 +1,6 @@
 import React, { useRef, useEffect, useState } from "react";
 import * as faceapi from "face-api.js";
+import { signIn } from "next-auth/react";
 
 const MODEL_URL = "/models";
 
@@ -9,85 +10,97 @@ export default function FaceLogin() {
   const [message, setMessage] = useState("");
 
   useEffect(() => {
+    let detectInterval: NodeJS.Timeout | null = null;
+
     const loadModelsAndStartVideo = async () => {
       try {
-        setMessage("Loading face recognition models...");
-        
-        // Load models
+        setMessage("Memuat model Face Recognition...");
         await faceapi.nets.ssdMobilenetv1.loadFromUri(MODEL_URL);
         await faceapi.nets.faceLandmark68Net.loadFromUri(MODEL_URL);
         await faceapi.nets.faceRecognitionNet.loadFromUri(MODEL_URL);
-        
-        setMessage("Starting camera...");
+
+        setMessage("Memulai kamera...");
         setLoading(false);
-        
-        // Tunggu sedikit agar video element ter-render
+
         await new Promise(resolve => setTimeout(resolve, 100));
-        
-        // Start camera
+
         if (navigator.mediaDevices && videoRef.current) {
-          const stream = await navigator.mediaDevices.getUserMedia({ 
-            video: { width: 320, height: 240 } 
+          const stream = await navigator.mediaDevices.getUserMedia({
+            video: { width: 320, height: 240 }
           });
           videoRef.current.srcObject = stream;
-          
-          // Pastikan video playing
           videoRef.current.onloadedmetadata = () => {
             videoRef.current?.play();
-            setMessage("Camera ready!");
+            setMessage("Kamera siap!");
+
+            // Mulai interval deteksi otomatis
+            detectInterval = setInterval(async () => {
+              if (!videoRef.current) return;
+              const detection = await faceapi
+                .detectSingleFace(videoRef.current)
+                .withFaceLandmarks()
+                .withFaceDescriptor();
+
+              if (detection) {
+                setMessage("Wajah terdeteksi, memverifikasi...");
+                clearInterval(detectInterval!);
+
+                // Proses login otomatis
+                const API_URL = process.env.NEXT_PUBLIC_API_URL;
+                try {
+                  const descriptor = Array.from(detection.descriptor);
+                  const res = await fetch(`${API_URL}/auth/face-login`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ descriptor }),
+                  });
+                  const json = await res.json();
+                  if (json.success && json.token) {
+                    await signIn("credentials", {
+                      redirect: true,
+                      callbackUrl: "/dashboard",
+                      faceToken: json.token
+                    });
+                  } else {
+                    setMessage(json.message || "Login gagal, wajah tidak dikenali.");
+                  }
+                } catch {
+                  setMessage("Terjadi kesalahan saat login.");
+                }
+              }
+            }, 1200); // deteksi setiap 1.2 detik
           };
         } else {
           setMessage("Browser tidak mendukung kamera");
         }
-        
       } catch (err) {
         console.error("Error:", err);
         setMessage("Error: " + (err as Error).message);
         setLoading(false);
       }
     };
-    
+
     loadModelsAndStartVideo();
-    
+
+    const videoEl = videoRef.current;
     return () => {
-      if (videoRef.current?.srcObject) {
-        const stream = videoRef.current.srcObject as MediaStream;
+      if (videoEl?.srcObject) {
+        const stream = videoEl.srcObject as MediaStream;
         stream.getTracks().forEach(track => track.stop());
       }
+      if (detectInterval) clearInterval(detectInterval);
     };
   }, []);
 
-  const handleLogin = async () => {
-    setMessage("Mendeteksi wajah...");
-    if (!videoRef.current) return;
-    
-    const detection = await faceapi
-      .detectSingleFace(videoRef.current)
-      .withFaceLandmarks()
-      .withFaceDescriptor();
-
-    if (!detection) {
-      setMessage("Wajah tidak terdeteksi, coba lagi.");
-      return;
-    }
-
-    setMessage("Memverifikasi...");
-  };
-
   return (
-    <>
-      <div className="my-4 flex items-center">
-        <hr className="grow border-gray-300" />
-        <span className="mx-2 text-gray-400 text-sm">Atau</span>
-        <hr className="grow border-gray-300" />
-      </div>
-      <div style={{ padding: "20px" }}>
-        <h2>Login dengan Face Recognition</h2>
-        <p style={{ color: message.includes("Error") ? "red" : "blue" }}>
+    <section className="bg-white rounded-xl shadow p-7 w-full">
+      <div className="flex flex-col items-center">
+        <h2 className="text-center text-2xl font-bold">Login dengan Face Recognition</h2>
+        <p className="text-center mt-2" style={{ color: message.includes("Error") ? "red" : "blue" }}>
           {message}
         </p>
         {loading ? (
-          <p>Loading model...</p>
+          <p>Memuat model...</p>
         ) : (
           <>
             <video
@@ -97,13 +110,12 @@ export default function FaceLogin() {
               muted
               width={320}
               height={240}
-              style={{ border: "1px solid #ccc", display: "block" }}
+              className="mt-3 rounded-xl border border-gray-300"
             />
             <br />
-            <button onClick={handleLogin}>Login dengan Wajah</button>
           </>
         )}
       </div>
-    </>
+    </section>
   );
 }

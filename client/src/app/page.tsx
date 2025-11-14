@@ -1,9 +1,11 @@
+import Navbar from '@/components/layout/Navbar';
 import FeatureCard from '../components/ui/FeatureCard';
 import Gallery from '@/components/ui/Gallery';
 
 export default function Home() {
   return (
     <>
+      <Navbar />
       <main className="flex flex-col min-h-screen items-center font-sans">
         <section id="hero" className="px-4">
           <h1 className="text-3xl text-center font-bold text-black">

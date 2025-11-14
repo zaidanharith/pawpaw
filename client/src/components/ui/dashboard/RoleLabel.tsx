@@ -1,5 +1,4 @@
 import React from 'react';
-import { useSession } from "next-auth/react";
 
 type RoleLabelProps = {
     role: string;
@@ -12,19 +11,21 @@ const roleColors: Record<string, string> = {
 };
 
 
-const RoleLabel: React.FC<RoleLabelProps> = () => {
-    const { data: session } = useSession();
-    const role = session?.user?.role || "ADMIN";
+const RoleLabel: React.FC<RoleLabelProps> = ({role}) => {
 
     const accentColor = roleColors[role];
     const textColor = role === "ADMIN" ? "#FFFFFF" : "#282828";
 
     return (
-        <span className={`flex items-center text-center px-1.5 py-0.75 rounded-lg text-xs first-letter:uppercase `}
-        style={{
-                backgroundColor: accentColor,
-                color: textColor,
-            }}>
+        <span
+            className="inline-flex items-center text-center px-2 py-0.5 rounded-lg text-xs first-letter:uppercase w-auto"
+            style={{
+            backgroundColor: accentColor,
+            color: textColor,
+            width: "auto",
+            minWidth: 0,
+            }}
+        >
             {role.toLowerCase().replace(/^\w/, (c) => c.toUpperCase())}
         </span>
     );

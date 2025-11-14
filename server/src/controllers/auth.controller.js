@@ -452,16 +452,16 @@ const authController = {
         return res.status(400).json({ success: false, message: "Descriptor tidak valid" });
       }
 
-      // Cari user dengan faceDescriptor terdekat
       const users = await prisma.user.findMany({
         where: {
-          faceDescriptor: { not: [] }
+          faceDescriptor: {
+            isEmpty: false
+          }
         }
       });
 
       let matchedUser = null;
-      let minDistance = 0.6; // threshold face-api.js
-
+      let minDistance = 0.6;
       for (const user of users) {
         if (user.faceDescriptor && user.faceDescriptor.length === descriptor.length) {
           const dist = euclideanDistance(user.faceDescriptor, descriptor);
@@ -473,7 +473,6 @@ const authController = {
       }
 
       if (matchedUser) {
-        // Login sukses, generate JWT
         const token = generateToken(matchedUser.id, matchedUser.username, matchedUser.role);
         return res.json({
           success: true,
@@ -496,7 +495,74 @@ const authController = {
       console.error("Face login error:", err);
       res.status(500).json({ success: false, message: "Server error" });
     }
-  }
+  },
+
+  registerFaceDescriptor: async (req, res) => {
+    try {
+      const { userId, descriptor } = req.body;
+      if (!userId || !descriptor || !Array.isArray(descriptor)) {
+        return res.status(400).json({ success: false, message: "Data tidak lengkap" });
+      }
+
+      const user = await prisma.user.findUnique({ where: { id: userId } });
+      if (!user) {
+        return res.status(404).json({ success: false, message: "User tidak ditemukan" });
+      }
+
+      await prisma.user.update({
+        where: { id: userId },
+        data: { faceDescriptor: descriptor }
+      });
+
+      res.json({ success: true, message: "Face descriptor berhasil didaftarkan" });
+    } catch (err) {
+      console.error("Register face descriptor error:", err);
+      res.status(500).json({ success: false, message: "Server error" });
+    }
+  },
+
+  verifyFaceToken: async (req, res) => {
+    try {
+      const { faceToken } = req.body;
+      if (!faceToken) {
+        return res.status(400).json({ success: false, message: "Token wajah wajib diisi" });
+      }
+
+      const { verifyToken } = require('../utils/jwt');
+      let payload;
+      try {
+        payload = verifyToken(faceToken);
+      } catch (err) {
+        return res.status(401).json({ success: false, message: "Token tidak valid" });
+      }
+
+      const user = await prisma.user.findUnique({
+        where: { id: payload.id }
+      });
+
+      if (!user) {
+        return res.status(404).json({ success: false, message: "User tidak ditemukan" });
+      }
+
+      return res.json({
+        success: true,
+        user: {
+          id: user.id,
+          username: user.username,
+          name: user.name,
+          email: user.email,
+          role: user.role,
+          picture: user.picture,
+          phoneNumber: user.phoneNumber,
+          provider: user.provider
+        },
+        token: faceToken
+      });
+    } catch (err) {
+      console.error("Verifikasi token wajah error:", err);
+      res.status(500).json({ success: false, message: "Server error" });
+    }
+  },
 };
 
 module.exports = authController;

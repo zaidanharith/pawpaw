@@ -160,6 +160,21 @@ export const authService = {
       const axiosError = error as AxiosError<ErrorResponse>;
       throw new Error(axiosError.response?.data?.message || "Reset password gagal");
     }
+  },
+
+  async verifyFaceToken(faceToken: string): Promise<AuthResponse> {
+    try {
+      const response = await axios.post(`${API_URL}/auth/verify-face-token`, { faceToken });
+      return response.data;
+    } catch (error) {
+      console.error("Verify face token service error:", error);
+      const axiosError = error as AxiosError<ErrorResponse>;
+      return {
+        success: false,
+        message: axiosError.response?.data?.message || "Face login gagal",
+        serverError: !axiosError.response
+      };
+    }
   }
 };
 

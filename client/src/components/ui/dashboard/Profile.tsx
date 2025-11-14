@@ -6,7 +6,7 @@ import { useSession, signOut } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import authService, { AuthResponse } from "@/services/auth.service";
 import Image from "next/image";
-import RoleLabel from "@/components/ui/RoleLabel";
+import RoleLabel from "@/components/ui/dashboard/RoleLabel";
 
 type UserProfile = AuthResponse["user"] & {
     createdAt?: string;
@@ -76,16 +76,6 @@ export default function Profile() {
 
     return (
         <div className="p-5 bg-white rounded-xl shadow">
-            <div className="mb-6 flex gap-4 justify-center">
-                <Link href="/" className="px-4 py-2 bg-blue-50 text-blue-600 rounded hover:bg-blue-100 transition cursor-pointer">Beranda</Link>
-                <Link href="/dashboard" className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition cursor-pointer">Dashboard</Link>
-                <button
-                    onClick={() => signOut({ callbackUrl: "/login" })}
-                    className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 transition cursor-pointer"
-                >
-                    Keluar
-                </button>
-            </div>
             <div className="flex flex-col items-center">
                 <Image
                     src={user.picture || "/images/default-profile.png"}

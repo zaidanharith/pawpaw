@@ -206,38 +206,6 @@ router.post('/auth/reset-password', authController.resetPassword);
 
 /**
  * @swagger
- * /auth/profile:
- *   get:
- *     summary: Melihat profil user
- *     tags: [Auth]
- *     security:
- *       - bearerAuth: []
- *     responses:
- *       200:
- *         description: Berhasil mendapatkan profil user
- *       401:
- *         description: Akses ditolak
- */
-router.get('/auth/profile', protect, authController.getProfile);
-
-/**
- * @swagger
- * /auth/me:
- *   get:
- *     summary: Melihat profil user (alias)
- *     tags: [Auth]
- *     security:
- *       - bearerAuth: []
- *     responses:
- *       200:
- *         description: Berhasil mendapatkan profil user
- *       401:
- *         description: Akses ditolak
- */
-router.get('/auth/me', protect, authController.getProfile);
-
-/**
- * @swagger
  * /auth/face-login:
  *   post:
  *     summary: Login dengan Face Recognition
@@ -278,5 +246,105 @@ router.get('/auth/me', protect, authController.getProfile);
  *         description: Server error
  */
 router.post('/auth/face-login', authController.faceLogin);
+
+/**
+ * @swagger
+ * /auth/register-face:
+ *   post:
+ *     summary: Mendaftarkan face descriptor untuk user
+ *     tags: [Auth]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - userId
+ *               - descriptor
+ *             properties:
+ *               userId:
+ *                 type: string
+ *                 example: "clx1234567890"
+ *               descriptor:
+ *                 type: array
+ *                 items:
+ *                   type: number
+ *                 example: [0.123, -0.456, ...]
+ *     responses:
+ *       200:
+ *         description: Face descriptor berhasil didaftarkan
+ *       400:
+ *         description: Data tidak lengkap
+ *       404:
+ *         description: User tidak ditemukan
+ *       500:
+ *         description: Server error
+ */
+router.post('/auth/register-face', protect, authController.registerFaceDescriptor);
+
+/**
+ * @swagger
+ * /auth/profile:
+ *   get:
+ *     summary: Melihat profil user
+ *     tags: [Auth]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Berhasil mendapatkan profil user
+ *       401:
+ *         description: Akses ditolak
+ */
+router.get('/auth/profile', protect, authController.getProfile);
+
+/**
+ * @swagger
+ * /auth/me:
+ *   get:
+ *     summary: Melihat profil user (alias)
+ *     tags: [Auth]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Berhasil mendapatkan profil user
+ *       401:
+ *         description: Akses ditolak
+ */
+router.get('/auth/me', protect, authController.getProfile);
+
+/**
+ * @swagger
+ * /auth/verify-face-token:
+ *   post:
+ *     summary: Verifikasi Face Token
+ *     tags: [Auth]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - token
+ *             properties:
+ *               token:
+ *                 type: string
+ *                 example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+ *     responses:
+ *       200:
+ *         description: Token berhasil diverifikasi
+ *       400:
+ *         description: Bad request
+ *       401:
+ *         description: Token tidak valid
+ *       404:
+ *         description: User tidak ditemukan
+ */
+router.post('/auth/verify-face-token', authController.verifyFaceToken);
 
 module.exports = router;

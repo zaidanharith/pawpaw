@@ -21,10 +21,28 @@ const handler = NextAuth({
       name: "Credentials",
       credentials: {
         username: { label: "Username", type: "text" },
-        password: { label: "Password", type: "password" }
+        password: { label: "Password", type: "password" },
+        faceToken: { label: "Face Token", type: "text" }
       },
       async authorize(credentials) {
         try {
+          if (credentials?.faceToken) {
+            const data = await authService.verifyFaceToken(credentials.faceToken);
+            if (data.success && data.user) {
+              return {
+                id: data.user.id,
+                name: data.user.name,
+                email: data.user.email,
+                username: data.user.username,
+                role: data.user.role,
+                picture: data.user.picture,
+                accessToken: data.token
+              };
+            }
+            throw new Error(data.message || "Face login gagal");
+          }
+
+          // Login username & password
           if (!credentials?.username || !credentials?.password) {
             throw new Error("Username dan password wajib diisi");
           }

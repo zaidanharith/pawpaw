@@ -2,14 +2,14 @@
 import React, { useState } from "react";
 import authService from "@/services/auth.service";
 import { signOut, useSession } from "next-auth/react";
-import { FaTachometerAlt, FaUser, FaUsers, FaClipboardList, FaBullhorn, FaSignOutAlt, FaTimes } from "react-icons/fa";
+import { FaSignOutAlt, FaTimes} from "react-icons/fa";
 
 interface SidebarProps {
+  menuItems: { name: string; icon: React.ReactNode }[];
   isOpen: boolean;
   onClose: () => void;
   activeMenu: string;
   onSelectMenu: (menu: string) => void;
-  role?: "ADMIN" | "TEACHER" | "PARENT";
 }
 
 const roleColors: Record<string, string> = {
@@ -18,15 +18,8 @@ const roleColors: Record<string, string> = {
   PARENT: "#58baab",
 };
 
-const menuItems = [
-  { name: "Dashboard", icon: <FaTachometerAlt size={24} /> },
-  { name: "User", icon: <FaUser size={24} /> },
-  { name: "Siswa", icon: <FaUsers size={24} /> },
-  { name: "Laporan Kegiatan", icon: <FaClipboardList size={24} /> },
-  { name: "Pengumuman", icon: <FaBullhorn size={24} /> },
-];
-
 const Sidebar: React.FC<SidebarProps> = ({
+  menuItems,
   isOpen,
   onClose,
   activeMenu,
@@ -54,7 +47,7 @@ const Sidebar: React.FC<SidebarProps> = ({
   const baseTextColor = role === "ADMIN" ? "#ffffff" : "#282828";
 
   return (
-    <div className={`font-sans fixed inset-0 z-50 transition-all duration-300 ${isOpen ? "visible opacity-100" : "invisible opacity-0"}`}>
+    <div className={`font-sans fixed inset-0 z-100 transition-all duration-300 ${isOpen ? "visible opacity-100" : "invisible opacity-0"}`}>
       <div
         className={`absolute inset-0 bg-black bg-opacity-50 transition-all duration-800 ${isOpen ? "opacity-100" : "opacity-0"}`}
         onClick={onClose}

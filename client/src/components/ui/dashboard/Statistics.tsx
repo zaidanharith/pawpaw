@@ -69,10 +69,10 @@ const Statistics: React.FC = () => {
     return (
         <section className="flex gap-2 justify-between">
             {stats.map((item, i) => (
-                <div key={i} className="rounded-xl shadow p-5 flex flex-col items-center border-2 border-[#e5e7eb] transition-transform w-1/3"
+                <div key={i} className="rounded-xl shadow p-5 flex flex-col items-center transition w-1/3"
                     style={{ backgroundColor: cardColor }} >
                     <div className="mb-3 text-4xl">{item.icon}</div>
-                    <h3  className="text-3xl md:text-4xl font-extrabold drop-shadow"
+                    <h3  className="text-3xl md:text-4xl font-extrabold"
                         style={{ color: textColor }} >
                         {loading ? <span className="animate-pulse">-</span> : item.count}
                     </h3>
