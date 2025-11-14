@@ -8,10 +8,14 @@ import BurgerButton from '../ui/BurgerButton';
 import Sidebar from "./Sidebar";
 import { usePathname } from "next/navigation";
 
-const Navbar = () => {
+interface NavbarProps {
+  activeMenu: string;
+  setActiveMenu: (menu: string) => void;
+}
+
+const Navbar: React.FC<NavbarProps> = ({ activeMenu, setActiveMenu }) => {
     const { data: session, status } = useSession();
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-    const [activeMenu, setActiveMenu] = useState("Dashboard");
     const pathname = usePathname();
 
     return (
@@ -66,7 +70,7 @@ const Navbar = () => {
                 isOpen={isSidebarOpen}
                 onClose={() => setIsSidebarOpen(false)}
                 activeMenu={activeMenu}
-                onSelectMenu={setActiveMenu}
+                setActiveMenu={setActiveMenu}
             />
         </>
     );

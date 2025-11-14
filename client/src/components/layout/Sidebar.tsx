@@ -8,7 +8,7 @@ interface SidebarProps {
   isOpen: boolean;
   onClose: () => void;
   activeMenu: string;
-  onSelectMenu: (menu: string) => void;
+  setActiveMenu: (menu: string) => void;
   role?: "ADMIN" | "TEACHER" | "PARENT";
 }
 
@@ -30,13 +30,13 @@ const Sidebar: React.FC<SidebarProps> = ({
   isOpen,
   onClose,
   activeMenu,
-  onSelectMenu,
+  setActiveMenu,
 }) => {
   const [isLoggingOut, setIsLoggingOut] = useState(false);
   const { data: session } = useSession();
 
   const handleClick = (menu: string) => {
-    onSelectMenu(menu);
+    setActiveMenu(menu);
     onClose();
   };
 

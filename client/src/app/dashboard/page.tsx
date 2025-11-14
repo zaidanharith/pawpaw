@@ -15,11 +15,11 @@ export default function DashboardPage() {
   };
 
   return (
-    <div className="px-4">
-      <header className="flex items-center justify-start gap-2">
+    <div className="px-4 ">
+      <div className="flex flex-row items-center justify-start gap-2 mb-4 mx-10">
         <h1 className="font-bold text-foreground text-2xl min-w-5">Halo, {(session?.user?.name) || "Joecelyn Aurora Majesty"}</h1>
         <RoleLabel role={role || "Guest"} />
-      </header>
+      </div>
 
       <section>
         <Admin />
