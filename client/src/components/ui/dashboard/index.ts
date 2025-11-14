@@ -7,4 +7,7 @@ export { default as Statistics } from "./Statistics";
 export { default as Weather } from "./Weather";
 export { default as UserTable } from "./UserTable";
 export { default as StudentTable } from "./StudentTable";
+export { default as AddUser } from "./AddUser";
 export { default as EditUser } from "./EditUser";
+export { default as AddStudent } from "./AddStudent";
+export { default as EditStudent } from "./EditStudent";

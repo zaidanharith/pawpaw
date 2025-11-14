@@ -36,7 +36,6 @@ const UserTable: React.FC<UserTableProps> = ({ onDeleteUser }) => {
     const [allUsers, setAllUsers] = useState<User[]>([]);
     const [loading, setLoading] = useState(true);
 
-    // State untuk overlay AddUser
     const [isAddUserOpen, setIsAddUserOpen] = useState(false);
     const [isEditUserOpen, setIsEditUserOpen] = useState(false);
     const [editUserData, setEditUserData] = useState<User | null>(null);
