@@ -3,8 +3,27 @@
 import { useState } from "react";
 import Navbar from "@/components/layout/Navbar";
 import Sidebar from "@/components/layout/Sidebar";
-import { DashboardPageTitle, Statistics, Weather, LiveReport, Announcement, Profile, StudentTable, ReportPage } from "@/components/ui/dashboard";
-import { FaTachometerAlt, FaUsers, FaClipboardList, FaBullhorn, FaUserCog, FaRegSmile } from "react-icons/fa";
+import { 
+  DashboardPageTitle, 
+  Statistics, 
+  Weather, 
+  LiveReport, 
+  Announcement, 
+  Profile, 
+  StudentTable, 
+  ReportPage,
+  AnnouncementPage
+} from "@/components/ui/dashboard";
+
+import { 
+  FaTachometerAlt, 
+  FaUsers, 
+  FaClipboardList, 
+  FaBullhorn, 
+  FaUserCog, 
+  FaRegSmile 
+} from "react-icons/fa";
+
 import FaceRegister from "../ui/dashboard/FaceRegister";
 
 export default function Teacher() {
@@ -33,6 +52,7 @@ export default function Teacher() {
             <Announcement />
           </>
         );
+
       case "Siswa":
         return (
           <>
@@ -40,6 +60,7 @@ export default function Teacher() {
             <StudentTable />
           </>
         );
+
       case "Laporan Kegiatan":
         return (
           <>
@@ -47,12 +68,15 @@ export default function Teacher() {
             <ReportPage />
           </>
         );
+
       case "Pengumuman":
         return (
           <>
             <DashboardPageTitle page={activeMenu}/>
+            <AnnouncementPage />
           </>
         );
+
       case "Profil":
         return (
           <>
@@ -60,6 +84,7 @@ export default function Teacher() {
             <Profile />
           </>
         );
+
       case "Face Recognition":
         return (
           <>
