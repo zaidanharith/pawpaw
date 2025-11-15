@@ -3,7 +3,8 @@
 import { useState } from "react";
 import Navbar from "@/components/layout/Navbar";
 import Sidebar from "@/components/layout/Sidebar";
-import { FaTachometerAlt, FaClipboardList, FaBullhorn, FaUserCog, FaRegSmile, FaComments } from "react-icons/fa";
+import { DashboardPageTitle, Weather, LiveReport, Announcement, Profile, ReportPage } from "@/components/ui/dashboard";
+import { FaTachometerAlt, FaClipboardList, FaBullhorn, FaUserCog, FaRegSmile } from "react-icons/fa";
 import FaceRegister from "../ui/dashboard/FaceRegister";
 import ParentChat from "../ui/dashboard/ParentChat";
 import { 
@@ -47,6 +48,7 @@ export default function Parent() {
             <LiveReport />
           </>
         );
+
       case "Laporan Kegiatan":
         return (
           <>
@@ -54,20 +56,14 @@ export default function Parent() {
             <LiveReporPage />
           </>
         );
+
       case "Pengumuman":
         return (
           <>
             <DashboardPageTitle page={activeMenu}/>
-            <Announcement />
           </>
         );
-      case "Chat Guru":
-        return (
-          <>
-            <DashboardPageTitle page={activeMenu}/>
-            <ParentChat />
-          </>
-        );
+
       case "Profil":
         return (
           <>
@@ -75,6 +71,7 @@ export default function Parent() {
             <Profile />
           </>
         );
+
       case "Face Recognition":
         return (
           <>
