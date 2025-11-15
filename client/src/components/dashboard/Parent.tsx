@@ -13,7 +13,7 @@ import {
   Announcement, 
   Profile, 
   ReportPage,
-  LiveReportPage
+  LiveReporPage
 } from "@/components/ui/dashboard";
 
 export default function Parent() {
@@ -51,7 +51,7 @@ export default function Parent() {
         return (
           <>
             <DashboardPageTitle page={activeMenu}/>
-            <LiveReportPage />
+            <LiveReporPage />
           </>
         );
       case "Pengumuman":
