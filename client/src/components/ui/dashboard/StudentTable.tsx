@@ -10,8 +10,8 @@ interface Siswa {
     id: string;
     name: string;
     gender: string;
-    tanggalLahir: string;
-    alamat: string;
+    birthDate: string;
+    address: string;
 }
 
 const genderColors: Record<string, string> = {
@@ -154,8 +154,8 @@ const StudentTable: React.FC = () => {
                                                 {siswa.gender}
                                             </span>
                                         </td>
-                                        <td className="px-4 py-3">{siswa.tanggalLahir}</td>
-                                        <td className="px-4 py-3">{siswa.alamat}</td>
+                                        <td className="px-4 py-3">{siswa.birthDate}</td>
+                                        <td className="px-4 py-3">{siswa.address}</td>
                                         <td className="px-4 py-3 flex justify-center sm:justify-start gap-3">
                                             <button
                                                 onClick={() => handleEditStudent(siswa)}
