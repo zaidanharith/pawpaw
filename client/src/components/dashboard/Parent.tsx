@@ -9,7 +9,7 @@ import {
   LiveReport, 
   Announcement, 
   Profile, 
-  LiveReportPage 
+  ReportPage 
 } from "@/components/ui/dashboard";
 
 import { 
@@ -61,7 +61,7 @@ export default function Parent() {
         return (
           <>
             <DashboardPageTitle page={activeMenu} />
-            <LiveReportPage />
+            <ReportPage />
           </>
         );
 
@@ -69,7 +69,6 @@ export default function Parent() {
         return (
           <>
             <DashboardPageTitle page={activeMenu} />
-            {/* Jika parent hanya melihat pengumuman */}
             <Announcement />
           </>
         );
