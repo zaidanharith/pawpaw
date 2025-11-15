@@ -36,6 +36,7 @@ const ReportPage: React.FC = () => {
     const role = session?.user?.role || "ADMIN";
     const accentColor = roleColors[role] || roleColors.ADMIN;
     const textColor = role === "ADMIN" ? "#FFFFFF" : "#282828";
+    const isReadOnly = role === "PARENT";
 
     const [allReports, setAllReports] = useState<Report[]>([]);
     const [loading, setLoading] = useState(true);
@@ -167,16 +168,18 @@ const ReportPage: React.FC = () => {
                         </div>
                     </div>
 
-                    <button
-                        onClick={() => setIsAddReportOpen(true)}
-                        className="w-full sm:w-auto flex items-center justify-center gap-2 px-4 py-3 cursor-pointer rounded-xl text-sm md:text-base font-semibold hover:shadow-lg transition"
-                        style={{
+                    {!isReadOnly && (
+                        <button
+                            onClick={() => setIsAddReportOpen(true)}
+                            className="w-full sm:w-auto flex items-center justify-center gap-2 px-4 py-3 cursor-pointer rounded-xl text-sm md:text-base font-semibold hover:shadow-lg transition"
+                            style={{
                             backgroundColor: accentColor,
                             color: textColor,
-                        }}
-                    >
-                        <FaEdit /> Buat Laporan
-                    </button>
+                            }}
+                        >
+                            <FaEdit /> Buat Laporan
+                        </button>
+                    )}
                 </div>
             </section>
 
@@ -204,22 +207,24 @@ const ReportPage: React.FC = () => {
                                 </div>
                                 
                                 {/* Action buttons */}
-                                <div className="flex gap-2">
-                                    <button
-                                        onClick={() => handleEditReport(report)}
-                                        className="cursor-pointer hover:scale-110 transition-transform p-2 rounded-full text-blue-500 hover:bg-blue-50"
-                                        title="Edit Laporan"
-                                    >
-                                        <MdEdit className="w-5 h-5" />
-                                    </button>
-                                    <button
-                                        onClick={() => handleDeleteReport(report.id)}
-                                        className="cursor-pointer hover:scale-110 transition-transform p-2 rounded-full text-red-500 hover:bg-red-50"
-                                        title="Hapus Laporan"
-                                    >
-                                        <MdDelete className="w-5 h-5" />
-                                    </button>
-                                </div>
+                                {!isReadOnly && (
+                                    <div className="flex gap-2">
+                                        <button
+                                            onClick={() => handleEditReport(report)}
+                                            className="cursor-pointer hover:scale-110 transition-transform p-2 rounded-full text-blue-500 hover:bg-blue-50"
+                                            title="Edit Laporan"
+                                        >
+                                            <MdEdit className="w-5 h-5" />
+                                        </button>
+                                        <button
+                                            onClick={() => handleDeleteReport(report.id)}
+                                            className="cursor-pointer hover:scale-110 transition-transform p-2 rounded-full text-red-500 hover:bg-red-50"
+                                            title="Hapus Laporan"
+                                        >
+                                            <MdDelete className="w-5 h-5" />
+                                        </button>
+                                    </div>
+                                )}
                             </div>
 
                             {/* Judul + Badge */}
@@ -271,20 +276,24 @@ const ReportPage: React.FC = () => {
             </section>
 
             {/* Modals */}
-            <AddReport
-                isOpen={isAddReportOpen}
-                onClose={() => setIsAddReportOpen(false)}
-                onSave={handleSaveNewReport}
-            />
-            <EditReport
-                isOpen={isEditReportOpen}
-                onClose={() => {
-                    setIsEditReportOpen(false);
-                    setEditReportData(null);
-                }}
-                reportData={editReportData}
-                onSave={handleSaveEditReport}
-            />
+            {!isReadOnly && (
+                <>
+                    <AddReport
+                    isOpen={isAddReportOpen}
+                    onClose={() => setIsAddReportOpen(false)}
+                    onSave={handleSaveNewReport}
+                    />
+                    <EditReport
+                    isOpen={isEditReportOpen}
+                    onClose={() => {
+                        setIsEditReportOpen(false);
+                        setEditReportData(null);
+                    }}
+                    reportData={editReportData}
+                    onSave={handleSaveEditReport}
+                    />
+                </>
+            )}
         </>
     );
 };
