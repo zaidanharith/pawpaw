@@ -2,59 +2,54 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useSession } from "next-auth/react";
 
-interface Siswa {
+interface Announcement {
     id: string;
-    name: string;
-    gender: string;
-    birthDate: string;
-    address: string;
+    title: string;
+    kelas: string;
+    content: string;
 }
 
-const GENDER_OPTIONS = [
-    { value: "LAKI", label: "Laki-Laki" },
-    { value: "PEREMPUAN", label: "Perempuan" },
+const KELAS_OPTIONS = [
+    { value: "A1", label: "A1" },
+    { value: "B1", label: "B1" },
 ];
 
-interface EditStudentProps {
+interface EditAnnouncementProps {
     isOpen: boolean;
     onClose: () => void;
-    studentData: Siswa | null;
+    reportData: Announcement | null;
     onSave: () => void;
 }
 
-const EditStudent: React.FC<EditStudentProps> = ({ isOpen, onClose, studentData, onSave }) => {
-    const [formData, setFormData] = useState<Siswa>({
+const EditAnnouncement: React.FC<EditAnnouncementProps> = ({ isOpen, onClose, reportData, onSave }) => {
+    const [formData, setFormData] = useState<Announcement>({
         id: "",
-        name: "",
-        gender: "LAKI",
-        birthDate: "",
-        address: "",
+        title: "",
+        kelas: "A1",
+        content: "",
     });
     const [loading, setLoading] = useState(false);
     const { data: session } = useSession();
     const token = session?.accessToken;
 
     useEffect(() => {
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-        if (isOpen && studentData) {
+        if (isOpen && reportData) {
             setFormData({
-                id: studentData.id,
-                name: studentData.name,
-                gender: studentData.gender,
-                birthDate: studentData.birthDate,
-                address: studentData.address,
+                id: reportData.id,
+                title: reportData.title,
+                kelas: reportData.kelas,
+                content: reportData.content,
             });
         }
-    }, [isOpen, studentData]);
+    }, [isOpen, reportData]);
 
     useEffect(() => {
         if (!isOpen) {
             setFormData({
                 id: "",
-                name: "",
-                gender: "LAKI",
-                birthDate: "",
-                address: "",
+                title: "",
+                kelas: "A1",
+                content: "",
             });
         }
     }, [isOpen]);
@@ -69,7 +64,7 @@ const EditStudent: React.FC<EditStudentProps> = ({ isOpen, onClose, studentData,
         setLoading(true);
         try {
             const API_URL = process.env.NEXT_PUBLIC_API_URL;
-            await axios.put(`${API_URL}/student/${formData.id}`, formData, {
+            await axios.put(`${API_URL}/announcement/${formData.id}`, formData, {
                 headers: {
                     Authorization: `Bearer ${token}`
                 }
@@ -77,12 +72,12 @@ const EditStudent: React.FC<EditStudentProps> = ({ isOpen, onClose, studentData,
             onSave();
             onClose();
         } catch {
-            alert("Gagal mengedit siswa");
+            alert("Gagal mengedit pengumuman");
         }
         setLoading(false);
     };
 
-    if (!isOpen || !studentData) {
+    if (!isOpen || !reportData) {
         return null;
     }
 
@@ -94,7 +89,7 @@ const EditStudent: React.FC<EditStudentProps> = ({ isOpen, onClose, studentData,
             />
             <div className="relative bg-white rounded-xl w-full max-w-2xl mx-4 shadow-lg">
                 <div className="p-6 border-b border-gray-100 flex justify-between items-center">
-                    <h2 className="text-xl font-bold text-gray-800">Edit Siswa</h2>
+                    <h2 className="text-xl font-bold text-gray-800">Edit Pengumuman</h2>
                     <button 
                         onClick={onClose} 
                         className="text-gray-400 hover:text-gray-700 transition text-2xl cursor-pointer"
@@ -104,30 +99,34 @@ const EditStudent: React.FC<EditStudentProps> = ({ isOpen, onClose, studentData,
                         &times;
                     </button>
                 </div>
-                <form onSubmit={handleSubmit} className="p-6 space-y-2">
+                <form onSubmit={handleSubmit} className="p-6 space-y-4">
                     <div>
-                        <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">Nama Lengkap</label>
+                        <label htmlFor="title" className="block text-sm font-medium text-gray-700 mb-1">
+                            Judul Pengumuman
+                        </label>
                         <input
                             type="text"
-                            id="name"
-                            name="name"
-                            value={formData.name ?? ""}
-                            onChange={handleChange}
-                            required
-                            className="w-full border border-gray-300 rounded-lg p-2.5 focus:ring-2 focus:ring-[#3f9065] focus:border-[#3f9065] transition"
-                        />
-                    </div>
-                    <div>
-                        <label htmlFor="gender" className="block text-sm font-medium text-gray-700 mb-1">Jenis Kelamin</label>
-                        <select
-                            id="gender"
-                            name="gender"
-                            value={formData.gender ?? ""}
+                            id="title"
+                            name="title"
+                            value={formData.title ?? ""}
                             onChange={handleChange}
                             required
                             className="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-[#3f9065] focus:outline-none"
+                        />
+                    </div>
+                    <div>
+                        <label htmlFor="kelas" className="block text-sm font-medium text-gray-700 mb-1">
+                            Kelas
+                        </label>
+                        <select
+                            id="kelas"
+                            name="kelas"
+                            value={formData.kelas ?? ""}
+                            onChange={handleChange}
+                            required
+                            className="w-full border border-gray-300 rounded-md px-3 py-2 bg-white focus:ring-2 focus:ring-[#3f9065] focus:outline-none"
                         >
-                            {GENDER_OPTIONS.map(option => (
+                            {KELAS_OPTIONS.map(option => (
                                 <option key={option.value} value={option.value}>
                                     {option.label}
                                 </option>
@@ -135,24 +134,14 @@ const EditStudent: React.FC<EditStudentProps> = ({ isOpen, onClose, studentData,
                         </select>
                     </div>
                     <div>
-                        <label htmlFor="birthDate" className="block text-sm font-medium text-gray-700 mb-1">Tanggal Lahir</label>
-                        <input
-                            type="date"
-                            id="birthDate"
-                            name="birthDate"
-                            value={formData.birthDate ?? ""}
-                            onChange={handleChange}
-                            required
-                            className="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-[#3f9065] focus:outline-none"
-                        />
-                    </div>
-                    <div>
-                        <label htmlFor="address" className="block text-sm font-medium text-gray-700 mb-1">Alamat</label>
+                        <label htmlFor="content" className="block text-sm font-medium text-gray-700 mb-1">
+                            Deskripsi Pengumuman
+                        </label>
                         <input
                             type="text"
-                            id="address"
-                            name="address"
-                            value={formData.address ?? ""}
+                            id="content"
+                            name="content"
+                            value={formData.content ?? ""}
                             onChange={handleChange}
                             required
                             className="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-[#3f9065] focus:outline-none"
@@ -180,4 +169,4 @@ const EditStudent: React.FC<EditStudentProps> = ({ isOpen, onClose, studentData,
     );
 };
 
-export default EditStudent;
+export default EditAnnouncement;

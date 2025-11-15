@@ -3,33 +3,31 @@ import axios from "axios";
 import { MdOutlineClose } from "react-icons/md";
 import { useSession } from "next-auth/react";
 
-interface NewStudentData {
-    name: string;
-    gender: string;
-    birthDate: string;
-    address: string;
+interface NewAnnouncementData {
+    title: string;
+    kelas: string;
+    content: string;
 }
 
-const GENDER_OPTIONS = [
-    { value: "LAKI", label: "Laki-laki" },
-    { value: "PEREMPUAN", label: "Perempuan" },
+const KELAS_OPTIONS = [
+    { value: "A1", label: "A1" },
+    { value: "B1", label: "B1" },
 ];
 
-interface AddStudentProps {
+interface AddAnnouncementProps {
     isOpen: boolean;
     onClose: () => void;
-    onSave: (data: NewStudentData) => void;
+    onSave: (data: NewAnnouncementData) => void;
 }
 
-const initialForm: NewStudentData = {
-    name: "",
-    gender: "LAKI",
-    birthDate: "",
-    address: "",
+const initialForm: NewAnnouncementData = {
+    title: "",
+    kelas: "A1",
+    content: "",
 };
 
-const AddStudent: React.FC<AddStudentProps> = ({ isOpen, onClose, onSave }) => {
-    const [formData, setFormData] = useState<NewStudentData>(initialForm);
+const AddAnnouncement: React.FC<AddAnnouncementProps> = ({ isOpen, onClose, onSave }) => {
+    const [formData, setFormData] = useState<NewAnnouncementData>(initialForm);
     const [loading, setLoading] = useState(false);
     const { data: session } = useSession();
     const token = session?.accessToken;
@@ -43,14 +41,14 @@ const AddStudent: React.FC<AddStudentProps> = ({ isOpen, onClose, onSave }) => {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        if (!formData.name || !formData.gender || !formData.birthDate || !formData.address) {
+        if (!formData.title || !formData.kelas || !formData.content) {
             alert("Mohon lengkapi semua field.");
             return;
         }
         setLoading(true);
         try {
             const API_URL = process.env.NEXT_PUBLIC_API_URL;
-            await axios.post(`${API_URL}/student/create`, formData, {
+            await axios.post(`${API_URL}/announcement/create`, formData, {
                 headers: {
                     Authorization: `Bearer ${token}`
                 }
@@ -59,7 +57,7 @@ const AddStudent: React.FC<AddStudentProps> = ({ isOpen, onClose, onSave }) => {
             setFormData(initialForm);
             onClose();
         } catch {
-            alert("Gagal menambah siswa");
+            alert("Gagal menambah pengumuman");
         }
         setLoading(false);
     };
@@ -74,7 +72,7 @@ const AddStudent: React.FC<AddStudentProps> = ({ isOpen, onClose, onSave }) => {
             />
             <div className="relative bg-white rounded-xl w-full max-w-2xl mx-4 shadow-lg">
                 <div className="p-6 border-b border-gray-100 flex justify-between items-center">
-                    <h2 className="text-xl font-bold text-gray-800">Tambah Siswa Baru</h2>
+                    <h2 className="text-xl font-bold text-gray-800">Tambah Pengumuman Baru</h2>
                     <button
                         onClick={onClose}
                         className="text-gray-400 hover:text-gray-700 transition"
@@ -86,32 +84,32 @@ const AddStudent: React.FC<AddStudentProps> = ({ isOpen, onClose, onSave }) => {
                 </div>
                 <form onSubmit={handleSubmit} className="p-6 space-y-4">
                     <div>
-                        <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
-                            Nama Lengkap
+                        <label htmlFor="title" className="block text-sm font-medium text-gray-700 mb-1">
+                            Judul Pengumuman
                         </label>
                         <input
                             type="text"
-                            id="name"
-                            name="name"
-                            value={formData.name}
+                            id="title"
+                            name="title"
+                            value={formData.title}
                             onChange={handleChange}
                             required
                             className="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-[#3f9065] focus:outline-none"
                         />
                     </div>
                     <div>
-                        <label htmlFor="gender" className="block text-sm font-medium text-gray-700 mb-1">
-                            Jenis Kelamin
+                        <label htmlFor="kelas" className="block text-sm font-medium text-gray-700 mb-1">
+                            Kelas
                         </label>
                         <select
-                            id="gender"
-                            name="gender"
-                            value={formData.gender}
+                            id="kelas"
+                            name="kelas"
+                            value={formData.kelas}
                             onChange={handleChange}
                             required
                             className="w-full border border-gray-300 rounded-md px-3 py-2 bg-white focus:ring-2 focus:ring-[#3f9065] focus:outline-none"
                         >
-                            {GENDER_OPTIONS.map(option => (
+                            {KELAS_OPTIONS.map(option => (
                                 <option key={option.value} value={option.value}>
                                     {option.label}
                                 </option>
@@ -119,28 +117,14 @@ const AddStudent: React.FC<AddStudentProps> = ({ isOpen, onClose, onSave }) => {
                         </select>
                     </div>
                     <div>
-                        <label htmlFor="birthDate" className="block text-sm font-medium text-gray-700 mb-1">
-                            Tanggal Lahir
-                        </label>
-                        <input
-                            type="date"
-                            id="birthDate"
-                            name="birthDate"
-                            value={formData.birthDate}
-                            onChange={handleChange}
-                            required
-                            className="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-[#3f9065] focus:outline-none"
-                        />
-                    </div>
-                    <div>
-                        <label htmlFor="address" className="block text-sm font-medium text-gray-700 mb-1">
-                            Alamat
+                        <label htmlFor="content" className="block text-sm font-medium text-gray-700 mb-1">
+                            Deskripsi Kegiatan
                         </label>
                         <input
                             type="text"
-                            id="address"
-                            name="address"
-                            value={formData.address}
+                            id="content"
+                            name="content"
+                            value={formData.content}
                             onChange={handleChange}
                             required
                             className="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-[#3f9065] focus:outline-none"
@@ -159,7 +143,7 @@ const AddStudent: React.FC<AddStudentProps> = ({ isOpen, onClose, onSave }) => {
                             disabled={loading}
                             className="px-4 py-2 text-sm font-medium cursor-pointer rounded-lg text-white bg-[#3f9065] hover:bg-[#3f9065] transition shadow-md"
                         >
-                            {loading ? "Menyimpan..." : "Simpan Siswa Baru"}
+                            {loading ? "Menyimpan..." : "Simpan Pengumuman Baru"}
                         </button>
                     </div>
                 </form>
@@ -168,4 +152,4 @@ const AddStudent: React.FC<AddStudentProps> = ({ isOpen, onClose, onSave }) => {
     );
 };
 
-export default AddStudent;
+export default AddAnnouncement;
