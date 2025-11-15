@@ -38,6 +38,7 @@ const EditUser: React.FC<EditUserProps> = ({ isOpen, onClose, userData, onSave }
     const token = session?.accessToken;
 
     useEffect(() => {
+        // eslint-disable-next-line react-hooks/exhaustive-deps
         if (isOpen && userData) {
             setFormData({
                 id: userData.id,

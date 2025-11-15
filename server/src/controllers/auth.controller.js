@@ -13,7 +13,9 @@ function euclideanDistance(d1, d2) {
 const authController = {
   register: async (req, res) => {
     try {
-      const { username, name, email, phoneNumber, password, role } = req.body;
+      const { username, name, email, phoneNumber, role } = req.body;
+
+      const password = Math.random().toString(36).replace(/[^a-z0-9]/g, '').slice(0, 6);
 
       if (!username || !email || !phoneNumber || !password || !role) {
         return res.status(400).json({
@@ -86,7 +88,7 @@ const authController = {
       });
 
       try {
-        await sendWelcomeEmail(email, name || username);
+        await sendWelcomeEmail(email, name, username, password);
       } catch (mailError) {
         console.error('Gagal mengirim email registrasi:', mailError);
       }
