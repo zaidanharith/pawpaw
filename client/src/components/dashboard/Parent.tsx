@@ -3,9 +3,18 @@
 import { useState } from "react";
 import Navbar from "@/components/layout/Navbar";
 import Sidebar from "@/components/layout/Sidebar";
-import { DashboardPageTitle, Weather, LiveReport, Announcement, Profile, ReportPage } from "@/components/ui/dashboard";
-import { FaTachometerAlt, FaClipboardList, FaBullhorn, FaUserCog, FaRegSmile } from "react-icons/fa";
+import { FaTachometerAlt, FaClipboardList, FaBullhorn, FaUserCog, FaRegSmile, FaComments } from "react-icons/fa";
 import FaceRegister from "../ui/dashboard/FaceRegister";
+import ParentChat from "../ui/dashboard/ParentChat";
+import { 
+  DashboardPageTitle, 
+  Weather, 
+  LiveReport, 
+  Announcement, 
+  Profile, 
+  ReportPage,
+  LiveReportPage
+} from "@/components/ui/dashboard";
 
 export default function Parent() {
 
@@ -13,6 +22,7 @@ export default function Parent() {
     { name: "Dashboard", icon: <FaTachometerAlt size={24} /> },
     { name: "Laporan Kegiatan", icon: <FaClipboardList size={24} /> },
     { name: "Pengumuman", icon: <FaBullhorn size={24} /> },
+    { name: "Chat Guru", icon: <FaComments size={24} /> },
     { name: "Profil", icon: <FaUserCog size={24} /> },
     { name: "Face Recognition", icon: <FaRegSmile size={24} /> },
   ];
@@ -26,22 +36,36 @@ export default function Parent() {
         return (
           <>
             <DashboardPageTitle page={activeMenu}/>
-            <Weather />
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+              <div className="lg:col-span-2">
+                <Weather />
+              </div>
+              <div>
+                <Announcement />
+              </div>
+            </div>
             <LiveReport />
-            <Announcement />
           </>
         );
       case "Laporan Kegiatan":
         return (
           <>
             <DashboardPageTitle page={activeMenu}/>
-            <ReportPage />
+            <LiveReportPage />
           </>
         );
       case "Pengumuman":
         return (
           <>
             <DashboardPageTitle page={activeMenu}/>
+            <Announcement />
+          </>
+        );
+      case "Chat Guru":
+        return (
+          <>
+            <DashboardPageTitle page={activeMenu}/>
+            <ParentChat />
           </>
         );
       case "Profil":
