@@ -25,7 +25,9 @@ const roleColors: Record<string, string> = {
 const AnnouncementPage: React.FC = () => {
     const { data: session } = useSession();
     const token = session?.accessToken;
-    const role = session?.user?.role || "ADMIN";
+
+    // FIX: UPPERCASE ROLE (SANGAT PENTING)
+    const role = (session?.user?.role || "ADMIN").toUpperCase();
 
     const accentColor = roleColors[role] || roleColors.ADMIN;
     const textColor = role === "ADMIN" ? "#FFFFFF" : "#282828";
@@ -35,14 +37,10 @@ const AnnouncementPage: React.FC = () => {
     const [allAnnouncements, setAllAnnouncements] = useState<Announcement[]>([]);
     const [loading, setLoading] = useState(true);
     const [isAddAnnouncementOpen, setIsAddAnnouncementOpen] = useState(false);
-    const [isEditAnnouncementOpen, setIsEditAnnouncementOpen] = useState(false);
-    const [editAnnouncementData, setEditAnnouncementData] = useState<Announcement | null>(null);
-    const [detailAnnouncement, setDetailAnnouncement] = useState<Announcement | null>(null);
-
-    // Fetch announcements
     useEffect(() => {
         const fetchAnnouncements = async () => {
             if (!token) return;
+
             setLoading(true);
             try {
                 const API_URL = process.env.NEXT_PUBLIC_API_URL;
@@ -50,11 +48,7 @@ const AnnouncementPage: React.FC = () => {
                     headers: { Authorization: `Bearer ${token}` },
                 });
 
-                if (Array.isArray(res.data.data)) {
-                    setAllAnnouncements(res.data.data);
-                } else {
-                    setAllAnnouncements([]);
-                }
+                setAllAnnouncements(Array.isArray(res.data.data) ? res.data.data : []);
             } catch {
                 setAllAnnouncements([]);
             }
@@ -79,6 +73,9 @@ const AnnouncementPage: React.FC = () => {
         }
     };
 
+    const [isEditAnnouncementOpen, setIsEditAnnouncementOpen] = useState(false);
+    const [editAnnouncementData, setEditAnnouncementData] = useState<Announcement | null>(null);
+
     const handleSaveNewAnnouncement = async () => {
         await handleRefreshAnnouncements();
         setIsAddAnnouncementOpen(false);
@@ -100,21 +97,23 @@ const AnnouncementPage: React.FC = () => {
 
         try {
             const API_URL = process.env.NEXT_PUBLIC_API_URL;
-            await axios.delete(`${API_URL}/pengumuman/${id}`, {
+
+            // FIX: Endpoint salah → ganti dari /pengumuman menjadi /announcement
+            await axios.delete(`${API_URL}/announcement/${id}`, {
                 headers: { Authorization: `Bearer ${token}` },
             });
+
             await handleRefreshAnnouncements();
         } catch {
             alert("Gagal menghapus pengumuman");
         }
     };
 
-    // Get today date
     const today = new Date();
     const dayNames = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
     const monthNames = [
         "Januari", "Februari", "Maret", "April", "Mei", "Juni",
-        "Juli", "Agustus", "September", "Oktober", "November", "Desember",
+        "Juli", "Agustus", "September", "Oktober", "November", "Desember"
     ];
     const dayName = dayNames[today.getDay()];
     const dateString = `${today.getDate()} ${monthNames[today.getMonth()]} ${today.getFullYear()}`;
@@ -155,6 +154,8 @@ const AnnouncementPage: React.FC = () => {
         return `${time} | ${dateStr}`;
     };
 
+    const [detailAnnouncement, setDetailAnnouncement] = useState<Announcement | null>(null);
+
     return (
         <>
             {/* HEADER */}
@@ -174,9 +175,7 @@ const AnnouncementPage: React.FC = () => {
 
                         <div className="text-gray-800 px-3 py-2 flex flex-col items-center">
                             <h3 className="font-semibold text-sm">Total Pengumuman Hari Ini</h3>
-                            <h4 className="font-bold text-3xl">
-                                {todayAnnouncementsCount}
-                            </h4>
+                            <h4 className="font-bold text-3xl">{todayAnnouncementsCount}</h4>
                         </div>
                     </div>
 
