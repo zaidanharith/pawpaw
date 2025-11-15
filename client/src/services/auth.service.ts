@@ -36,6 +36,7 @@ export interface AuthResponse {
     phoneNumber?: string;
     provider?: string;
     emailVerified?: Date;
+    isPasswordReset?: boolean;
   };
   userNotFound?: boolean;
   accountInactive?: boolean;
@@ -151,9 +152,19 @@ export const authService = {
     }
   },
 
-  async resetPassword(email: string): Promise<{ success: boolean; message: string }> {
+  async resetPassword(username: string, newPassword: string, token?: string): Promise<{ success: boolean; message: string }> {
     try {
-      const response = await axios.post(`${API_URL}/auth/reset-password`, { email });
+      const response = await axios.post(
+        `${API_URL}/auth/reset-password`,
+        { username, newPassword },
+        token
+          ? {
+              headers: {
+                Authorization: `Bearer ${token}`
+              }
+            }
+          : undefined
+      );
       return response.data;
     } catch (error) {
       console.error("Reset password service error:", error);

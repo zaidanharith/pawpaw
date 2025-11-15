@@ -36,13 +36,13 @@ const handler = NextAuth({
                 username: data.user.username,
                 role: data.user.role,
                 picture: data.user.picture,
-                accessToken: data.token
+                accessToken: data.token,
+                isPasswordReset: data.user.isPasswordReset
               };
             }
             throw new Error(data.message || "Face login gagal");
           }
 
-          // Login username & password
           if (!credentials?.username || !credentials?.password) {
             throw new Error("Username dan password wajib diisi");
           }
@@ -60,7 +60,8 @@ const handler = NextAuth({
               username: data.user.username,
               role: data.user.role,
               picture: data.user.picture,
-              accessToken: data.token
+              accessToken: data.token,
+              isPasswordReset: data.user.isPasswordReset
             };
           }
 
@@ -101,11 +102,12 @@ const handler = NextAuth({
             user.username = data.user.username;
             user.role = data.user.role;
             user.accessToken = data.token;
+            user.isPasswordReset = data.user.isPasswordReset;
             return true;
           }
 
           return false;
-        } catch (error) {
+        } catch {
           user.loginErrorMessage = "Terjadi kesalahan pada server";
           return true;
         }
@@ -120,6 +122,7 @@ const handler = NextAuth({
         token.username = user.username;
         token.role = user.role;
         token.accessToken = user.accessToken;
+        token.isPasswordReset = user.isPasswordReset;
       }
       return token;
     },
@@ -130,6 +133,7 @@ const handler = NextAuth({
         session.user.username = token.username as string;
         session.user.role = token.role as "ADMIN" | "TEACHER" | "PARENT";
         session.accessToken = token.accessToken as string;
+        session.user.isPasswordReset = token.isPasswordReset as boolean;
       }
       return session;
     }

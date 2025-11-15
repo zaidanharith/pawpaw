@@ -20,7 +20,6 @@ const LoginForm = () => {
             callbackUrl: "/dashboard"
         });
 
-
         if (result && !result.ok) {
             setLoginError("Username atau password salah.");
         }

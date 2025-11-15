@@ -5,6 +5,7 @@ import { useSession } from "next-auth/react";
 import axios from "axios";
 import AddAnnouncement from "./AddAnnouncement";
 import EditAnnouncement from "./EditAnnouncement";
+import AnnouncementDetail from "./AnnouncementDetail";
 
 interface Announcement {
     id: string;
@@ -24,7 +25,9 @@ const roleColors: Record<string, string> = {
 const AnnouncementPage: React.FC = () => {
     const { data: session } = useSession();
     const token = session?.accessToken;
-    const role = session?.user?.role || "ADMIN";
+
+    // FIX: UPPERCASE ROLE (SANGAT PENTING)
+    const role = (session?.user?.role || "ADMIN").toUpperCase();
 
     const accentColor = roleColors[role] || roleColors.ADMIN;
     const textColor = role === "ADMIN" ? "#FFFFFF" : "#282828";
@@ -34,28 +37,18 @@ const AnnouncementPage: React.FC = () => {
     const [allAnnouncements, setAllAnnouncements] = useState<Announcement[]>([]);
     const [loading, setLoading] = useState(true);
     const [isAddAnnouncementOpen, setIsAddAnnouncementOpen] = useState(false);
-    const [isEditAnnouncementOpen, setIsEditAnnouncementOpen] = useState(false);
-    const [editAnnouncementData, setEditAnnouncementData] =
-        useState<Announcement | null>(null);
-
-    // Fetch announcements
     useEffect(() => {
         const fetchAnnouncements = async () => {
             if (!token) return;
+
             setLoading(true);
             try {
                 const API_URL = process.env.NEXT_PUBLIC_API_URL;
                 const res = await axios.get(`${API_URL}/announcement`, {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    },
+                    headers: { Authorization: `Bearer ${token}` },
                 });
 
-                if (Array.isArray(res.data.data)) {
-                    setAllAnnouncements(res.data.data);
-                } else {
-                    setAllAnnouncements([]);
-                }
+                setAllAnnouncements(Array.isArray(res.data.data) ? res.data.data : []);
             } catch {
                 setAllAnnouncements([]);
             }
@@ -80,6 +73,9 @@ const AnnouncementPage: React.FC = () => {
         }
     };
 
+    const [isEditAnnouncementOpen, setIsEditAnnouncementOpen] = useState(false);
+    const [editAnnouncementData, setEditAnnouncementData] = useState<Announcement | null>(null);
+
     const handleSaveNewAnnouncement = async () => {
         await handleRefreshAnnouncements();
         setIsAddAnnouncementOpen(false);
@@ -101,38 +97,27 @@ const AnnouncementPage: React.FC = () => {
 
         try {
             const API_URL = process.env.NEXT_PUBLIC_API_URL;
-            await axios.delete(`${API_URL}/pengumuman/${id}`, {
+
+            // FIX: Endpoint salah → ganti dari /pengumuman menjadi /announcement
+            await axios.delete(`${API_URL}/announcement/${id}`, {
                 headers: { Authorization: `Bearer ${token}` },
             });
+
             await handleRefreshAnnouncements();
         } catch {
             alert("Gagal menghapus pengumuman");
         }
     };
 
-    // Get date
     const today = new Date();
     const dayNames = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
     const monthNames = [
-        "Januari",
-        "Februari",
-        "Maret",
-        "April",
-        "Mei",
-        "Juni",
-        "Juli",
-        "Agustus",
-        "September",
-        "Oktober",
-        "November",
-        "Desember",
+        "Januari", "Februari", "Maret", "April", "Mei", "Juni",
+        "Juli", "Agustus", "September", "Oktober", "November", "Desember"
     ];
     const dayName = dayNames[today.getDay()];
-    const dateString = `${today.getDate()} ${
-        monthNames[today.getMonth()]
-    } ${today.getFullYear()}`;
+    const dateString = `${today.getDate()} ${monthNames[today.getMonth()]} ${today.getFullYear()}`;
 
-    // Count today's announcements
     const todayAnnouncementsCount = allAnnouncements.filter((report) => {
         if (!report.createdAt) return false;
         const reportDate = new Date(report.createdAt);
@@ -169,9 +154,11 @@ const AnnouncementPage: React.FC = () => {
         return `${time} | ${dateStr}`;
     };
 
+    const [detailAnnouncement, setDetailAnnouncement] = useState<Announcement | null>(null);
+
     return (
         <>
-            {/* HEADER CARD */}
+            {/* HEADER */}
             <section>
                 <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                     <div
@@ -187,24 +174,16 @@ const AnnouncementPage: React.FC = () => {
                         </div>
 
                         <div className="text-gray-800 px-3 py-2 flex flex-col items-center">
-                            <h3 className="font-semibold text-sm">
-                                Total Pengumuman Hari Ini
-                            </h3>
-                            <h4 className="font-bold text-3xl">
-                                {todayAnnouncementsCount}
-                            </h4>
+                            <h3 className="font-semibold text-sm">Total Pengumuman Hari Ini</h3>
+                            <h4 className="font-bold text-3xl">{todayAnnouncementsCount}</h4>
                         </div>
                     </div>
 
-                    {/* Tombol Buat Pengumuman — disembunyikan untuk Parent */}
                     {!isParent && (
                         <button
                             onClick={() => setIsAddAnnouncementOpen(true)}
                             className="w-full sm:w-auto flex items-center justify-center gap-2 px-4 py-3 cursor-pointer rounded-xl text-sm md:text-base font-semibold hover:shadow-lg transition"
-                            style={{
-                                backgroundColor: accentColor,
-                                color: textColor,
-                            }}
+                            style={{ backgroundColor: accentColor, color: textColor }}
                         >
                             <FaEdit /> Buat Pengumuman
                         </button>
@@ -212,8 +191,8 @@ const AnnouncementPage: React.FC = () => {
                 </div>
             </section>
 
-            {/* LIST ANNOUNCEMENT */}
-            <section className="flex flex-col gap-4">
+            {/* LIST */}
+            <section className="flex flex-col gap-4 mt-4">
                 {loading ? (
                     <div className="border rounded-xl p-10 shadow-sm bg-white text-center text-gray-500"
                     style={{ borderColor: accentColor}}>
@@ -237,7 +216,6 @@ const AnnouncementPage: React.FC = () => {
                                     <span>{getRelativeTime(report.createdAt)}</span>
                                 </div>
 
-                                {/* HIDE Edit & Delete for Parent */}
                                 {!isParent && (
                                     <div className="flex gap-2">
                                         <button
@@ -248,9 +226,7 @@ const AnnouncementPage: React.FC = () => {
                                         </button>
 
                                         <button
-                                            onClick={() =>
-                                                handleDeleteAnnouncement(report.id)
-                                            }
+                                            onClick={() => handleDeleteAnnouncement(report.id)}
                                             className="cursor-pointer hover:scale-110 transition-transform p-2 rounded-full text-red-500 hover:bg-red-50"
                                         >
                                             <MdDelete className="w-5 h-5" />
@@ -266,7 +242,8 @@ const AnnouncementPage: React.FC = () => {
                             </p>
 
                             <button
-                                className="w-full py-3 mt-2 rounded-xl font-semibold text-white hover:bg-[#5ba97f] transition"
+                                onClick={() => setDetailAnnouncement(report)}
+                                className="w-full py-3 mt-2 rounded-xl font-semibold text-white hover:opacity-90 transition"
                                 style={{ backgroundColor: accentColor }}
                             >
                                 Lihat Detail Pengumuman
@@ -276,7 +253,7 @@ const AnnouncementPage: React.FC = () => {
                 )}
             </section>
 
-            {/* MODALS */}
+            {/* ADD & EDIT MODALS */}
             {!isParent && (
                 <>
                     <AddAnnouncement
@@ -295,6 +272,16 @@ const AnnouncementPage: React.FC = () => {
                         onSave={handleSaveEditAnnouncement}
                     />
                 </>
+            )}
+
+            {/* DETAIL MODAL */}
+            {detailAnnouncement && (
+                <AnnouncementDetail
+                    announcement={detailAnnouncement}
+                    onClose={() => setDetailAnnouncement(null)}
+                    accentColor={accentColor}
+                    textColor={textColor}
+                />
             )}
         </>
     );

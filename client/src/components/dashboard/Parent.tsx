@@ -3,8 +3,32 @@
 import { useState } from "react";
 import Navbar from "@/components/layout/Navbar";
 import Sidebar from "@/components/layout/Sidebar";
+<<<<<<< HEAD
 import { DashboardPageTitle, Weather, LiveReport, Announcement, Profile, LiveReportPage } from "@/components/ui/dashboard";
 import { FaTachometerAlt, FaClipboardList, FaBullhorn, FaUserCog, FaRegSmile, FaComments } from "react-icons/fa";
+import FaceRegister from "../ui/dashboard/FaceRegister";
+import ParentChat from "../ui/dashboard/ParentChat";
+=======
+import { 
+  DashboardPageTitle, 
+  Weather, 
+  LiveReport, 
+  Announcement, 
+  Profile, 
+  LiveReportPage ,
+  ResetPassword
+} from "@/components/ui/dashboard";
+>>>>>>> 9682a95712f8de99fc138175b49e79083dc0bb78
+
+import { 
+  FaTachometerAlt, 
+  FaClipboardList, 
+  FaBullhorn, 
+  FaUserCog, 
+  FaRegSmile, 
+  FaComments 
+} from "react-icons/fa";
+
 import FaceRegister from "../ui/dashboard/FaceRegister";
 import ParentChat from "../ui/dashboard/ParentChat";
 
@@ -24,10 +48,11 @@ export default function Parent() {
 
   const renderContent = () => {
     switch (activeMenu) {
+
       case "Dashboard":
         return (
           <>
-            <DashboardPageTitle page={activeMenu}/>
+            <DashboardPageTitle page={activeMenu} />
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
               <div className="lg:col-span-2">
                 <Weather />
@@ -43,7 +68,11 @@ export default function Parent() {
       case "Laporan Kegiatan":
         return (
           <>
+<<<<<<< HEAD
             <DashboardPageTitle page={activeMenu}/>
+=======
+            <DashboardPageTitle page={activeMenu} />
+>>>>>>> 9682a95712f8de99fc138175b49e79083dc0bb78
             <LiveReportPage />
           </>
         );
@@ -51,14 +80,25 @@ export default function Parent() {
       case "Pengumuman":
         return (
           <>
-            <DashboardPageTitle page={activeMenu}/>
+            <DashboardPageTitle page={activeMenu} />
+            {/* Jika parent hanya melihat pengumuman */}
+            <Announcement />
+          </>
+        );
+
+      case "Chat Guru":
+        return (
+          <>
+            <DashboardPageTitle page={activeMenu} />
+            <ParentChat />
           </>
         );
 
       case "Profil":
         return (
           <>
-            <DashboardPageTitle page={activeMenu}/>
+            <DashboardPageTitle page={activeMenu} />
+            <ResetPassword/>
             <Profile />
           </>
         );
@@ -66,10 +106,13 @@ export default function Parent() {
       case "Face Recognition":
         return (
           <>
-            <DashboardPageTitle page={activeMenu}/>
+            <DashboardPageTitle page={activeMenu} />
             <FaceRegister />
           </>
         );
+
+      default:
+        return null;
     }
   };
 
@@ -77,11 +120,11 @@ export default function Parent() {
     <section className="w-full flex flex-col gap-4 my-5">
       <Navbar setIsSidebarOpen={() => setIsSidebarOpen(true)} />
       <Sidebar
-          menuItems={menuItems}
-          isOpen={isSidebarOpen}
-          onClose={() => setIsSidebarOpen(false)}
-          activeMenu={activeMenu}
-          onSelectMenu={setActiveMenu}
+        menuItems={menuItems}
+        isOpen={isSidebarOpen}
+        onClose={() => setIsSidebarOpen(false)}
+        activeMenu={activeMenu}
+        onSelectMenu={setActiveMenu}
       />
       {renderContent()}
     </section>
