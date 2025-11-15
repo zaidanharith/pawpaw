@@ -3,19 +3,10 @@
 import { useState } from "react";
 import Navbar from "@/components/layout/Navbar";
 import Sidebar from "@/components/layout/Sidebar";
-import { DashboardPageTitle, Weather, LiveReport, Announcement, Profile, ReportPage } from "@/components/ui/dashboard";
-import { FaTachometerAlt, FaClipboardList, FaBullhorn, FaUserCog, FaRegSmile } from "react-icons/fa";
+import { DashboardPageTitle, Weather, LiveReport, Announcement, Profile, LiveReportPage } from "@/components/ui/dashboard";
+import { FaTachometerAlt, FaClipboardList, FaBullhorn, FaUserCog, FaRegSmile, FaComments } from "react-icons/fa";
 import FaceRegister from "../ui/dashboard/FaceRegister";
 import ParentChat from "../ui/dashboard/ParentChat";
-import { 
-  DashboardPageTitle, 
-  Weather, 
-  LiveReport, 
-  Announcement, 
-  Profile, 
-  ReportPage,
-  LiveReporPage
-} from "@/components/ui/dashboard";
 
 export default function Parent() {
 
@@ -53,7 +44,7 @@ export default function Parent() {
         return (
           <>
             <DashboardPageTitle page={activeMenu}/>
-            <LiveReporPage />
+            <LiveReportPage />
           </>
         );
 

@@ -156,8 +156,10 @@ const ReportPage: React.FC = () => {
         <>
             <section>
                 <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-                    <div className="flex flex-row items-center gap-2 px-4 bg-white border-[#3f9065] border rounded-xl w-full sm:w-auto">
-                        <div className="bg-[#3f9065] text-white rounded-xl px-3 py-2 my-2 flex flex-col items-center">
+                    <div className="flex flex-row items-center gap-2 px-4 bg-white border rounded-xl w-full sm:w-auto"
+                    style={{ borderColor: accentColor}}>
+                        <div className="rounded-xl px-3 py-2 my-2 flex flex-col items-center"
+                        style={{ backgroundColor: accentColor, color: textColor}}>
                             <h3 className="font-semibold text-md">{dayName}</h3>
                             <h4 className="font-normal text-sm">{dateString}</h4>
                         </div>
@@ -182,11 +184,13 @@ const ReportPage: React.FC = () => {
 
             <section className="flex flex-col gap-4">
                 {loading ? (
-                    <div className="border rounded-xl p-10 shadow-sm bg-white text-center text-gray-500">
+                    <div className="border rounded-xl p-10 shadow-sm bg-white text-center text-gray-500"
+                    style={{ borderColor: accentColor}}>
                         Memuat data laporan...
                     </div>
                 ) : allReports.length === 0 ? (
-                    <div className="border rounded-xl p-10 shadow-sm bg-white text-center text-gray-500">
+                    <div className="border rounded-xl p-10 shadow-sm bg-white text-center text-gray-500"
+                    style={{ borderColor: accentColor}}>
                         Belum ada laporan yang tersedia.
                     </div>
                 ) : (

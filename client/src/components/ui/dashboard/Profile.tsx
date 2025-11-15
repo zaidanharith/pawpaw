@@ -18,11 +18,19 @@ type UserProfile = AuthResponse["user"] & {
     picture?: string;
 };
 
+const roleColors: Record<string, string> = {
+    ADMIN: "#3f9065",
+    TEACHER: "#f5bb00",
+    PARENT: "#58baab",
+};
+
 export default function Profile() {
     const { data: session, status } = useSession();
     const router = useRouter();
     const [loading, setLoading] = useState(true);
+    const role = session?.user?.role || "ADMIN";
     const [user, setUser] = useState<UserProfile | null>(null);
+    const accentColor = roleColors[role] || roleColors.ADMIN;
     const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
@@ -82,7 +90,8 @@ export default function Profile() {
                     alt={user.name || "Profile"}
                     width={96}
                     height={96}
-                    className="rounded-full border-4 border-[#3f9065] shadow mb-4 object-cover"
+                    className="rounded-full border-4 shadow mb-4 object-cover"
+                    style={{ borderColor: accentColor}}
                     priority
                 />
                 <h2 className="text-2xl font-bold text-gray-800">{user.name}</h2>
