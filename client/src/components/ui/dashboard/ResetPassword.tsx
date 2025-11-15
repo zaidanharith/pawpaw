@@ -22,6 +22,7 @@ interface SessionUser {
 }
 
 type UserProfile = {
+    isPasswordReset?: boolean;
     success?: string;
     data: {
         id?: string;
@@ -102,8 +103,7 @@ export default function ResetPassword() {
         <section className="bg-white rounded-xl shadow p-5 border-2 border-red-500">
             <h2 className="text-xl font-bold mb-3">Reset Password</h2>
             <div className="bg-red-100 border border-red-500 px-3 py-2 rounded-md mb-4 text-red-600 font-semibold text-sm">
-                Anda disarankan untuk mengganti password setelah pertama kali login.
-                <pre>{JSON.stringify(userDetail, null, 2)}</pre>
+                Anda disarankan untuk mengganti password setelah akun anda diregistrasikan oleh Admin.
             </div>
             <form onSubmit={handleSubmit} className="flex flex-col gap-3">
                 <div>
