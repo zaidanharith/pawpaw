@@ -20,10 +20,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="id" className="scroll-smooth">
+    <html lang="id" className="scroll-smooth select-none">
       <body className={`${inter.variable} antialiased`}>
         <SessionProvider>
-          <div className="min-h-screen flex flex-col">
+          <div className="min-h-screen flex flex-col select-none">
             <main className="pt-24 font-sans flex-1">
               {children}
             </main>
