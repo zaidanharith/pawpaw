@@ -82,7 +82,7 @@ export default function Profile() {
                     alt={user.name || "Profile"}
                     width={96}
                     height={96}
-                    className="rounded-full border-4 border-blue-200 shadow mb-4 object-cover"
+                    className="rounded-full border-4 border-[#3f9065] shadow mb-4 object-cover"
                     priority
                 />
                 <h2 className="text-2xl font-bold text-gray-800">{user.name}</h2>

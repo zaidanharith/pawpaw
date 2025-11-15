@@ -105,11 +105,7 @@ const StudentTable: React.FC = () => {
                     <h2 className="text-xl font-bold">Daftar Siswa</h2>
                     <button
                         onClick={() => setIsAddStudentOpen(true)}
-                        className="cursor-pointer px-3 py-2 rounded-lg text-sm md:text-base font-semibold hover:bg-opacity-80 transition"
-                        style={{
-                            backgroundColor: accentColor,
-                            color: textColor,
-                        }}
+                        className="cursor-pointer px-3 py-2 rounded-lg text-sm md:text-base font-semibold bg-[#3f9065] text-white hover:bg-[#5ba97f] transition"
                         title="Tambah Siswa"
                     >
                         <FaUserPlus />

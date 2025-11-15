@@ -159,11 +159,7 @@ const AnnouncementPage: React.FC = () => {
 
                     <button
                         onClick={() => setIsAddAnnouncementOpen(true)}
-                        className="w-full sm:w-auto flex items-center justify-center gap-2 px-4 py-3 cursor-pointer rounded-xl text-sm md:text-base font-semibold hover:shadow-lg transition"
-                        style={{
-                            backgroundColor: accentColor,
-                            color: textColor,
-                        }}
+                        className="w-full sm:w-auto flex items-center justify-center gap-2 px-4 py-3 bg-[#3f9065] text-white hover:bg-[#5ba97f] cursor-pointer rounded-xl text-sm md:text-base font-semibold transition"
                     >
                         <FaEdit /> Buat Pengumuman
                     </button>
@@ -224,7 +220,7 @@ const AnnouncementPage: React.FC = () => {
 
                             {/* Tombol */}
                             <button
-                                className="w-full py-3 mt-2 rounded-xl font-semibold text-white hover:opacity-90 transition"
+                                className="w-full py-3 mt-2 rounded-xl font-semibold text-white hover:bg-[#5ba97f] transition"
                                 style={{ backgroundColor: accentColor }}
                             >
                                 Lihat Detail Pengumuman

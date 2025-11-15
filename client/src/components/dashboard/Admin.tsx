@@ -3,8 +3,9 @@
 import { useState } from "react";
 import Navbar from "@/components/layout/Navbar";
 import Sidebar from "@/components/layout/Sidebar";
-import { DashboardPageTitle, Statistics, Weather, LiveReport, Announcement, Profile, UserTable, StudentTable, ReportPage, AnnouncementPage } from "@/components/ui/dashboard";
-import { FaTachometerAlt, FaUser, FaUsers, FaClipboardList, FaBullhorn, FaUserCog, FaRegSmile } from "react-icons/fa";
+import { DashboardPageTitle, Statistics, Weather, LiveReport, Announcement, Profile, UserTable, StudentTable, ReportPage, AnnouncementPage, ClassPage } from "@/components/ui/dashboard";
+import { FaTachometerAlt, FaUser, FaUsers, FaClipboardList, FaBullhorn, FaUserCog, FaRegSmile, } from "react-icons/fa";
+import { SiGoogleclassroom } from "react-icons/si";
 import FaceRegister from "../ui/dashboard/FaceRegister";
 
 export default function Admin() {
@@ -13,7 +14,7 @@ export default function Admin() {
     { name: "Dashboard", icon: <FaTachometerAlt size={24} /> },
     { name: "User", icon: <FaUser size={24} /> },
     { name: "Siswa", icon: <FaUsers size={24} /> },
-    { name: "Kelas", icon: <FaUsers size={24} /> },
+    { name: "Kelas", icon: <SiGoogleclassroom size={24} /> },
     { name: "Laporan Kegiatan", icon: <FaClipboardList size={24} /> },
     { name: "Pengumuman", icon: <FaBullhorn size={24} /> },
     { name: "Profil", icon: <FaUserCog size={24} /> },
@@ -47,6 +48,13 @@ export default function Admin() {
           <>
             <DashboardPageTitle page={activeMenu}/>
             <StudentTable />
+          </>
+        );
+      case "Kelas":
+        return (
+          <>
+            <DashboardPageTitle page={activeMenu}/>
+            <ClassPage />
           </>
         );
       case "Laporan Kegiatan":
