@@ -10,8 +10,8 @@ interface Siswa {
     id: string;
     name: string;
     gender: string;
-    tanggalLahir: string;
-    alamat: string;
+    birthDate: string;
+    address: string;
 }
 
 const genderColors: Record<string, string> = {
@@ -105,11 +105,7 @@ const StudentTable: React.FC = () => {
                     <h2 className="text-xl font-bold">Daftar Siswa</h2>
                     <button
                         onClick={() => setIsAddStudentOpen(true)}
-                        className="cursor-pointer px-3 py-2 rounded-lg text-sm md:text-base font-semibold hover:bg-opacity-80 transition"
-                        style={{
-                            backgroundColor: accentColor,
-                            color: textColor,
-                        }}
+                        className="cursor-pointer px-3 py-2 rounded-lg text-sm md:text-base font-semibold bg-[#3f9065] text-white hover:bg-[#5ba97f] transition"
                         title="Tambah Siswa"
                     >
                         <FaUserPlus />
@@ -154,8 +150,8 @@ const StudentTable: React.FC = () => {
                                                 {siswa.gender}
                                             </span>
                                         </td>
-                                        <td className="px-4 py-3">{siswa.tanggalLahir}</td>
-                                        <td className="px-4 py-3">{siswa.alamat}</td>
+                                        <td className="px-4 py-3">{siswa.birthDate}</td>
+                                        <td className="px-4 py-3">{siswa.address}</td>
                                         <td className="px-4 py-3 flex justify-center sm:justify-start gap-3">
                                             <button
                                                 onClick={() => handleEditStudent(siswa)}

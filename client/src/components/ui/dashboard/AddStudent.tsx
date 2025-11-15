@@ -6,8 +6,8 @@ import { useSession } from "next-auth/react";
 interface NewStudentData {
     name: string;
     gender: string;
-    tanggalLahir: string;
-    alamat: string;
+    birthDate: string;
+    address: string;
 }
 
 const GENDER_OPTIONS = [
@@ -24,8 +24,8 @@ interface AddStudentProps {
 const initialForm: NewStudentData = {
     name: "",
     gender: "LAKI",
-    tanggalLahir: "",
-    alamat: "",
+    birthDate: "",
+    address: "",
 };
 
 const AddStudent: React.FC<AddStudentProps> = ({ isOpen, onClose, onSave }) => {
@@ -43,7 +43,7 @@ const AddStudent: React.FC<AddStudentProps> = ({ isOpen, onClose, onSave }) => {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        if (!formData.name || !formData.gender || !formData.tanggalLahir || !formData.alamat) {
+        if (!formData.name || !formData.gender || !formData.birthDate || !formData.address) {
             alert("Mohon lengkapi semua field.");
             return;
         }
@@ -119,28 +119,28 @@ const AddStudent: React.FC<AddStudentProps> = ({ isOpen, onClose, onSave }) => {
                         </select>
                     </div>
                     <div>
-                        <label htmlFor="tanggalLahir" className="block text-sm font-medium text-gray-700 mb-1">
+                        <label htmlFor="birthDate" className="block text-sm font-medium text-gray-700 mb-1">
                             Tanggal Lahir
                         </label>
                         <input
                             type="date"
-                            id="tanggalLahir"
-                            name="tanggalLahir"
-                            value={formData.tanggalLahir}
+                            id="birthDate"
+                            name="birthDate"
+                            value={formData.birthDate}
                             onChange={handleChange}
                             required
                             className="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-[#3f9065] focus:outline-none"
                         />
                     </div>
                     <div>
-                        <label htmlFor="alamat" className="block text-sm font-medium text-gray-700 mb-1">
+                        <label htmlFor="address" className="block text-sm font-medium text-gray-700 mb-1">
                             Alamat
                         </label>
                         <input
                             type="text"
-                            id="alamat"
-                            name="alamat"
-                            value={formData.alamat}
+                            id="address"
+                            name="address"
+                            value={formData.address}
                             onChange={handleChange}
                             required
                             className="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-[#3f9065] focus:outline-none"

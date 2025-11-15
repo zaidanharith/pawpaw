@@ -6,8 +6,8 @@ interface Siswa {
     id: string;
     name: string;
     gender: string;
-    tanggalLahir: string;
-    alamat: string;
+    birthDate: string;
+    address: string;
 }
 
 const GENDER_OPTIONS = [
@@ -27,8 +27,8 @@ const EditStudent: React.FC<EditStudentProps> = ({ isOpen, onClose, studentData,
         id: "",
         name: "",
         gender: "LAKI",
-        tanggalLahir: "",
-        alamat: "",
+        birthDate: "",
+        address: "",
     });
     const [loading, setLoading] = useState(false);
     const { data: session } = useSession();
@@ -41,8 +41,8 @@ const EditStudent: React.FC<EditStudentProps> = ({ isOpen, onClose, studentData,
                 id: studentData.id,
                 name: studentData.name,
                 gender: studentData.gender,
-                tanggalLahir: studentData.tanggalLahir,
-                alamat: studentData.alamat,
+                birthDate: studentData.birthDate,
+                address: studentData.address,
             });
         }
     }, [isOpen, studentData]);
@@ -53,8 +53,8 @@ const EditStudent: React.FC<EditStudentProps> = ({ isOpen, onClose, studentData,
                 id: "",
                 name: "",
                 gender: "LAKI",
-                tanggalLahir: "",
-                alamat: "",
+                birthDate: "",
+                address: "",
             });
         }
     }, [isOpen]);
@@ -135,24 +135,24 @@ const EditStudent: React.FC<EditStudentProps> = ({ isOpen, onClose, studentData,
                         </select>
                     </div>
                     <div>
-                        <label htmlFor="tanggalLahir" className="block text-sm font-medium text-gray-700 mb-1">Tanggal Lahir</label>
+                        <label htmlFor="birthDate" className="block text-sm font-medium text-gray-700 mb-1">Tanggal Lahir</label>
                         <input
                             type="date"
-                            id="tanggalLahir"
-                            name="tanggalLahir"
-                            value={formData.tanggalLahir ?? ""}
+                            id="birthDate"
+                            name="birthDate"
+                            value={formData.birthDate ?? ""}
                             onChange={handleChange}
                             required
                             className="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-[#3f9065] focus:outline-none"
                         />
                     </div>
                     <div>
-                        <label htmlFor="alamat" className="block text-sm font-medium text-gray-700 mb-1">Alamat</label>
+                        <label htmlFor="address" className="block text-sm font-medium text-gray-700 mb-1">Alamat</label>
                         <input
                             type="text"
-                            id="alamat"
-                            name="alamat"
-                            value={formData.alamat ?? ""}
+                            id="address"
+                            name="address"
+                            value={formData.address ?? ""}
                             onChange={handleChange}
                             required
                             className="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-[#3f9065] focus:outline-none"
