@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import axios from "axios";
+import { MdOutlineClose } from "react-icons/md";
 import { useSession } from "next-auth/react";
 
 interface NewStudentData {
@@ -80,7 +81,7 @@ const AddStudent: React.FC<AddStudentProps> = ({ isOpen, onClose, onSave }) => {
                         title="Close"
                         type="button"
                     >
-                        &times;
+                        <MdOutlineClose className="w-6 h-6 cursor-pointer" />
                     </button>
                 </div>
                 <form onSubmit={handleSubmit} className="p-6 space-y-4">
@@ -95,7 +96,7 @@ const AddStudent: React.FC<AddStudentProps> = ({ isOpen, onClose, onSave }) => {
                             value={formData.name}
                             onChange={handleChange}
                             required
-                            className="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-blue-400 focus:outline-none"
+                            className="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-[#3f9065] focus:outline-none"
                         />
                     </div>
                     <div>
@@ -108,7 +109,7 @@ const AddStudent: React.FC<AddStudentProps> = ({ isOpen, onClose, onSave }) => {
                             value={formData.gender}
                             onChange={handleChange}
                             required
-                            className="w-full border border-gray-300 rounded-md px-3 py-2 bg-white focus:ring-2 focus:ring-blue-400 focus:outline-none"
+                            className="w-full border border-gray-300 rounded-md px-3 py-2 bg-white focus:ring-2 focus:ring-[#3f9065] focus:outline-none"
                         >
                             {GENDER_OPTIONS.map(option => (
                                 <option key={option.value} value={option.value}>
@@ -128,7 +129,7 @@ const AddStudent: React.FC<AddStudentProps> = ({ isOpen, onClose, onSave }) => {
                             value={formData.tanggalLahir}
                             onChange={handleChange}
                             required
-                            className="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-blue-400 focus:outline-none"
+                            className="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-[#3f9065] focus:outline-none"
                         />
                     </div>
                     <div>
@@ -142,7 +143,7 @@ const AddStudent: React.FC<AddStudentProps> = ({ isOpen, onClose, onSave }) => {
                             value={formData.alamat}
                             onChange={handleChange}
                             required
-                            className="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-blue-400 focus:outline-none"
+                            className="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-[#3f9065] focus:outline-none"
                         />
                     </div>
                     <div className="flex justify-end pt-4 gap-3">
@@ -156,7 +157,7 @@ const AddStudent: React.FC<AddStudentProps> = ({ isOpen, onClose, onSave }) => {
                         <button
                             type="submit"
                             disabled={loading}
-                            className="px-4 py-2 text-sm font-medium cursor-pointer rounded-lg text-white bg-blue-500 hover:bg-blue-600 transition shadow-md"
+                            className="px-4 py-2 text-sm font-medium cursor-pointer rounded-lg text-white bg-[#3f9065] hover:bg-[#3f9065] transition shadow-md"
                         >
                             {loading ? "Menyimpan..." : "Simpan Siswa Baru"}
                         </button>
