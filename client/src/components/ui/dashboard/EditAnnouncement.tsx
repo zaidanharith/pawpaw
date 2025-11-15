@@ -49,6 +49,7 @@ const EditAnnouncement: React.FC<EditAnnouncementProps> = ({
     const token = session?.accessToken;
 
     useEffect(() => {
+        // eslint-disable-next-line react-hooks/exhaustive-deps
         if (isOpen && reportData) {
             setFormData({
                 id: reportData.id,
@@ -61,7 +62,6 @@ const EditAnnouncement: React.FC<EditAnnouncementProps> = ({
 
     useEffect(() => {
         if (!isOpen) {
-            // eslint-disable-next-line react-hooks/exhaustive-deps
             setFormData({
                 id: "",
                 title: "",
