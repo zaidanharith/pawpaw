@@ -5,6 +5,7 @@ import { useSession } from "next-auth/react";
 import axios from "axios";
 import AddAnnouncement from "./AddAnnouncement";
 import EditAnnouncement from "./EditAnnouncement";
+import AnnouncementDetail from "./AnnouncementDetail";
 
 interface Announcement {
     id: string;
@@ -36,6 +37,9 @@ const AnnouncementPage: React.FC = () => {
     const [isAddAnnouncementOpen, setIsAddAnnouncementOpen] = useState(false);
     const [isEditAnnouncementOpen, setIsEditAnnouncementOpen] = useState(false);
     const [editAnnouncementData, setEditAnnouncementData] =
+        useState<Announcement | null>(null);
+
+    const [detailAnnouncement, setDetailAnnouncement] =
         useState<Announcement | null>(null);
 
     // Fetch announcements
@@ -110,7 +114,6 @@ const AnnouncementPage: React.FC = () => {
         }
     };
 
-    // Get date
     const today = new Date();
     const dayNames = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
     const monthNames = [
@@ -128,11 +131,8 @@ const AnnouncementPage: React.FC = () => {
         "Desember",
     ];
     const dayName = dayNames[today.getDay()];
-    const dateString = `${today.getDate()} ${
-        monthNames[today.getMonth()]
-    } ${today.getFullYear()}`;
+    const dateString = `${today.getDate()} ${monthNames[today.getMonth()]} ${today.getFullYear()}`;
 
-    // Count today's announcements
     const todayAnnouncementsCount = allAnnouncements.filter((report) => {
         if (!report.createdAt) return false;
         const reportDate = new Date(report.createdAt);
@@ -196,7 +196,6 @@ const AnnouncementPage: React.FC = () => {
                         </div>
                     </div>
 
-                    {/* Tombol Buat Pengumuman — disembunyikan untuk Parent */}
                     {!isParent && (
                         <button
                             onClick={() => setIsAddAnnouncementOpen(true)}
@@ -213,7 +212,7 @@ const AnnouncementPage: React.FC = () => {
             </section>
 
             {/* LIST ANNOUNCEMENT */}
-            <section className="flex flex-col gap-4">
+            <section className="flex flex-col gap-4 mt-4">
                 {loading ? (
                     <div className="border rounded-xl p-10 shadow-sm bg-white text-center text-gray-500">
                         Memuat data pengumuman...
@@ -235,7 +234,6 @@ const AnnouncementPage: React.FC = () => {
                                     <span>{getRelativeTime(report.createdAt)}</span>
                                 </div>
 
-                                {/* HIDE Edit & Delete for Parent */}
                                 {!isParent && (
                                     <div className="flex gap-2">
                                         <button
@@ -264,6 +262,7 @@ const AnnouncementPage: React.FC = () => {
                             </p>
 
                             <button
+                                onClick={() => setDetailAnnouncement(report)}
                                 className="w-full py-3 mt-2 rounded-xl font-semibold text-white hover:opacity-90 transition"
                                 style={{ backgroundColor: accentColor }}
                             >
@@ -293,6 +292,14 @@ const AnnouncementPage: React.FC = () => {
                         onSave={handleSaveEditAnnouncement}
                     />
                 </>
+            )}
+
+            {/* DETAIL MODAL */}
+            {detailAnnouncement && (
+                <AnnouncementDetail
+                    announcement={detailAnnouncement}
+                    onClose={() => setDetailAnnouncement(null)}
+                />
             )}
         </>
     );
