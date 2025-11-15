@@ -4,6 +4,7 @@ import { useSession } from "next-auth/react";
 import RoleLabel from "../../components/ui/dashboard/RoleLabel";
 import { Admin, Parent, Teacher } from "../../components/dashboard";
 
+
 export default function DashboardPage() {
   const { data: session } = useSession();
   const role = session?.user?.role;

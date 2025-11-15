@@ -29,7 +29,6 @@ const router = express.Router();
  *               - username
  *               - email
  *               - phoneNumber
- *               - password
  *               - role
  *             properties:
  *               username:
@@ -44,9 +43,6 @@ const router = express.Router();
  *               phoneNumber:
  *                 type: string
  *                 example: "08123456789"
- *               password:
- *                 type: string
- *                 example: rahasia1234
  *               role:
  *                 type: string
  *                 enum: [ADMIN, TEACHER, PARENT]
@@ -202,7 +198,7 @@ router.post('/auth/logout', protect, authController.logout);
  *       400:
  *         description: Bad request
  */
-router.post('/auth/reset-password', authController.resetPassword);
+router.post('/auth/reset-password', protect, authController.resetPassword);
 
 /**
  * @swagger

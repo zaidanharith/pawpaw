@@ -6,6 +6,7 @@ import RoleLabel from "./RoleLabel";
 import { FaUserPlus } from "react-icons/fa";
 import AddUser, { type NewUserData } from "./AddUser";
 import EditUser from "./EditUser";
+import DeleteConfirmation from "../DeleteConfirmation";
 
 interface User {
     id: string;
@@ -22,11 +23,8 @@ const roleColors: Record<string, string> = {
     PARENT: "#58baab",
 };
 
-interface UserTableProps {
-    onDeleteUser?: (userId: string) => void;
-}
 
-const UserTable: React.FC<UserTableProps> = ({ onDeleteUser }) => {
+const UserTable = () => {
     const { data: session } = useSession();
     const role = session?.user?.role || "ADMIN";
     const accentColor = roleColors[role] || roleColors.ADMIN;
@@ -39,6 +37,7 @@ const UserTable: React.FC<UserTableProps> = ({ onDeleteUser }) => {
     const [isAddUserOpen, setIsAddUserOpen] = useState(false);
     const [isEditUserOpen, setIsEditUserOpen] = useState(false);
     const [editUserData, setEditUserData] = useState<User | null>(null);
+    const [deleteConfirm, setDeleteConfirm] = useState<{ open: boolean; user: User | null }>({ open: false, user: null });
 
     useEffect(() => {
         const fetchUsers = async () => {
@@ -99,6 +98,32 @@ const UserTable: React.FC<UserTableProps> = ({ onDeleteUser }) => {
         setEditUserData(null);
     };
 
+    const openDeleteConfirm = (user: User) => {
+        setDeleteConfirm({ open: true, user });
+    };
+
+    const closeDeleteConfirm = () => {
+        setDeleteConfirm({ open: false, user: null });
+    };
+
+    const confirmDeleteUser = async () => {
+        if (!deleteConfirm.user) return;
+        try {
+            const API_URL = process.env.NEXT_PUBLIC_API_URL;
+            const res = await axios.delete(`${API_URL}/user/${deleteConfirm.user.id}`, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            if (res.data.success) {
+                setAllUsers((prevUsers) => prevUsers.filter((u) => u.id !== deleteConfirm.user!.id));
+            } else {
+                alert("Gagal menghapus user");
+            }
+        } catch {
+            alert("Gagal menghapus user");
+        }
+        closeDeleteConfirm();
+    };
+
     return (
         <>
             <section className="bg-white rounded-xl shadow p-5">
@@ -154,7 +179,7 @@ const UserTable: React.FC<UserTableProps> = ({ onDeleteUser }) => {
                                                 <MdEdit className="w-5 h-5"/>
                                             </button>
                                             <button 
-                                                onClick={() => onDeleteUser && onDeleteUser(user.id)}
+                                                onClick={() => openDeleteConfirm(user)}
                                                 className="cursor-pointer hover:scale-110 transition-transform p-1 rounded-full text-red-500 hover:bg-red-50"
                                                 title="Delete User"
                                             >
@@ -178,6 +203,12 @@ const UserTable: React.FC<UserTableProps> = ({ onDeleteUser }) => {
                 onClose={() => { setIsEditUserOpen(false); setEditUserData(null); }}
                 userData={editUserData}
                 onSave={handleSaveEditUser}
+            />
+            <DeleteConfirmation
+                deleted={deleteConfirm.user?.name || ""}
+                open={deleteConfirm.open}
+                onConfirm={confirmDeleteUser}
+                onCancel={closeDeleteConfirm}
             />
         </>
     );
