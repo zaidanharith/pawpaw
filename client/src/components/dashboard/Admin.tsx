@@ -6,6 +6,7 @@ import Sidebar from "@/components/layout/Sidebar";
 import { DashboardPageTitle, Statistics, Weather, LiveReport, Announcement, Profile, UserTable, StudentTable } from "@/components/ui/dashboard";
 import { FaTachometerAlt, FaUser, FaUsers, FaClipboardList, FaBullhorn, FaUserCog, FaRegSmile } from "react-icons/fa";
 import FaceRegister from "../ui/dashboard/FaceRegister";
+import ReportPage from "../ui/dashboard/ReportPage";
 
 export default function Admin() {
 
@@ -52,6 +53,7 @@ export default function Admin() {
         return (
           <>
             <DashboardPageTitle page={activeMenu}/>
+            <ReportPage />
           </>
         );
       case "Pengumuman":

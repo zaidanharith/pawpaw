@@ -116,7 +116,7 @@ const UserTable: React.FC<UserTableProps> = ({ onDeleteUser }) => {
                         <FaUserPlus />
                     </button>
                 </div>
-                <div className="rounded-xl overflow-x-scroll">
+                <div className="rounded-xl">
                     <table className="w-full text-sm text-gray-700">
                         <thead style={{ backgroundColor: accentColor, color:textColor }}>
                             <tr>

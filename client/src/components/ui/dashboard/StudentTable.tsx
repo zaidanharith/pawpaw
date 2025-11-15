@@ -115,9 +115,9 @@ const StudentTable: React.FC = () => {
                         <FaUserPlus />
                     </button>
                 </div>
-                <div className="rounded-xl overflow-x-scroll">
+                <div className="rounded-xl">
                     <table className="w-full text-sm text-gray-700">
-                        <thead style={{ backgroundColor: accentColor, color: textColor }}>
+                        <thead style={{ backgroundColor: accentColor, color: textColor}}>
                             <tr>
                                 <th className="px-4 py-3 text-left font-semibold whitespace-nowrap">Nama Lengkap</th>
                                 <th className="px-4 py-3 text-left font-semibold">Jenis Kelamin</th>
