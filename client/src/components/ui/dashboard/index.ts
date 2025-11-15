@@ -13,3 +13,5 @@ export { default as AddStudent } from "./AddStudent";
 export { default as EditStudent } from "./EditStudent";
 export { default as ReportPage } from "./ReportPage";
 export { default as AnnouncementPage} from "./AnnouncementPage";
+export { default as ClassPage} from "./ClassPage";
+export { default as LiveReportPage } from "./LiveReportPage";

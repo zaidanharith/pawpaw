@@ -262,7 +262,6 @@ const AnnouncementPage: React.FC = () => {
                             </p>
 
                             <button
-                                onClick={() => setDetailAnnouncement(report)}
                                 className="w-full py-3 mt-2 rounded-xl font-semibold text-white hover:opacity-90 transition"
                                 style={{ backgroundColor: accentColor }}
                             >
