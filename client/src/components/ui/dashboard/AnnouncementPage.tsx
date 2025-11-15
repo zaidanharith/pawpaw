@@ -36,11 +36,8 @@ const AnnouncementPage: React.FC = () => {
     const [loading, setLoading] = useState(true);
     const [isAddAnnouncementOpen, setIsAddAnnouncementOpen] = useState(false);
     const [isEditAnnouncementOpen, setIsEditAnnouncementOpen] = useState(false);
-    const [editAnnouncementData, setEditAnnouncementData] =
-        useState<Announcement | null>(null);
-
-    const [detailAnnouncement, setDetailAnnouncement] =
-        useState<Announcement | null>(null);
+    const [editAnnouncementData, setEditAnnouncementData] = useState<Announcement | null>(null);
+    const [detailAnnouncement, setDetailAnnouncement] = useState<Announcement | null>(null);
 
     // Fetch announcements
     useEffect(() => {
@@ -50,9 +47,7 @@ const AnnouncementPage: React.FC = () => {
             try {
                 const API_URL = process.env.NEXT_PUBLIC_API_URL;
                 const res = await axios.get(`${API_URL}/announcement`, {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    },
+                    headers: { Authorization: `Bearer ${token}` },
                 });
 
                 if (Array.isArray(res.data.data)) {
@@ -114,21 +109,12 @@ const AnnouncementPage: React.FC = () => {
         }
     };
 
+    // Get today date
     const today = new Date();
     const dayNames = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
     const monthNames = [
-        "Januari",
-        "Februari",
-        "Maret",
-        "April",
-        "Mei",
-        "Juni",
-        "Juli",
-        "Agustus",
-        "September",
-        "Oktober",
-        "November",
-        "Desember",
+        "Januari", "Februari", "Maret", "April", "Mei", "Juni",
+        "Juli", "Agustus", "September", "Oktober", "November", "Desember",
     ];
     const dayName = dayNames[today.getDay()];
     const dateString = `${today.getDate()} ${monthNames[today.getMonth()]} ${today.getFullYear()}`;
@@ -171,7 +157,7 @@ const AnnouncementPage: React.FC = () => {
 
     return (
         <>
-            {/* HEADER CARD */}
+            {/* HEADER */}
             <section>
                 <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                     <div
@@ -187,9 +173,7 @@ const AnnouncementPage: React.FC = () => {
                         </div>
 
                         <div className="text-gray-800 px-3 py-2 flex flex-col items-center">
-                            <h3 className="font-semibold text-sm">
-                                Total Pengumuman Hari Ini
-                            </h3>
+                            <h3 className="font-semibold text-sm">Total Pengumuman Hari Ini</h3>
                             <h4 className="font-bold text-3xl">
                                 {todayAnnouncementsCount}
                             </h4>
@@ -200,10 +184,7 @@ const AnnouncementPage: React.FC = () => {
                         <button
                             onClick={() => setIsAddAnnouncementOpen(true)}
                             className="w-full sm:w-auto flex items-center justify-center gap-2 px-4 py-3 cursor-pointer rounded-xl text-sm md:text-base font-semibold hover:shadow-lg transition"
-                            style={{
-                                backgroundColor: accentColor,
-                                color: textColor,
-                            }}
+                            style={{ backgroundColor: accentColor, color: textColor }}
                         >
                             <FaEdit /> Buat Pengumuman
                         </button>
@@ -211,7 +192,7 @@ const AnnouncementPage: React.FC = () => {
                 </div>
             </section>
 
-            {/* LIST ANNOUNCEMENT */}
+            {/* LIST */}
             <section className="flex flex-col gap-4 mt-4">
                 {loading ? (
                     <div className="border rounded-xl p-10 shadow-sm bg-white text-center text-gray-500">
@@ -244,9 +225,7 @@ const AnnouncementPage: React.FC = () => {
                                         </button>
 
                                         <button
-                                            onClick={() =>
-                                                handleDeleteAnnouncement(report.id)
-                                            }
+                                            onClick={() => handleDeleteAnnouncement(report.id)}
                                             className="cursor-pointer hover:scale-110 transition-transform p-2 rounded-full text-red-500 hover:bg-red-50"
                                         >
                                             <MdDelete className="w-5 h-5" />
@@ -262,6 +241,7 @@ const AnnouncementPage: React.FC = () => {
                             </p>
 
                             <button
+                                onClick={() => setDetailAnnouncement(report)}
                                 className="w-full py-3 mt-2 rounded-xl font-semibold text-white hover:opacity-90 transition"
                                 style={{ backgroundColor: accentColor }}
                             >
@@ -272,7 +252,7 @@ const AnnouncementPage: React.FC = () => {
                 )}
             </section>
 
-            {/* MODALS */}
+            {/* ADD & EDIT MODALS */}
             {!isParent && (
                 <>
                     <AddAnnouncement
@@ -298,6 +278,8 @@ const AnnouncementPage: React.FC = () => {
                 <AnnouncementDetail
                     announcement={detailAnnouncement}
                     onClose={() => setDetailAnnouncement(null)}
+                    accentColor={accentColor}
+                    textColor={textColor}
                 />
             )}
         </>

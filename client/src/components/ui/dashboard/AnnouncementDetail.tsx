@@ -1,50 +1,57 @@
 import React from "react";
-import { motion } from "framer-motion";
 
 interface Announcement {
     id: string;
     title: string;
-    kelas: string;
     content: string;
     createdAt?: string;
+    updatedAt?: string;
 }
 
 interface Props {
     announcement: Announcement;
     onClose: () => void;
+    accentColor: string;
+    textColor: string;
 }
 
-const AnnouncementDetail: React.FC<Props> = ({ announcement, onClose }) => {
+const AnnouncementDetail: React.FC<Props> = ({
+    announcement,
+    onClose,
+    accentColor,
+    textColor,
+}) => {
     return (
-        <div className="fixed inset-0 bg-black bg-opacity-30 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-            <motion.div
-                initial={{ scale: 0.8, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                exit={{ opacity: 0 }}
-                className="bg-white w-full max-w-md rounded-2xl p-6 shadow-xl"
-            >
-                <h2 className="text-2xl font-bold mb-2 text-gray-700">
+        <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center p-4 z-50">
+            <div className="bg-white w-full max-w-md rounded-2xl p-6 shadow-xl animate-fadeIn relative">
+                
+                {/* TITLE */}
+                <h2 className="text-xl font-bold mb-3 text-gray-900">
                     {announcement.title}
                 </h2>
 
-                <p className="text-sm text-gray-600 mb-4 leading-relaxed">
+                {/* CONTENT */}
+                <p className="text-gray-700 text-sm leading-relaxed mb-4">
                     {announcement.content}
                 </p>
 
-                <p className="text-xs text-gray-500">
-                    Dibuat:{" "}
+                {/* DATE INFO */}
+                <p className="text-xs text-gray-500 border-t pt-3">
+                    Dibuat pada:{" "}
                     {announcement.createdAt
                         ? new Date(announcement.createdAt).toLocaleString("id-ID")
                         : "-"}
                 </p>
 
+                {/* BUTTON CLOSE */}
                 <button
                     onClick={onClose}
-                    className="w-full mt-5 py-2 rounded-xl font-semibold bg-gradient-to-r from-[#6CC2FF] to-[#A6E3A1] text-gray-700 hover:opacity-90 transition"
+                    className="w-full mt-5 py-3 rounded-xl font-semibold shadow hover:opacity-90 transition"
+                    style={{ backgroundColor: accentColor, color: textColor }}
                 >
                     Tutup
                 </button>
-            </motion.div>
+            </div>
         </div>
     );
 };
