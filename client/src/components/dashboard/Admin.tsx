@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Navbar from "@/components/layout/Navbar";
 import Sidebar from "@/components/layout/Sidebar";
-import { DashboardPageTitle, Statistics, Weather, LiveReport, Announcement, Profile, UserTable, StudentTable, ReportPage, AnnouncementPage, ClassPage } from "@/components/ui/dashboard";
+import { DashboardPageTitle, Statistics, Weather, LiveReport, Announcement, Profile, UserTable, StudentTable, ReportPage, AnnouncementPage, ClassPage, ResetPassword } from "@/components/ui/dashboard";
 import { FaTachometerAlt, FaUser, FaUsers, FaClipboardList, FaBullhorn, FaUserCog, FaRegSmile, } from "react-icons/fa";
 import { SiGoogleclassroom } from "react-icons/si";
 import FaceRegister from "../ui/dashboard/FaceRegister";
@@ -75,6 +75,7 @@ export default function Admin() {
         return (
           <>
             <DashboardPageTitle page={activeMenu}/>
+            <ResetPassword />
             <Profile />
           </>
         );

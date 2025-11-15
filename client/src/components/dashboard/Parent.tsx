@@ -9,7 +9,8 @@ import {
   LiveReport, 
   Announcement, 
   Profile, 
-  ReportPage 
+  ReportPage,
+  ResetPassword
 } from "@/components/ui/dashboard";
 
 import { 
@@ -85,6 +86,7 @@ export default function Parent() {
         return (
           <>
             <DashboardPageTitle page={activeMenu} />
+            <ResetPassword/>
             <Profile />
           </>
         );

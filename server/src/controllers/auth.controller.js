@@ -73,7 +73,8 @@ const authController = {
           role,
           provider: 'LOCAL',
           isLogin: false,
-          isActive: true
+          isActive: true,
+          isPasswordReset: false
         },
         select: {
           id: true,
@@ -138,17 +139,10 @@ const authController = {
         });
       }
 
-      if (user.provider === 'GOOGLE') {
+      if (user.provider === 'GOOGLE' && !user.password) {
         return res.status(400).json({
           success: false,
-          message: 'Akun ini terdaftar menggunakan Google. Silakan login dengan Google.'
-        });
-      }
-
-      if (!user.password) {
-        return res.status(400).json({
-          success: false,
-          message: 'Password tidak ditemukan. Silakan reset password atau login dengan Google.'
+          message: 'Akun Google tidak memiliki password. Silakan login dengan Google atau reset password untuk membuat password.'
         });
       }
 
@@ -372,6 +366,7 @@ const authController = {
           provider: user.provider,
           emailVerified: user.emailVerified,
           isLogin: user.isLogin,
+          isPasswordReset: user.isPasswordReset,
           isActive: user.isActive,
           createdAt: user.createdAt,
           updatedAt: user.updatedAt
@@ -417,19 +412,15 @@ const authController = {
         });
       }
 
-      if (user.provider === 'GOOGLE') {
-        return res.status(400).json({
-          success: false,
-          message: 'Akun Google tidak memiliki password. Silakan login dengan Google atau hubungi admin.'
-        });
-      }
-
       const saltRounds = 10;
       const hashedPassword = await bcrypt.hash(newPassword, saltRounds);
 
       await prisma.user.update({
         where: { id: user.id },
-        data: { password: hashedPassword }
+        data: { 
+          password: hashedPassword,
+          isPasswordReset: true
+        }
       });
 
       res.status(200).json({
