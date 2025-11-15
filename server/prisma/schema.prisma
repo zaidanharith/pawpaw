@@ -16,21 +16,22 @@ datasource db {
 
 // ===== USER MODEL =====
 model User {
-  id            String    @id @default(auto()) @map("_id") @db.ObjectId
-  username      String    @unique
-  name          String
-  email         String    @unique
-  password      String?
-  phoneNumber   String?
-  googleId      String?   @map("google_id")
-  picture       String?
-  provider      Provider  @default(LOCAL)
-  role          Role      @default(PARENT)
-  emailVerified DateTime? @map("email_verified")
-  isActive      Boolean   @default(true) @map("is_active")
-  isLogin       Boolean   @default(false) @map("is_login")
-  createdAt     DateTime  @default(now()) @map("created_at")
-  updatedAt     DateTime  @updatedAt @map("updated_at")
+  id              String    @id @default(auto()) @map("_id") @db.ObjectId
+  username        String    @unique
+  name            String
+  email           String    @unique
+  password        String?
+  phoneNumber     String?
+  googleId        String?   @map("google_id")
+  picture         String?
+  provider        Provider  @default(LOCAL)
+  role            Role      @default(PARENT)
+  emailVerified   DateTime? @map("email_verified")
+  isPasswordReset Boolean   @default(false) @map("is_password_reset")
+  isActive        Boolean   @default(true) @map("is_active")
+  isLogin         Boolean   @default(false) @map("is_login")
+  createdAt       DateTime  @default(now()) @map("created_at")
+  updatedAt       DateTime  @updatedAt @map("updated_at")
 
   faceDescriptor Float[]
 

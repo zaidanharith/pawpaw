@@ -12,7 +12,8 @@ import {
   Profile, 
   StudentTable, 
   ReportPage,
-  AnnouncementPage
+  AnnouncementPage,
+  ResetPassword
 } from "@/components/ui/dashboard";
 
 import { 
@@ -81,6 +82,7 @@ export default function Teacher() {
         return (
           <>
             <DashboardPageTitle page={activeMenu}/>
+            <ResetPassword />
             <Profile />
           </>
         );
