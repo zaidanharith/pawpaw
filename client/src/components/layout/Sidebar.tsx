@@ -47,7 +47,7 @@ const Sidebar: React.FC<SidebarProps> = ({
   const baseTextColor = role === "ADMIN" ? "#ffffff" : "#282828";
 
   return (
-    <div className={`font-sans fixed inset-0 z-100 transition-all duration-300 ${isOpen ? "visible opacity-100" : "invisible opacity-0"}`}>
+    <div className={`font-sans fixed inset-0 z-100 transition-all duration-300 min-h-screen overflow-y-scroll ${isOpen ? "visible opacity-100" : "invisible opacity-0"}`}>
       <div
         className={`absolute inset-0 bg-black bg-opacity-50 transition-all duration-800 ${isOpen ? "opacity-100" : "opacity-0"}`}
         onClick={onClose}
@@ -62,7 +62,7 @@ const Sidebar: React.FC<SidebarProps> = ({
             <FaTimes size={28} />
           </button>
         </div>
-        <nav className="flex flex-col gap-5">
+        <nav className="flex flex-col gap-4">
           {menuItems.map((menu) => (
             <button
               key={menu.name}
@@ -76,7 +76,7 @@ const Sidebar: React.FC<SidebarProps> = ({
                   : "transparent",
                 borderColor: "#fff"
               }}
-              className={`flex items-center gap-3 font-semibold rounded-xl py-3 px-4 transition-all duration-200 cursor-pointer text-lg ${
+              className={`flex items-center gap-3 font-semibold rounded-xl py-2 px-3 transition-all duration-200 cursor-pointer text-lg ${
                 activeMenu === menu.name
                   ? "shadow-sm"
                   : "border-2 hover:bg-white hover:text-[#282828]"

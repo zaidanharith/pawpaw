@@ -2,7 +2,7 @@
 
 import { useSession } from "next-auth/react";
 import RoleLabel from "../../components/ui/dashboard/RoleLabel";
-import Admin from "../../components/dashboard/Admin";
+import { Admin, Parent, Teacher } from "../../components/dashboard";
 
 export default function DashboardPage() {
   const { data: session } = useSession();
@@ -18,7 +18,9 @@ export default function DashboardPage() {
           <RoleLabel role={role || "Guest"} />
         </header>
         <section>
-          <Admin />
+          {role === "ADMIN" && <Admin />}
+          {role === "TEACHER" && <Teacher />}
+          {role === "PARENT" && <Parent />}
         </section>
       </main>
     </div>

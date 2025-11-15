@@ -11,3 +11,4 @@ export { default as AddUser } from "./AddUser";
 export { default as EditUser } from "./EditUser";
 export { default as AddStudent } from "./AddStudent";
 export { default as EditStudent } from "./EditStudent";
+export { default as ReportPage } from "./ReportPage";
