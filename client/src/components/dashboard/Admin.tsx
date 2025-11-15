@@ -39,7 +39,7 @@ export default function Admin() {
         return (
           <>
             <DashboardPageTitle page={activeMenu}/>
-            <UserTable onDeleteUser={() => {}} />
+            <UserTable  />
           </>
         );
       case "Siswa":
