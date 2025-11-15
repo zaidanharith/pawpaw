@@ -13,6 +13,7 @@ const LiveReport: React.FC = () => {
     const role = session?.user?.role || "ADMIN";
     const accentColor = roleColors[role] || roleColors.ADMIN;
     const textColor = role === "ADMIN" ? "#FFFFFF" : "#282828";
+    const isReadOnly = role === "PARENT";
 
     return (
         <section className="bg-white rounded-xl shadow p-5">
@@ -22,15 +23,17 @@ const LiveReport: React.FC = () => {
                 >
                     Laporan Terkini
                 </h2>
-                <button
+                {!isReadOnly && (
+                    <button
                     className="cursor-pointer px-3 py-2 rounded-lg text-sm md:text-base font-semibold hover:bg-opacity-80 transition"
                     style={{
                         backgroundColor: accentColor,
                         color: textColor,
                     }}
-                >
+                    >
                     <FaEdit />
-                </button>
+                    </button>
+                )}
             </div>
             <div className="flex flex-col gap-3">
                 {[1, 2, 3].map((i) => (
