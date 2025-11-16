@@ -11,8 +11,8 @@ interface Siswa {
 }
 
 const GENDER_OPTIONS = [
-    { value: "LAKI", label: "Laki-Laki" },
-    { value: "PEREMPUAN", label: "Perempuan" },
+  { value: "MALE", label: "Laki-Laki" },
+  { value: "FEMALE", label: "Perempuan" },
 ];
 
 interface EditStudentProps {

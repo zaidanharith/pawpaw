@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useSession } from "next-auth/react";
 import { FaUser, FaChevronLeft, FaPaperPlane } from "react-icons/fa";
 
 interface Contact {
@@ -19,11 +20,11 @@ interface Message {
   time: string;
 }
 
-interface UnifiedChatProps {
-  role: "teacher" | "parent";
-}
+export default function LiveChat() {
+  const { data: session } = useSession();
+  const role: "teacher" | "parent" =
+    session?.user?.role === "TEACHER" ? "teacher" : "parent";
 
-export default function UnifiedChat({ role }: UnifiedChatProps) {
   const [activeTab, setActiveTab] = useState<"semua" | "belum">("semua");
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedContact, setSelectedContact] = useState<string | null>(null);
@@ -61,7 +62,6 @@ export default function UnifiedChat({ role }: UnifiedChatProps) {
     },
   ]);
 
-  // Color classes based on role (using complete Tailwind classes)
   const colorClasses = role === "teacher" 
     ? {
         header: "bg-yellow-500",
@@ -90,7 +90,6 @@ export default function UnifiedChat({ role }: UnifiedChatProps) {
         focusRing: "focus:ring-teal-500",
       };
 
-  // Contact list based on role
   const contacts: Contact[] = role === "teacher" 
     ? [
         {
@@ -165,11 +164,9 @@ export default function UnifiedChat({ role }: UnifiedChatProps) {
     }
   };
 
-  // If contact is selected, show chat detail
   if (selectedContact) {
     return (
       <div className="flex flex-col h-screen bg-gray-50">
-        {/* Header */}
         <div className={`${colorClasses.header} text-white px-4 py-4 flex items-center gap-3 shadow-md`}>
           <button
             onClick={() => setSelectedContact(null)}
