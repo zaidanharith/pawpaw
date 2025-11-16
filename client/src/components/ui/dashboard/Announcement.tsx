@@ -29,26 +29,28 @@ const announcements = [
 const Announcement: React.FC = () => {
     const { data: session } = useSession();
 
-    // ✔ Role selalu uppercase → TEACHER aman kuning
     const role = (session?.user?.role || "ADMIN").toUpperCase();
     const accentColor = roleColors[role] || roleColors.ADMIN;
-
     const textColor = role === "ADMIN" ? "#FFFFFF" : "#282828";
+
+    const isParent = role === "PARENT";
 
     return (
         <section className="bg-white rounded-xl shadow p-5">
             <div className="flex flex-row items-center justify-between gap-2 mb-4">
                 <h2 className="font-bold text-xl">Pengumuman</h2>
 
-                <button
-                    className="cursor-pointer px-3 py-2 rounded-lg text-sm font-semibold hover:bg-opacity-80 transition flex items-center justify-center"
-                    style={{
-                        backgroundColor: accentColor,
-                        color: textColor,
-                    }}
-                >
-                    <FaEdit />
-                </button>
+                {!isParent && (
+                    <button
+                        className="cursor-pointer px-3 py-2 rounded-lg text-sm font-semibold hover:bg-opacity-80 transition flex items-center justify-center"
+                        style={{
+                            backgroundColor: accentColor,
+                            color: textColor,
+                        }}
+                    >
+                        <FaEdit />
+                    </button>
+                )}
             </div>
 
             <div className="flex flex-col gap-3">
