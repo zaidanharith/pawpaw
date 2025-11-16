@@ -14,21 +14,21 @@ import {
   StudentTable,
   ReportPage,
   AnnouncementPage,
-  MenuNotFound
+  MenuNotFound,
+  LiveChat
 } from "@/components/ui/dashboard";
 
-import {
-  FaTachometerAlt,
-  FaUsers,
-  FaClipboardList,
-  FaBullhorn,
-  FaUserCog,
+import { 
+  FaTachometerAlt, 
+  FaUsers, 
+  FaClipboardList, 
+  FaBullhorn, 
+  FaUserCog, 
   FaRegSmile,
-  FaComments,
+  FaComments
 } from "react-icons/fa";
 
 import FaceRegister from "../ui/dashboard/FaceRegister";
-import TeacherChat from "@/components/ui/dashboard/TeacherChat";
 
 interface TeacherProps {
   activePage?: string;
@@ -95,7 +95,7 @@ export default function Teacher({ activePage = "" }: TeacherProps) {
         return (
           <>
             <DashboardPageTitle page="Chat Orang Tua Murid" />
-            <TeacherChat />
+            <LiveChat />
           </>
         );
       case "profile":

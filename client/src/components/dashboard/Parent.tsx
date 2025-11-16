@@ -11,7 +11,8 @@ import {
   Announcement, 
   Profile, 
   ReportPage,
-  MenuNotFound
+  MenuNotFound,
+  LiveChat
 } from "@/components/ui/dashboard";
 
 import { 
@@ -24,7 +25,7 @@ import {
 } from "react-icons/fa";
 
 import FaceRegister from "../ui/dashboard/FaceRegister";
-import ParentChat from "../ui/dashboard/ParentChat";
+import ParentTeacherChat from "../ui/dashboard/LiveChat";
 
 interface ParentProps {
   activePage?: string;
@@ -84,8 +85,9 @@ export default function Parent({ activePage = "" }: ParentProps) {
       case "chat":
         return (
           <>
+
             <DashboardPageTitle page="Chat Guru" />
-            <ParentChat />
+            <LiveChat />
           </>
         );
       case "profile":
