@@ -15,16 +15,6 @@ import {
   AnnouncementPage,
 } from "@/components/ui/dashboard";
 
-<<<<<<< Updated upstream
-import {
-  FaTachometerAlt,
-  FaUsers,
-  FaClipboardList,
-  FaBullhorn,
-  FaUserCog,
-  FaRegSmile,
-  FaComments,
-=======
 import { 
   FaTachometerAlt, 
   FaUsers, 
@@ -33,11 +23,10 @@ import {
   FaUserCog, 
   FaRegSmile,
   FaComments
->>>>>>> Stashed changes
 } from "react-icons/fa";
 
 import FaceRegister from "../ui/dashboard/FaceRegister";
-import TeacherChat from "@/components/ui/dashboard/TeacherChat";
+import ParentTeacherChat from "@/components/ui/dashboard/ParentTeacherChat";
 
 export default function Teacher() {
   const menuItems = [
@@ -45,7 +34,7 @@ export default function Teacher() {
     { name: "Siswa", icon: <FaUsers size={24} /> },
     { name: "Laporan Kegiatan", icon: <FaClipboardList size={24} /> },
     { name: "Pengumuman", icon: <FaBullhorn size={24} /> },
-    { name: "Chat Orang Tua Murid", icon: <FaComments size={24} /> }, // 🔥 DIGANTI
+    { name: "Chat Orang Tua Murid", icon: <FaComments size={24} /> }, 
     { name: "Profil", icon: <FaUserCog size={24} /> },
     { name: "Face Recognition", icon: <FaRegSmile size={24} /> },
   ];
@@ -94,7 +83,7 @@ export default function Teacher() {
         return (
           <>
             <DashboardPageTitle page={activeMenu} />
-            <TeacherChat />
+            <ParentTeacherChat role="teacher" />
           </>
         );
 

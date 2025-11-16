@@ -22,7 +22,7 @@ import {
 } from "react-icons/fa";
 
 import FaceRegister from "../ui/dashboard/FaceRegister";
-import ParentChat from "../ui/dashboard/ParentChat";
+import ParentTeacherChat from "../ui/dashboard/ParentTeacherChat";
 
 export default function Parent() {
 
@@ -73,7 +73,7 @@ export default function Parent() {
         return (
           <>
             <DashboardPageTitle page={activeMenu} />
-            <ParentChat />
+            <ParentTeacherChat role="parent" />
           </>
         );
 
