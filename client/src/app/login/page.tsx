@@ -18,6 +18,12 @@ function LoginContent() {
     }
   }, [status, router]);
 
+  useEffect(() => {
+    if (activeForm === "login" && typeof window !== "undefined" && window.dispatchEvent) {
+      window.dispatchEvent(new Event("face-login-stop"));
+    }
+  }, [activeForm]);
+
   if (status === "authenticated") {
     return null;
   }
