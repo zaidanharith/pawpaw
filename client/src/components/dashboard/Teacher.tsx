@@ -15,6 +15,7 @@ import {
   AnnouncementPage,
 } from "@/components/ui/dashboard";
 
+<<<<<<< Updated upstream
 import {
   FaTachometerAlt,
   FaUsers,
@@ -23,6 +24,16 @@ import {
   FaUserCog,
   FaRegSmile,
   FaComments,
+=======
+import { 
+  FaTachometerAlt, 
+  FaUsers, 
+  FaClipboardList, 
+  FaBullhorn, 
+  FaUserCog, 
+  FaRegSmile,
+  FaComments
+>>>>>>> Stashed changes
 } from "react-icons/fa";
 
 import FaceRegister from "../ui/dashboard/FaceRegister";
