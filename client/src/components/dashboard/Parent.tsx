@@ -8,7 +8,6 @@ import {
   Weather, 
   LiveReport, 
   Announcement, 
-  ResetPassword,
   Profile, 
   ReportPage 
 } from "@/components/ui/dashboard";
@@ -46,9 +45,11 @@ export default function Parent() {
         return (
           <>
             <DashboardPageTitle page={activeMenu} />
-            <Weather />
-            <Announcement />
-            <LiveReport />
+            <div className="space-y-6">
+              <Weather />
+              <Announcement />
+              <LiveReport />
+            </div>
           </>
         );
 
@@ -80,7 +81,6 @@ export default function Parent() {
         return (
           <>
             <DashboardPageTitle page={activeMenu} />
-            <ResetPassword />
             <Profile />
           </>
         );
