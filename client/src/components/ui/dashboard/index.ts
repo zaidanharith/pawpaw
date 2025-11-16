@@ -16,3 +16,4 @@ export { default as AnnouncementPage} from "./AnnouncementPage";
 export { default as ClassPage} from "./ClassPage";
 export { default as LiveReportPage } from "./LiveReportPage";
 export { default as ResetPassword } from "./ResetPassword";
+export { default as DetailReport} from "./DetailReport";

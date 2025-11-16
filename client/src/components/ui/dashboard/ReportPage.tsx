@@ -210,23 +210,6 @@ const ReportPage: React.FC = () => {
     return reportDate.toDateString() === today.toDateString();
   }).length;
 
-<<<<<<< HEAD
-    return (
-        <>
-            <section>
-                <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-                    <div className="flex flex-row items-center gap-2 px-4 bg-white border rounded-xl w-full sm:w-auto"
-                    style={{ borderColor: accentColor}}>
-                        <div className="rounded-xl px-3 py-2 my-2 flex flex-col items-center"
-                        style={{ backgroundColor: accentColor, color: textColor}}>
-                            <h3 className="font-semibold text-md">{dayName}</h3>
-                            <h4 className="font-normal text-sm">{dateString}</h4>
-                        </div>
-                        <div className="text-gray-800 px-3 py-2 flex flex-col items-center">
-                            <h3 className="font-semibold text-sm">Total Laporan Hari Ini</h3>
-                            <h4 className="font-bold text-3xl">{todayReportsCount}</h4>
-                        </div>
-=======
   // Format relative time
   const getRelativeTime = (dateString?: string) => {
     if (!dateString) return "Baru saja";
@@ -343,11 +326,10 @@ const ReportPage: React.FC = () => {
                       <p className="text-gray-700 font-medium">
                         {displayActivityName}
                       </p>
->>>>>>> 9682a95712f8de99fc138175b49e79083dc0bb78
                     </div>
 
                     <span
-                      className="px-3 py-1 rounded-full text-gray-800 text-sm font-semibold"
+                      className="px-3 py-1 rounded-full text-white text-sm font-semibold"
                       style={{ backgroundColor: accentColor }}
                     >
                       {report.teacher?.name
@@ -375,7 +357,7 @@ const ReportPage: React.FC = () => {
 
                   {/* Tombol detail */}
                   <button
-                    className="w-full py-3 mt-2 rounded-xl font-semibold text-gray-800 hover:opacity-90 transition"
+                    className="w-full py-3 mt-2 rounded-xl font-semibold text-white hover:opacity-90 transition"
                     style={{ backgroundColor: accentColor }}
                     onClick={() => handleOpenDetail(report)}
                   >
@@ -388,51 +370,6 @@ const ReportPage: React.FC = () => {
         )}
       </section>
 
-<<<<<<< HEAD
-            <section className="flex flex-col gap-4">
-                {loading ? (
-                    <div className="border rounded-xl p-10 shadow-sm bg-white text-center text-gray-500"
-                    style={{ borderColor: accentColor}}>
-                        Memuat data laporan...
-                    </div>
-                ) : allReports.length === 0 ? (
-                    <div className="border rounded-xl p-10 shadow-sm bg-white text-center text-gray-500"
-                    style={{ borderColor: accentColor}}>
-                        Belum ada laporan yang tersedia.
-                    </div>
-                ) : (
-                    allReports.map((report) => (
-                        <div
-                            key={report.id}
-                            className="border rounded-xl p-5 shadow-sm bg-white flex flex-col gap-3"
-                            style={{ borderColor: accentColor }}
-                        >
-                            {/* Waktu relatif */}
-                            <div className="flex items-center justify-between">
-                                <div className="flex items-center gap-2 text-gray-500 text-sm">
-                                    <span>🕒</span>
-                                    <span>{getRelativeTime(report.createdAt)}</span>
-                                </div>
-                                
-                                {/* Action buttons */}
-                                <div className="flex gap-2">
-                                    <button
-                                        onClick={() => handleEditReport(report)}
-                                        className="cursor-pointer hover:scale-110 transition-transform p-2 rounded-full text-blue-500 hover:bg-blue-50"
-                                        title="Edit Laporan"
-                                    >
-                                        <MdEdit className="w-5 h-5" />
-                                    </button>
-                                    <button
-                                        onClick={() => handleDeleteReport(report.id)}
-                                        className="cursor-pointer hover:scale-110 transition-transform p-2 rounded-full text-red-500 hover:bg-red-50"
-                                        title="Hapus Laporan"
-                                    >
-                                        <MdDelete className="w-5 h-5" />
-                                    </button>
-                                </div>
-                            </div>
-=======
       {/* MODAL ADD & EDIT (HANYA ADMIN/GURU) */}
       {!isReadOnly && (
         <>
@@ -441,7 +378,6 @@ const ReportPage: React.FC = () => {
             onClose={() => setIsAddReportOpen(false)}
             onSave={handleSaveNewReport}
           />
->>>>>>> 9682a95712f8de99fc138175b49e79083dc0bb78
 
           <EditReport
             isOpen={isEditReportOpen}

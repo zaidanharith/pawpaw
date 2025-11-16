@@ -3,22 +3,15 @@
 import { useState } from "react";
 import Navbar from "@/components/layout/Navbar";
 import Sidebar from "@/components/layout/Sidebar";
-<<<<<<< HEAD
-import { DashboardPageTitle, Weather, LiveReport, Announcement, Profile, LiveReportPage } from "@/components/ui/dashboard";
-import { FaTachometerAlt, FaClipboardList, FaBullhorn, FaUserCog, FaRegSmile, FaComments } from "react-icons/fa";
-import FaceRegister from "../ui/dashboard/FaceRegister";
-import ParentChat from "../ui/dashboard/ParentChat";
-=======
 import { 
   DashboardPageTitle, 
   Weather, 
   LiveReport, 
   Announcement, 
+  ResetPassword,
   Profile, 
-  LiveReportPage ,
-  ResetPassword
+  ReportPage 
 } from "@/components/ui/dashboard";
->>>>>>> 9682a95712f8de99fc138175b49e79083dc0bb78
 
 import { 
   FaTachometerAlt, 
@@ -68,12 +61,8 @@ export default function Parent() {
       case "Laporan Kegiatan":
         return (
           <>
-<<<<<<< HEAD
-            <DashboardPageTitle page={activeMenu}/>
-=======
             <DashboardPageTitle page={activeMenu} />
->>>>>>> 9682a95712f8de99fc138175b49e79083dc0bb78
-            <LiveReportPage />
+            <ReportPage />
           </>
         );
 
@@ -98,7 +87,7 @@ export default function Parent() {
         return (
           <>
             <DashboardPageTitle page={activeMenu} />
-            <ResetPassword/>
+            <ResetPassword />
             <Profile />
           </>
         );

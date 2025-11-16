@@ -106,10 +106,10 @@ const ReportDetail: React.FC<ReportDetailProps> = ({
       {/* BACKDROP */}
       <div className="absolute inset-0 bg-black/50" onClick={onClose} />
 
-      {/* CARD – sekarang dibatasi tinggi & body scrollable */}
+      {/* CARD */}
       <div className="relative bg-white rounded-2xl w-full max-w-[650px] mx-4 shadow-xl overflow-hidden flex flex-col max-h-[90vh]">
         {/* =======================
-            HEADER (CENTERED)
+            HEADER
         ======================== */}
         <div
           className="relative px-4 py-2 flex items-center justify-center"
@@ -117,10 +117,10 @@ const ReportDetail: React.FC<ReportDetailProps> = ({
         >
           {/* TITLE */}
           <div className="flex flex-col items-center">
-            <h2 className="text-gray-800 font-bold text-lg">
+            <h2 className="text-white font-bold text-lg">
               Detail Laporan Kegiatan
             </h2>
-            <p className="text-gray-800/90 text-sm">
+            <p className="text-white/90 text-sm">
               Informasi lengkap laporan
             </p>
           </div>
@@ -128,7 +128,7 @@ const ReportDetail: React.FC<ReportDetailProps> = ({
           {/* CLOSE BUTTON */}
           <button
             onClick={onClose}
-            className="absolute right-4 text-gray-800 hover:text-gray-100 transition"
+            className="absolute right-4 text-white hover:text-gray-100 transition"
             title="Tutup"
           >
             <MdOutlineClose className="w-6 h-6 cursor-pointer" />
