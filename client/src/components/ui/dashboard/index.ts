@@ -17,5 +17,5 @@ export { default as ClassPage} from "./ClassPage";
 export { default as LiveReportPage } from "./LiveReportPage";
 export { default as ResetPassword } from "./ResetPassword";
 export { default as DetailReport} from "./DetailReport";
-export { default as MenuNotFound} from "./MenuNotFound";
-export { default as LiveChat} from "./LiveChat";
+export { default as LiveChat } from "./LiveChat";
+export { default as MenuNotFound } from "./MenuNotFound";

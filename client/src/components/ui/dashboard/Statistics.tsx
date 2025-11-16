@@ -15,7 +15,15 @@ type User = {
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
-const Statistics: React.FC = () => {
+interface StatisticsProps {
+    onNavigateToUser?: () => void;
+    onNavigateToSiswa?: () => void;
+}
+
+const Statistics: React.FC<StatisticsProps> = ({ 
+    onNavigateToUser, 
+    onNavigateToSiswa 
+}) => {
     const { data: session } = useSession();
     const role = session?.user?.role || "ADMIN";
     const cardColor = roleColors[role] || roleColors.ADMIN;
@@ -30,6 +38,7 @@ const Statistics: React.FC = () => {
         const fetchStats = async () => {
             setLoading(true);
             try {
+                // Fetch Students
                 const resStudent = await fetch(`${API_URL}/student`, {
                     headers: {
                         Authorization: `Bearer ${session?.accessToken || ""}`,
@@ -38,54 +47,99 @@ const Statistics: React.FC = () => {
                 const dataStudent = await resStudent.json();
                 setStudentCount(dataStudent.count || 0);
 
+                // Fetch Users
                 const resUser = await fetch(`${API_URL}/user`, {
                     headers: {
                         Authorization: `Bearer ${session?.accessToken || ""}`,
                     },
                 });
-
                 const dataUser = await resUser.json();
+                
                 if (dataUser.success && Array.isArray(dataUser.data)) {
                     const users: User[] = dataUser.data;
                     setTeacherCount(users.filter((u) => u.role === "TEACHER").length);
                     setAdminCount(users.filter((u) => u.role === "ADMIN").length);
                 }
-            } catch {
+            } catch (error) {
+                console.error("Failed to fetch statistics:", error);
                 setStudentCount(0);
                 setTeacherCount(0);
                 setAdminCount(0);
             }
             setLoading(false);
         };
+
         if (session?.accessToken) fetchStats();
     }, [session?.accessToken]);
 
+    // Handler untuk button Kelola
+    const handleManage = (type: "siswa" | "guru" | "admin") => {
+        if (type === "siswa" && onNavigateToSiswa) {
+            onNavigateToSiswa();
+        } else if ((type === "guru" || type === "admin") && onNavigateToUser) {
+            onNavigateToUser();
+        }
+    };
+
     const stats = [
-        { label: "Siswa", count: studentCount, icon: "👨‍🎓" },
-        { label: "Guru", count: teacherCount, icon: "👩‍🏫" },
-        { label: "Admin", count: adminCount, icon: "🛡️" },
+        { 
+            label: "Siswa", 
+            count: studentCount, 
+            icon: "👨‍🎓",
+            type: "siswa" as const
+        },
+        { 
+            label: "Guru", 
+            count: teacherCount, 
+            icon: "👩‍🏫",
+            type: "guru" as const
+        },
+        { 
+            label: "Admin", 
+            count: adminCount, 
+            icon: "🛡️",
+            type: "admin" as const
+        },
     ];
 
     return (
         <section className="flex gap-2 justify-between">
             {stats.map((item, i) => (
-                <div key={i} className="rounded-xl shadow p-5 flex flex-col items-center transition w-1/3"
-                    style={{ backgroundColor: cardColor }} >
+                <div 
+                    key={i} 
+                    className="rounded-xl shadow p-5 flex flex-col items-center transition w-1/3"
+                    style={{ backgroundColor: cardColor }}
+                >
                     <div className="mb-3 text-4xl">{item.icon}</div>
-                    <h3  className="text-3xl md:text-4xl font-extrabold"
-                        style={{ color: textColor }} >
-                        {loading ? <span className="animate-pulse">-</span> : item.count}
+                    
+                    <h3 
+                        className="text-3xl md:text-4xl font-extrabold"
+                        style={{ color: textColor }}
+                    >
+                        {loading ? (
+                            <span className="animate-pulse">-</span>
+                        ) : (
+                            item.count
+                        )}
                     </h3>
-                    <p className="text-sm md:text-base mt-2 font-semibold tracking-wide"
-                        style={{ color: textColor }}>
+                    
+                    <p 
+                        className="text-sm md:text-base mt-2 font-semibold tracking-wide"
+                        style={{ color: textColor }}
+                    >
                         {item.label}
                     </p>
-                    <button className="mt-5 cursor-pointer text-sm font-bold rounded-lg px-3 py-1"
+                    
+                    <button 
+                        onClick={() => handleManage(item.type)}
+                        className="mt-5 cursor-pointer text-sm font-bold rounded-lg px-3 py-1 hover:shadow-md transition-all"
                         style={{
                             backgroundColor: "#fefaef",
                             borderColor: cardColor,
                             color: "#282828",
-                        }} >
+                        }}
+                        title={`Kelola ${item.label}`}
+                    >
                         Kelola
                     </button>
                 </div>

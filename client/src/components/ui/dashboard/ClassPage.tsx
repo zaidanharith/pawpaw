@@ -3,9 +3,10 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useSession } from "next-auth/react";
-import { FaPlus, FaEdit } from "react-icons/fa";
+import { FaPlus } from "react-icons/fa";
 import AddClassModal from "./AddClass";
 import EditClassModal from "./EditClass";
+import { MdEdit, MdDelete } from "react-icons/md";
 
 interface Teacher {
     id: string;
@@ -104,7 +105,7 @@ const ClassroomPage: React.FC = () => {
                                 <th className="px-4 py-3">Aksi</th>
                             </tr>
                         </thead>
-                        <tbody>
+                        <tbody className="bg-background">
                             {loading ? (
                                 <tr>
                                     <td colSpan={3} className="text-center py-4">
@@ -119,7 +120,7 @@ const ClassroomPage: React.FC = () => {
                                 </tr>
                             ) : (
                                 classrooms.map((c) => (
-                                    <tr key={c.id} className="border-t">
+                                    <tr key={c.id} className="border-t hover:bg-gray-50 transition-colors">
                                         <td className="px-4 py-3 font-medium">{c.name}</td>
                                         <td className="px-4 py-3">
                                             {c.teacher?.name || "-"}
@@ -127,9 +128,10 @@ const ClassroomPage: React.FC = () => {
                                         <td className="px-4 py-3">
                                             <button
                                                 onClick={() => openEdit(c)}
-                                                className="text-blue-600 hover:text-blue-800 hover:underline flex items-center gap-1"
+                                                className="cursor-pointer hover:scale-110 transition-transform p-1 rounded-full text-blue-500 hover:bg-blue-50"
+
                                             >
-                                                <FaEdit /> Edit
+                                                <MdEdit className="w-5 h-5"/>
                                             </button>
                                         </td>
                                     </tr>

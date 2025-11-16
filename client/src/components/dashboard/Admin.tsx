@@ -25,7 +25,7 @@ export default function Admin({ activePage = "" }: AdminProps) {
     { name: "Profil", urlName: "profile", icon: <FaUserCog size={24} /> },
     { name: "Face Registration", urlName: "face-registration", icon: <FaRegSmile size={24} /> },
   ];
-
+  
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [activeMenu, setActiveMenu] = useState(activePage);
 
@@ -38,6 +38,26 @@ export default function Admin({ activePage = "" }: AdminProps) {
     router.push(`/dashboard/${menuUrl}`);
   };
 
+    const handleNavigateToReport = () => {
+    setActiveMenu("report");
+    router.push("/dashboard/report");
+};
+
+    const handleNavigateToAnnouncement = () => {
+    setActiveMenu("announcement");
+    router.push("/dashboard/announcement");
+};
+
+    const handleNavigateToUser = () => {
+    setActiveMenu("user");
+    router.push("/dashboard/user");
+};
+
+    const handleNavigateToSiswa = () => {
+    setActiveMenu("student");
+    router.push("/dashboard/student");
+};
+
   const renderContent = () => {
     switch (activeMenu) {
       case "":
@@ -45,9 +65,12 @@ export default function Admin({ activePage = "" }: AdminProps) {
           <>
             <DashboardPageTitle page="Dashboard"/>
             <Weather />
-            <Statistics />
-            <LiveReport />
-            <Announcement />
+            <Statistics 
+              onNavigateToUser={handleNavigateToUser}
+              onNavigateToSiswa={handleNavigateToSiswa}
+            />
+            <LiveReport onNavigateToReport={handleNavigateToReport} />
+            <Announcement onNavigateToAnnouncement={handleNavigateToAnnouncement} />
           </>
         );
       case "user":

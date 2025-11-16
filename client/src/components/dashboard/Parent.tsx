@@ -8,7 +8,8 @@ import {
   DashboardPageTitle, 
   Weather, 
   LiveReport, 
-  Announcement, 
+  Announcement,
+  AnnouncementPage, 
   Profile, 
   ReportPage,
   MenuNotFound,
@@ -77,7 +78,7 @@ export default function Parent({ activePage = "" }: ParentProps) {
         return (
           <>
             <DashboardPageTitle page="Pengumuman" />
-            <Announcement />
+            <AnnouncementPage />
           </>
         );
       case "chat":

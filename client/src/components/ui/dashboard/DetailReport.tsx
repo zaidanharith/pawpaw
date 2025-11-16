@@ -1,5 +1,5 @@
 import React from "react";
-import { MdOutlineClose } from "react-icons/md";
+import { MdOutlineClose, MdEdit, MdDelete } from "react-icons/md";
 import { FaClock } from "react-icons/fa";
 import { useSession } from "next-auth/react";
 import type { Report } from "./ReportPage";
@@ -37,6 +37,7 @@ const ReportDetail: React.FC<ReportDetailProps> = ({
   const { data: session } = useSession();
   const role = session?.user?.role || "ADMIN";
   const accentColor = roleColors[role] || roleColors.ADMIN;
+  const textColor = role === "ADMIN" ? "#FFFFFF" : "#3d3006";
 
   if (!isOpen || !report) return null;
 
@@ -117,10 +118,12 @@ const ReportDetail: React.FC<ReportDetailProps> = ({
         >
           {/* TITLE */}
           <div className="flex flex-col items-center">
-            <h2 className="text-white font-bold text-lg">
+            <h2 className="font-bold text-lg"
+            style={{color: textColor}}>
               Detail Laporan Kegiatan
             </h2>
-            <p className="text-white/90 text-sm">
+            <p className="text-white/90 text-sm"
+            style={{color: textColor}}>
               Informasi lengkap laporan
             </p>
           </div>
@@ -128,7 +131,8 @@ const ReportDetail: React.FC<ReportDetailProps> = ({
           {/* CLOSE BUTTON */}
           <button
             onClick={onClose}
-            className="absolute right-4 text-white hover:text-gray-100 transition"
+            className="absolute right-4 hover:opacity-80 transition"
+            style={{ color: textColor }}
             title="Tutup"
           >
             <MdOutlineClose className="w-6 h-6 cursor-pointer" />
@@ -208,11 +212,11 @@ const ReportDetail: React.FC<ReportDetailProps> = ({
               type="button"
               onClick={onEdit}
               className="flex-1 flex items-center justify-center gap-2 
-                        px-4 py-2.5 rounded-full text-gray-800 text-sm font-semibold 
-                        shadow-md hover:opacity-90 transition"
-              style={{ backgroundColor: accentColor }}
+                        px-4 py-2.5 rounded-full text-sm font-semibold 
+                        shadow-md hover:opacity-80 transition cursor-pointer"
+              style={{ backgroundColor: accentColor, color: textColor}}
             >
-              ✏️ Edit
+              <MdEdit/> Edit
             </button>
 
             {/* DELETE */}
@@ -221,9 +225,9 @@ const ReportDetail: React.FC<ReportDetailProps> = ({
               onClick={onDelete}
               className="flex-1 flex items-center justify-center gap-2 
                         px-4 py-2.5 rounded-full text-white text-sm font-semibold 
-                        bg-red-600 hover:bg-red-700 transition"
+                        bg-red-600 hover:bg-red-700 transition cursor-pointer"
             >
-              🗑 Hapus
+              <MdDelete/> Hapus
             </button>
           </div>
         )}

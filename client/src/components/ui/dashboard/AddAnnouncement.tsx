@@ -100,19 +100,21 @@ const AddAnnouncement: React.FC<AddAnnouncementProps> = ({
     <div className="fixed inset-0 z-50 flex items-center justify-center">
       <div className="absolute inset-0 bg-black/50" onClick={onClose} />
 
-      <div className="relative bg-white rounded-xl w-full max-w-2xl mx-4 shadow-lg">
+      <div className="relative bg-white rounded-3xl w-full max-w-2xl mx-4 shadow-lg">
         {/* HEADER */}
         <div
-          className="p-6 border-b flex justify-between items-center"
-          style={{ borderColor: accentColor }}
+          className="p-6 flex justify-between rounded-t-2xl items-center"
+          style={{ backgroundColor: accentColor }}
         >
-          <h2 className="text-xl font-bold text-gray-800">
+          <h2 className="text-xl font-bold text-gray-800"
+          style={{color: textColor}}>
             Tambah Pengumuman Baru
           </h2>
 
           <button
             onClick={onClose}
-            className="text-gray-400 hover:text-gray-700 transition"
+            className=" hover:opacity-80 transition"
+            style={{color: textColor}}
             type="button"
           >
             <MdOutlineClose className="w-6 h-6 cursor-pointer" />
@@ -131,9 +133,8 @@ const AddAnnouncement: React.FC<AddAnnouncementProps> = ({
               value={formData.title}
               onChange={handleChange}
               required
-              className="w-full border rounded-md px-3 py-2 focus:ring-2 focus:outline-none"
+              className="w-full border rounded-md px-3 py-2 border-gray-300 focus:ring-2 focus:outline-none"
               style={{
-                borderColor: accentColor,
                 ...twRingColor(accentColor),
               }}
             />
@@ -148,9 +149,8 @@ const AddAnnouncement: React.FC<AddAnnouncementProps> = ({
               value={formData.kelas}
               onChange={handleChange}
               required
-              className="w-full rounded-md px-3 py-2 bg-white focus:ring-2 focus:outline-none border"
+              className="w-full rounded-md px-3 py-2 border-gray-300 bg-white focus:ring-2 focus:outline-none border"
               style={{
-                borderColor: accentColor,
                 ...twRingColor(accentColor),
               }}
             >
@@ -172,9 +172,8 @@ const AddAnnouncement: React.FC<AddAnnouncementProps> = ({
               value={formData.content}
               onChange={handleChange}
               required
-              className="w-full border rounded-md px-3 py-2 focus:ring-2 focus:outline-none"
+              className="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:outline-none"
               style={{
-                borderColor: accentColor,
                 ...twRingColor(accentColor),
               }}
             />
@@ -185,7 +184,7 @@ const AddAnnouncement: React.FC<AddAnnouncementProps> = ({
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 text-sm font-medium rounded-lg text-gray-700 border border-gray-300 hover:bg-gray-100 transition"
+              className="px-4 py-2 text-sm font-medium rounded-lg text-gray-700 border border-gray-300 hover:bg-gray-100 transition cursor-pointer"
             >
               Batal
             </button>
@@ -193,7 +192,7 @@ const AddAnnouncement: React.FC<AddAnnouncementProps> = ({
             <button
               type="submit"
               disabled={loading}
-              className="px-4 py-2 text-sm font-medium rounded-lg text-white transition shadow-md"
+              className="px-4 py-2 text-sm font-medium rounded-lg hover:opacity-80 text-white transition shadow-md cursor-pointer"
               style={{
                 backgroundColor: accentColor,
                 color: textColor,

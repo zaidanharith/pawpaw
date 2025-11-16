@@ -24,6 +24,13 @@ interface EditClassModalProps {
     onSaved: () => void;
 }
 
+const roleColors: Record<string, string> = {
+    ADMIN: "#3f9065",
+    TEACHER: "#f5bb00",
+    PARENT: "#58baab",
+};
+
+
 const EditClassModal: React.FC<EditClassModalProps> = ({
     isOpen,
     onClose,
@@ -33,7 +40,9 @@ const EditClassModal: React.FC<EditClassModalProps> = ({
 }) => {
     const { data: session } = useSession();
     const token = session?.accessToken;
-
+    const role = session?.user?.role || "ADMIN";
+    const accentColor = roleColors[role] || roleColors.ADMIN;
+    const textColor = role === "ADMIN" ? "#FFFFFF" : "#282828";
     const [className, setClassName] = useState("");
     const [teacherId, setTeacherId] = useState("");
 
@@ -74,12 +83,15 @@ const EditClassModal: React.FC<EditClassModalProps> = ({
         <div className="fixed inset-0 z-50 flex items-center justify-center">
             <div className="absolute inset-0 bg-black/50" onClick={onClose} />
 
-            <div className="relative bg-white rounded-xl w-full max-w-lg mx-4 shadow-lg">
-                <div className="p-6 border-b border-gray-100 flex justify-between items-center">
-                    <h2 className="text-xl font-bold text-gray-800">Edit Kelas</h2>
+            <div className="relative bg-white rounded-2xl w-full max-w-lg mx-4 shadow-lg">
+                <div className="p-6 border-b rounded-t-2xl border-gray-100 flex justify-between items-center"
+                    style={{ backgroundColor: accentColor }}>
+                    <h2 className="text-xl font-bold text-gray-800"
+                    style={{ color: textColor }}>Edit Kelas</h2>
                     <button
                         onClick={onClose}
-                        className="text-gray-400 hover:text-gray-700 transition cursor-pointer"
+                        className="hover:opacity-80 transition cursor-pointer"
+                        style={{color: textColor}}
                     >
                         <MdOutlineClose className="w-6 h-6" />
                     </button>
@@ -121,14 +133,15 @@ const EditClassModal: React.FC<EditClassModalProps> = ({
                         <button
                             type="button"
                             onClick={onClose}
-                            className="px-4 py-2 rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-100 cursor-pointer transition"
+                            className="px-4 py-2 rounded-lg border border-gray-300 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer transition"
                         >
                             Batal
                         </button>
 
                         <button
                             type="submit"
-                            className="px-4 py-2 rounded-lg bg-green-600 text-white font-medium hover:bg-green-700 cursor-pointer shadow-md transition"
+                            className="px-4 py-2 text-sm font-medium cursor-pointer rounded-lg hover:opacity-80 transition shadow-md"
+                            style={{ backgroundColor: accentColor, color: textColor}}
                         >
                             Simpan Perubahan
                         </button>

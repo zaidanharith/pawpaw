@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { FaEdit } from "react-icons/fa";
+import { FaEdit, FaClock } from "react-icons/fa";
 import { MdEdit, MdDelete } from "react-icons/md";
 import { useSession } from "next-auth/react";
 import axios from "axios";
@@ -30,7 +30,7 @@ const AnnouncementPage: React.FC = () => {
     const role = (session?.user?.role || "ADMIN").toUpperCase();
 
     const accentColor = roleColors[role] || roleColors.ADMIN;
-    const textColor = role === "ADMIN" ? "#FFFFFF" : "#282828";
+    const textColor = role === "ADMIN" ? "#FFFFFF" : "#3d3006";
 
     const isParent = role === "PARENT";
 
@@ -182,7 +182,7 @@ const AnnouncementPage: React.FC = () => {
                     {!isParent && (
                         <button
                             onClick={() => setIsAddAnnouncementOpen(true)}
-                            className="w-full sm:w-auto flex items-center justify-center gap-2 px-4 py-3 cursor-pointer rounded-xl text-sm md:text-base font-semibold hover:shadow-lg transition"
+                            className="w-full sm:w-auto flex items-center justify-center gap-2 px-4 py-3 cursor-pointer rounded-xl text-sm md:text-base font-semibold hover: transition"
                             style={{ backgroundColor: accentColor, color: textColor }}
                         >
                             <FaEdit /> Buat Pengumuman
@@ -212,7 +212,7 @@ const AnnouncementPage: React.FC = () => {
                         >
                             <div className="flex items-center justify-between">
                                 <div className="flex items-center gap-2 text-gray-500 text-sm">
-                                    <span>🕒</span>
+                                    <span><FaClock/></span>
                                     <span>{getRelativeTime(report.createdAt)}</span>
                                 </div>
 
@@ -234,7 +234,11 @@ const AnnouncementPage: React.FC = () => {
                                     </div>
                                 )}
                             </div>
-
+                            <div>
+                                <h2 className="text-xl font-bold text-gray-900">
+                                {report.title}
+                                </h2>
+                            </div>
                             <p className="text-sm text-gray-700">{report.content}</p>
 
                             <p className="text-xs text-gray-500 font-medium">
@@ -243,8 +247,8 @@ const AnnouncementPage: React.FC = () => {
 
                             <button
                                 onClick={() => setDetailAnnouncement(report)}
-                                className="w-full py-3 mt-2 rounded-xl font-semibold text-white hover:opacity-90 transition"
-                                style={{ backgroundColor: accentColor }}
+                                className="w-full py-3 mt-2 rounded-xl font-semibold text-white hover:opacity-80 transition cursor-pointer"
+                                style={{ backgroundColor: accentColor, color: textColor }}
                             >
                                 Lihat Detail Pengumuman
                             </button>

@@ -15,7 +15,7 @@ const DashboardPageTitle: React.FC<DashboardTitleProps> = ({ page }) => {
     const { data: session } = useSession();
     const role = session?.user?.role || "ADMIN";
     const accentColor = roleColors[role] || roleColors.ADMIN;
-    const textColor = role === "ADMIN" ? "#FFFFFF" : "#282828";
+    const textColor = role === "ADMIN" ? "#FFFFFF" : "#3d3006";
 
     return (
         <div

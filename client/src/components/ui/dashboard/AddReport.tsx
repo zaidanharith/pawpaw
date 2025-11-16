@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import axios from "axios";
 import { MdOutlineClose } from "react-icons/md";
 import { useSession } from "next-auth/react";
+import { text } from "stream/consumers";
 
 interface NewReportData {
   judul: string;
@@ -52,6 +53,7 @@ const AddReport: React.FC<AddReportProps> = ({ isOpen, onClose, onSave }) => {
   const token = session?.accessToken;
   const teacherId = (session as any)?.user?.id;
   const role = (session?.user as any)?.role || "ADMIN";
+  const textColor = role === "ADMIN" ? "#FFFFFF" : "#3d3006";
   const accentColor = roleColors[role] || roleColors.ADMIN;
 
   const handleChange = (
@@ -133,15 +135,18 @@ const AddReport: React.FC<AddReportProps> = ({ isOpen, onClose, onSave }) => {
       <div className="absolute inset-0 bg-black/50" onClick={onClose} />
 
       {/* CARD: sama pola dengan DetailReport & EditReport */}
-      <div className="relative bg-white rounded-2xl w-full max-w-2xl mx-4 shadow-xl overflow-hidden flex flex-col max-h-[90vh]">
+      <div className="relative bg-white rounded-3xl w-full max-w-2xl mx-4 shadow-xl overflow-hidden flex flex-col max-h-[90vh]">
         {/* HEADER */}
-        <div className="p-6 border-b border-gray-100 flex justify-between items-center">
-          <h2 className="text-xl font-bold text-gray-800">
+        <div className="p-6  border-gray-100 rounded-t-2xl flex justify-between items-center"
+          style={{ backgroundColor: accentColor }}>
+          <h2 className="text-xl font-bold text-gray-800"
+            style={{ color: textColor }}>
             Tambah Laporan Baru
           </h2>
           <button
             onClick={onClose}
-            className="text-gray-400 hover:text-gray-700 transition"
+            className="hover:opacity-80 transition"
+            style={{ color: textColor }}
             title="Close"
             type="button"
           >
@@ -166,7 +171,8 @@ const AddReport: React.FC<AddReportProps> = ({ isOpen, onClose, onSave }) => {
                 value={formData.judul}
                 onChange={handleChange}
                 required
-                className="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-[#3f9065] focus:outline-none"
+                className="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:outline-none"
+                style={{'--tw-ring-color': accentColor,} as React.CSSProperties}
               />
             </div>
 
@@ -183,7 +189,8 @@ const AddReport: React.FC<AddReportProps> = ({ isOpen, onClose, onSave }) => {
                 value={formData.namaKegiatan}
                 onChange={handleChange}
                 required
-                className="w-full border border-gray-300 rounded-md px-3 py-2 bg-white focus:ring-2 focus:ring-[#3f9065] focus:outline-none"
+                className="w-full border border-gray-300 rounded-md px-3 py-2 bg-white focus:ring-2 focus:outline-none"
+                style={{'--tw-ring-color': accentColor,} as React.CSSProperties}
               >
                 {KEGIATAN_OPTIONS.map((option) => (
                   <option key={option.value} value={option.value}>
@@ -206,7 +213,8 @@ const AddReport: React.FC<AddReportProps> = ({ isOpen, onClose, onSave }) => {
                 value={formData.kelas}
                 onChange={handleChange}
                 required
-                className="w-full border border-gray-300 rounded-md px-3 py-2 bg-white focus:ring-2 focus:ring-[#3f9065] focus:outline-none"
+                className="w-full border border-gray-300 rounded-md px-3 py-2 bg-white focus:ring-2 focus:outline-none"
+                style={{'--tw-ring-color': accentColor,} as React.CSSProperties}
               >
                 {KELAS_OPTIONS.map((option) => (
                   <option key={option.value} value={option.value}>
@@ -230,7 +238,8 @@ const AddReport: React.FC<AddReportProps> = ({ isOpen, onClose, onSave }) => {
                 onChange={handleChange}
                 required
                 rows={4}
-                className="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-[#3f9065] focus:outline-none"
+                className="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:outline-none"
+                style={{'--tw-ring-color': accentColor,} as React.CSSProperties}
               />
             </div>
 
@@ -248,7 +257,8 @@ const AddReport: React.FC<AddReportProps> = ({ isOpen, onClose, onSave }) => {
                 accept="image/*"
                 onChange={handleFileChange}
                 required
-                className="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-[#3f9065] focus:outline-none"
+                className="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:outline-none"
+                style={{'--tw-ring-color': accentColor,} as React.CSSProperties}
               />
             </div>
           </form>
@@ -267,8 +277,8 @@ const AddReport: React.FC<AddReportProps> = ({ isOpen, onClose, onSave }) => {
             type="submit"
             form="add-report-form"
             disabled={loading}
-            className="px-4 py-2 text-sm font-semibold cursor-pointer rounded-lg text-gray-800 shadow-md hover:opacity-90 transition"
-            style={{ backgroundColor: accentColor }}
+            className="px-4 py-2 text-sm font-semibold cursor-pointer rounded-lg text-gray-800 shadow-md hover:opacity-80 transition"
+            style={{ backgroundColor: accentColor, color: textColor }}
           >
             {loading ? "Menyimpan..." : "Simpan Laporan Baru"}
           </button>
