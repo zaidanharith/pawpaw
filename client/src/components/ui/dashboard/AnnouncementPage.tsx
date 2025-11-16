@@ -194,11 +194,13 @@ const AnnouncementPage: React.FC = () => {
             {/* LIST */}
             <section className="flex flex-col gap-4 mt-4">
                 {loading ? (
-                    <div className="border rounded-xl p-10 shadow-sm bg-white text-center text-gray-500">
+                    <div className="border rounded-xl p-10 shadow-sm bg-white text-center text-gray-500"
+                    style={{ borderColor: accentColor}}>
                         Memuat data pengumuman...
                     </div>
                 ) : allAnnouncements.length === 0 ? (
-                    <div className="border rounded-xl p-10 shadow-sm bg-white text-center text-gray-500">
+                    <div className="border rounded-xl p-10 shadow-sm bg-white text-center text-gray-500"
+                    style={{ borderColor: accentColor}}>
                         Belum ada pengumuman yang tersedia.
                     </div>
                 ) : (

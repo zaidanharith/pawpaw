@@ -329,7 +329,7 @@ const ReportPage: React.FC = () => {
                     </div>
 
                     <span
-                      className="px-3 py-1 rounded-full text-gray-800 text-sm font-semibold"
+                      className="px-3 py-1 rounded-full text-white text-sm font-semibold"
                       style={{ backgroundColor: accentColor }}
                     >
                       {report.teacher?.name
@@ -357,7 +357,7 @@ const ReportPage: React.FC = () => {
 
                   {/* Tombol detail */}
                   <button
-                    className="w-full py-3 mt-2 rounded-xl font-semibold text-gray-800 hover:opacity-90 transition"
+                    className="w-full py-3 mt-2 rounded-xl font-semibold text-white hover:opacity-90 transition"
                     style={{ backgroundColor: accentColor }}
                     onClick={() => handleOpenDetail(report)}
                   >
