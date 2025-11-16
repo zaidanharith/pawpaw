@@ -22,7 +22,7 @@ import {
 } from "react-icons/fa";
 
 import FaceRegister from "../ui/dashboard/FaceRegister";
-import ParentTeacherChat from "../ui/dashboard/ParentTeacherChat";
+import ParentTeacherChat from "../ui/dashboard/LiveChat";
 
 export default function Parent() {
 
