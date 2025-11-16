@@ -38,14 +38,15 @@ export default function Admin({ activePage = "" }: AdminProps) {
     router.push(`/dashboard/${menuUrl}`);
   };
 
-  const handleNavigateToReport = () => {
-    setActiveMenu("Laporan Kegiatan");
-    
-  };
+    const handleNavigateToReport = () => {
+    setActiveMenu("report");
+    router.push("/dashboard/report");
+};
 
-  const handleNavigateToAnnouncement = () => {
-    setActiveMenu("Pengumuman");
-  };
+    const handleNavigateToAnnouncement = () => {
+    setActiveMenu("announcement");
+    router.push("/dashboard/announcement");
+};
 
     const handleNavigateToUser = () => {
     setActiveMenu("user");
