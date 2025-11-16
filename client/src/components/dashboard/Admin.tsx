@@ -1,26 +1,50 @@
 "use client";
+<<<<<<< HEAD
 import { useState } from "react";
+=======
+
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+>>>>>>> b5d0e1a1d884c64b50671e2b9aa033e7e68e4228
 import Navbar from "@/components/layout/Navbar";
 import Sidebar from "@/components/layout/Sidebar";
-import { DashboardPageTitle, Statistics, Weather, LiveReport, Announcement, Profile, UserTable, StudentTable, ReportPage, AnnouncementPage, ClassPage, ResetPassword } from "@/components/ui/dashboard";
+import { DashboardPageTitle, Statistics, Weather, LiveReport, Announcement, Profile, UserTable, StudentTable, ReportPage, AnnouncementPage, ClassPage, ResetPassword, MenuNotFound } from "@/components/ui/dashboard";
 import { FaTachometerAlt, FaUser, FaUsers, FaClipboardList, FaBullhorn, FaUserCog, FaRegSmile, } from "react-icons/fa";
 import { SiGoogleclassroom } from "react-icons/si";
 import FaceRegister from "../ui/dashboard/FaceRegister";
 
+<<<<<<< HEAD
 export default function Admin() {
+=======
+interface AdminProps {
+  activePage?: string;
+}
+
+export default function Admin({ activePage = "" }: AdminProps) {
+  const router = useRouter();
+>>>>>>> b5d0e1a1d884c64b50671e2b9aa033e7e68e4228
   const menuItems = [
-    { name: "Dashboard", icon: <FaTachometerAlt size={24} /> },
-    { name: "User", icon: <FaUser size={24} /> },
-    { name: "Siswa", icon: <FaUsers size={24} /> },
-    { name: "Kelas", icon: <SiGoogleclassroom size={24} /> },
-    { name: "Laporan Kegiatan", icon: <FaClipboardList size={24} /> },
-    { name: "Pengumuman", icon: <FaBullhorn size={24} /> },
-    { name: "Profil", icon: <FaUserCog size={24} /> },
-    { name: "Face Recognition", icon: <FaRegSmile size={24} /> },
+    { name: "Dashboard", urlName: "", icon: <FaTachometerAlt size={24} /> },
+    { name: "User", urlName: "user", icon: <FaUser size={24} /> },
+    { name: "Siswa", urlName: "student", icon: <FaUsers size={24} /> },
+    { name: "Kelas", urlName: "class", icon: <SiGoogleclassroom size={24} /> },
+    { name: "Laporan Kegiatan", urlName: "report", icon: <FaClipboardList size={24} /> },
+    { name: "Pengumuman", urlName: "announcement", icon: <FaBullhorn size={24} /> },
+    { name: "Profil", urlName: "profile", icon: <FaUserCog size={24} /> },
+    { name: "Face Registration", urlName: "face-registration", icon: <FaRegSmile size={24} /> },
   ];
   
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const [activeMenu, setActiveMenu] = useState("Dashboard");
+  const [activeMenu, setActiveMenu] = useState(activePage);
+
+  useEffect(() => {
+    setActiveMenu(activePage);
+  }, [activePage]);
+
+  const handleSelectMenu = (menuUrl: string) => {
+    setActiveMenu(menuUrl);
+    router.push(`/dashboard/${menuUrl}`);
+  };
 
   // Handler untuk navigasi ke halaman Laporan Kegiatan
   const handleNavigateToReport = () => {
@@ -44,10 +68,10 @@ export default function Admin() {
 
   const renderContent = () => {
     switch (activeMenu) {
-      case "Dashboard":
+      case "":
         return (
           <>
-            <DashboardPageTitle page={activeMenu}/>
+            <DashboardPageTitle page="Dashboard"/>
             <Weather />
             <Statistics 
               onNavigateToUser={handleNavigateToUser}
@@ -57,56 +81,58 @@ export default function Admin() {
             <Announcement onNavigateToAnnouncement={handleNavigateToAnnouncement} />
           </>
         );
-      case "User":
+      case "user":
         return (
           <>
-            <DashboardPageTitle page={activeMenu}/>
+            <DashboardPageTitle page="User"/>
             <UserTable  />
           </>
         );
-      case "Siswa":
+      case "student":
         return (
           <>
-            <DashboardPageTitle page={activeMenu}/>
+            <DashboardPageTitle page="Siswa"/>
             <StudentTable />
           </>
         );
-      case "Kelas":
+      case "class":
         return (
           <>
-            <DashboardPageTitle page={activeMenu}/>
+            <DashboardPageTitle page="Kelas"/>
             <ClassPage />
           </>
         );
-      case "Laporan Kegiatan":
+      case "report":
         return (
           <>
-            <DashboardPageTitle page={activeMenu}/>
+            <DashboardPageTitle page="Laporan Kegiatan"/>
             <ReportPage />
           </>
         );
-      case "Pengumuman":
+      case "announcement":
         return (
           <>
-            <DashboardPageTitle page={activeMenu}/>
+            <DashboardPageTitle page="Pengumuman"/>
             <AnnouncementPage />
           </>
         );
-      case "Profil":
+      case "profile":
         return (
           <>
-            <DashboardPageTitle page={activeMenu}/>
+            <DashboardPageTitle page="Profil"/>
             <ResetPassword />
             <Profile />
           </>
         );
-      case "Face Recognition":
+      case "face-registration":
         return (
           <>
-            <DashboardPageTitle page={activeMenu}/>
+            <DashboardPageTitle page="Face Registration"/>
             <FaceRegister />
           </>
         );
+      default:
+        return <MenuNotFound page={activeMenu} />;
     }
   };
 
@@ -118,7 +144,7 @@ export default function Admin() {
           isOpen={isSidebarOpen}
           onClose={() => setIsSidebarOpen(false)}
           activeMenu={activeMenu}
-          onSelectMenu={setActiveMenu}
+          onSelectMenu={handleSelectMenu}
       />
       {renderContent()}
     </section>

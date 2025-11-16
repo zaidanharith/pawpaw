@@ -1,105 +1,302 @@
+"use client";
+
 import React, { useEffect, useState } from "react";
 import { MdEdit, MdDelete } from "react-icons/md";
-import { FaUserPlus } from "react-icons/fa";
+import { FaUserPlus, FaClipboardList } from "react-icons/fa";
 import { useSession } from "next-auth/react";
 import axios from "axios";
 import AddStudent from "./AddStudent";
 import EditStudent from "./EditStudent";
+import DeleteConfirmation from "../DeleteConfirmation";
+import AttendanceModal from "./Attendance";
 
 interface Siswa {
-    id: string;
-    name: string;
-    gender: string;
-    birthDate: string;
-    address: string;
+  id: string;
+  name: string;
+  gender: string;
+  birthDate: string;
+  address: string;
+  attendanceSummary?: {
+    hadir: number;
+    izin: number;
+    sakit: number;
+    alfa: number;
+  };
+}
+
+interface Attendance {
+  id: string;
+  studentId: string;
+  status: "hadir" | "izin" | "sakit" | "absent";
+  date: string;
 }
 
 const genderColors: Record<string, string> = {
-    MALE: "#90caf9",
-    FEMALE: "#f48fb1",
+  MALE: "#90caf9",
+  FEMALE: "#f48fb1",
 };
 
 const roleColors: Record<string, string> = {
-    ADMIN: "#3f9065",
-    TEACHER: "#f5bb00",
-    PARENT: "#58baab",
+  ADMIN: "#3f9065",
+  TEACHER: "#f5bb00",
+  PARENT: "#58baab",
 };
 
+<<<<<<< HEAD
 const StudentTable: React.FC = () => {
     const { data: session } = useSession();
     const token = session?.accessToken;
     const role = session?.user?.role || "ADMIN";
     const accentColor = roleColors[role] || roleColors.ADMIN;
     const textColor = role === "ADMIN" ? "#FFFFFF" : "#3d3006";
+=======
+export default function StudentTable() {
+  const { data: session } = useSession();
+  const token = session?.accessToken;
+  const role = session?.user?.role || "ADMIN";
+  const accentColor = roleColors[role] || roleColors.ADMIN;
+  const textColor = role === "ADMIN" ? "#FFFFFF" : "#282828";
+>>>>>>> b5d0e1a1d884c64b50671e2b9aa033e7e68e4228
 
-    const [allSiswa, setAllSiswa] = useState<Siswa[]>([]);
-    const [loading, setLoading] = useState(true);
+  const [allSiswa, setAllSiswa] = useState<Siswa[]>([]);
+  const [loading, setLoading] = useState(true);
 
-    const [isAddStudentOpen, setIsAddStudentOpen] = useState(false);
-    const [isEditStudentOpen, setIsEditStudentOpen] = useState(false);
-    const [editStudentData, setEditStudentData] = useState<Siswa | null>(null);
+  const [isAddStudentOpen, setIsAddStudentOpen] = useState(false);
+  const [isEditStudentOpen, setIsEditStudentOpen] = useState(false);
+  const [editStudentData, setEditStudentData] = useState<Siswa | null>(null);
+  const [isDeleteOpen, setIsDeleteOpen] = useState(false);
+  const [studentToDelete, setStudentToDelete] = useState<Siswa | null>(null);
 
-    useEffect(() => {
-        const fetchSiswa = async () => {
-            if (!token) return;
-            setLoading(true);
-            try {
-                const API_URL = process.env.NEXT_PUBLIC_API_URL;
-                const res = await axios.get(`${API_URL}/student`, {
-                    headers: {
-                        Authorization: `Bearer ${token}`
-                    }
-                });
-                if (res.data.success && Array.isArray(res.data.data)) {
-                    setAllSiswa(res.data.data);
-                } else {
-                    setAllSiswa([]);
-                }
-            } catch {
-                setAllSiswa([]);
-            }
-            setLoading(false);
-        };
-        fetchSiswa();
-    }, [token]);
+  const [isAttendanceOpen, setIsAttendanceOpen] = useState(false);
+  const [selectedStudentForAttendance, setSelectedStudentForAttendance] = useState<Siswa | null>(null);
 
-    const handleSaveStudent = async () => {
-        try {
-            const API_URL = process.env.NEXT_PUBLIC_API_URL;
-            const res = await axios.get(`${API_URL}/student`, {
-                headers: { Authorization: `Bearer ${token}` }
-            });
-            if (res.data.success && Array.isArray(res.data.data)) {
-                setAllSiswa(res.data.data);
-            }
-        } catch {
-            alert("Gagal refresh data siswa");
-        }
+  const isAdminOrTeacher = role === "ADMIN" || role === "TEACHER";
+
+  const API_URL = process.env.NEXT_PUBLIC_API_URL;
+
+  // --- function to fetch students + attendance
+  const fetchStudentsWithAttendance = async () => {
+    if (!token) return;
+    setLoading(true);
+    try {
+      const res = await axios.get(`${API_URL}/student`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const students: Siswa[] = res.data.data || [];
+
+      const attendanceRes = await axios.get(`${API_URL}/attendance`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const attendances: Attendance[] = attendanceRes.data.data || [];
+
+      const studentsWithSummary = students.map((s) => {
+        const summary = attendances
+          .filter((a) => a.studentId === s.id)
+          .reduce(
+            (acc, curr) => {
+              switch (curr.status.toLowerCase()) {
+                case "hadir":
+                  acc.hadir++;
+                  break;
+                case "izin":
+                  acc.izin++;
+                  break;
+                case "sakit":
+                  acc.sakit++;
+                  break;
+                case "absent":
+                case "alfa":
+                  acc.alfa++;
+                  break;
+              }
+              return acc;
+            },
+            { hadir: 0, izin: 0, sakit: 0, alfa: 0 }
+          );
+        return { ...s, attendanceSummary: summary };
+      });
+
+      setAllSiswa(studentsWithSummary);
+    } catch (err) {
+      console.error(err);
+      setAllSiswa([]);
+    }
+    setLoading(false);
+  };
+
+  // --- useEffect React 18+ compliant
+  useEffect(() => {
+    if (!token) return;
+    const fetchData = async () => {
+      await fetchStudentsWithAttendance();
     };
+    fetchData();
+  }, [token]);
 
-    const handleEditStudent = (siswa: Siswa) => {
-        setEditStudentData(siswa);
-        setIsEditStudentOpen(true);
-    };
+  const refreshStudents = fetchStudentsWithAttendance;
 
-    const handleSaveEditStudent = async () => {
-        try {
-            const API_URL = process.env.NEXT_PUBLIC_API_URL;
-            const res = await axios.get(`${API_URL}/student`, {
-                headers: { Authorization: `Bearer ${token}` }
-            });
-            if (res.data.success && Array.isArray(res.data.data)) {
-                setAllSiswa(res.data.data);
-            }
-        } catch {
-            alert("Gagal refresh data siswa");
-        }
-        setIsEditStudentOpen(false);
-        setEditStudentData(null);
-    };
+  const handleEditStudent = (siswa: Siswa) => {
+    setEditStudentData(siswa);
+    setIsEditStudentOpen(true);
+  };
 
-    return (
+  const handleAskDeleteStudent = (siswa: Siswa) => {
+    setStudentToDelete(siswa);
+    setIsDeleteOpen(true);
+  };
+
+  const handleConfirmDeleteStudent = async () => {
+    if (!studentToDelete || !token) return;
+    try {
+      await axios.delete(`${API_URL}/student/${studentToDelete.id}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      await refreshStudents();
+      setIsDeleteOpen(false);
+      setStudentToDelete(null);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const openAttendanceModal = (siswa: Siswa) => {
+    setSelectedStudentForAttendance(siswa);
+    setIsAttendanceOpen(true);
+  };
+
+  const closeAttendanceModal = () => {
+    setSelectedStudentForAttendance(null);
+    setIsAttendanceOpen(false);
+  };
+
+  const formatBirthDate = (iso: string) =>
+    new Date(iso).toLocaleDateString("id-ID", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+    });
+
+  return (
+    <>
+      <section className="bg-white rounded-xl shadow p-5">
+        <div className="flex justify-between items-center mb-3">
+          <h2 className="text-xl font-bold">Daftar Siswa</h2>
+          {isAdminOrTeacher && (
+            <button
+              onClick={() => setIsAddStudentOpen(true)}
+              className="cursor-pointer px-3 py-2 rounded-lg text-sm md:text-base font-semibold hover:opacity-80 transition"
+              style={{ backgroundColor: accentColor, color: textColor }}
+              title="Tambah Siswa"
+            >
+              <FaUserPlus />
+            </button>
+          )}
+        </div>
+
+        <div className="rounded-xl overflow-x-scroll">
+          <table className="w-full text-sm text-gray-700 rounded-xl">
+            <thead style={{ backgroundColor: accentColor, color: textColor }}>
+              <tr>
+                <th className="px-4 py-3 text-left font-semibold whitespace-nowrap">
+                  Nama Lengkap
+                </th>
+                <th className="px-4 py-3 text-left font-semibold">Jenis Kelamin</th>
+                <th className="px-4 py-3 text-left font-semibold">Tanggal Lahir</th>
+                <th className="px-4 py-3 text-left font-semibold">Alamat</th>
+                <th className="px-4 py-3 text-left font-semibold">Hadir</th>
+                <th className="px-4 py-3 text-left font-semibold">Izin</th>
+                <th className="px-4 py-3 text-left font-semibold">Sakit</th>
+                <th className="px-4 py-3 text-left font-semibold">Alfa</th>
+                {isAdminOrTeacher && (
+                  <th className="px-4 py-3 text-left font-semibold">Aksi</th>
+                )}
+              </tr>
+            </thead>
+            <tbody className="bg-background">
+              {loading ? (
+                <tr>
+                  <td
+                    colSpan={isAdminOrTeacher ? 9 : 8}
+                    className="px-4 py-6 text-center text-gray-500"
+                  >
+                    Memuat data siswa...
+                  </td>
+                </tr>
+              ) : allSiswa.length === 0 ? (
+                <tr>
+                  <td
+                    colSpan={isAdminOrTeacher ? 9 : 8}
+                    className="px-4 py-6 text-center text-gray-500"
+                  >
+                    Tidak ada data siswa yang tersedia.
+                  </td>
+                </tr>
+              ) : (
+                allSiswa.map((siswa) => (
+                  <tr
+                    key={siswa.id}
+                    className="border-t hover:bg-gray-50 transition-colors"
+                  >
+                    <td className="px-4 py-3 font-medium whitespace-nowrap">
+                      {siswa.name}
+                    </td>
+                    <td className="px-4 py-3">
+                      <span
+                        className="px-3 py-1 rounded-full text-xs font-medium uppercase"
+                        style={{
+                          backgroundColor:
+                            genderColors[siswa.gender.toUpperCase()] ||
+                            genderColors.MALE,
+                          color: "#282828",
+                        }}
+                      >
+                        {siswa.gender === "MALE" ? "Laki-Laki" : "Perempuan"}
+                      </span>
+                    </td>
+                    <td className="px-4 py-3">
+                      {siswa.birthDate ? formatBirthDate(siswa.birthDate) : "-"}
+                    </td>
+                    <td className="px-4 py-3">{siswa.address}</td>
+                    <td className="px-4 py-3 text-center">{siswa.attendanceSummary?.hadir || 0}</td>
+                    <td className="px-4 py-3 text-center">{siswa.attendanceSummary?.izin || 0}</td>
+                    <td className="px-4 py-3 text-center">{siswa.attendanceSummary?.sakit || 0}</td>
+                    <td className="px-4 py-3 text-center">{siswa.attendanceSummary?.alfa || 0}</td>
+                    {isAdminOrTeacher && (
+                      <td className="px-4 py-3 flex justify-center sm:justify-start gap-3">
+                        <button
+                          onClick={() => handleEditStudent(siswa)}
+                          className="cursor-pointer hover:scale-110 transition-transform p-1 rounded-full text-blue-500 hover:bg-blue-50"
+                          title="Edit Siswa"
+                        >
+                          <MdEdit className="w-5 h-5" />
+                        </button>
+                        <button
+                          onClick={() => openAttendanceModal(siswa)}
+                          className="cursor-pointer hover:scale-110 transition-transform p-1 rounded-full text-[#3f9065] hover:bg-green-50"
+                          title="Attendance"
+                        >
+                          <FaClipboardList className="w-5 h-5" />
+                        </button>
+                        <button
+                          onClick={() => handleAskDeleteStudent(siswa)}
+                          className="cursor-pointer hover:scale-110 transition-transform p-1 rounded-full text-red-500 hover:bg-red-50"
+                          title="Delete Siswa"
+                        >
+                          <MdDelete className="w-5 h-5" />
+                        </button>
+                      </td>
+                    )}
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      {isAdminOrTeacher && (
         <>
+<<<<<<< HEAD
             <section className="bg-white rounded-xl shadow p-5">
                 <div className="flex justify-between items-center mb-3">
                     <h2 className="text-xl font-bold">Daftar Siswa</h2>
@@ -186,8 +383,39 @@ const StudentTable: React.FC = () => {
                 studentData={editStudentData}
                 onSave={handleSaveEditStudent}
             />
+=======
+          <AddStudent
+            isOpen={isAddStudentOpen}
+            onClose={() => setIsAddStudentOpen(false)}
+            onSave={refreshStudents}
+          />
+          <EditStudent
+            isOpen={isEditStudentOpen}
+            onClose={() => {
+              setIsEditStudentOpen(false);
+              setEditStudentData(null);
+            }}
+            studentData={editStudentData}
+            onSave={refreshStudents}
+          />
+          <DeleteConfirmation
+            deleted={studentToDelete?.name || "siswa ini"}
+            open={isDeleteOpen}
+            onConfirm={handleConfirmDeleteStudent}
+            onCancel={() => {
+              setIsDeleteOpen(false);
+              setStudentToDelete(null);
+            }}
+          />
+          <AttendanceModal
+            isOpen={isAttendanceOpen}
+            onClose={closeAttendanceModal}
+            student={selectedStudentForAttendance}
+            onSaved={refreshStudents}
+          />
+>>>>>>> b5d0e1a1d884c64b50671e2b9aa033e7e68e4228
         </>
-    );
-};
-
-export default StudentTable;
+      )}
+    </>
+  );
+}

@@ -1,15 +1,19 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import Navbar from "@/components/layout/Navbar";
 import Sidebar from "@/components/layout/Sidebar";
 import { 
   DashboardPageTitle, 
   Weather, 
   LiveReport, 
-  Announcement, 
+  Announcement,
+  AnnouncementPage, 
   Profile, 
-  ReportPage 
+  ReportPage,
+  MenuNotFound,
+  LiveChat
 } from "@/components/ui/dashboard";
 
 import { 
@@ -22,29 +26,42 @@ import {
 } from "react-icons/fa";
 
 import FaceRegister from "../ui/dashboard/FaceRegister";
-import ParentChat from "../ui/dashboard/ParentChat";
+import ParentTeacherChat from "../ui/dashboard/LiveChat";
 
-export default function Parent() {
+interface ParentProps {
+  activePage?: string;
+}
+
+export default function Parent({ activePage = "" }: ParentProps) {
+  const router = useRouter();
 
   const menuItems = [
-    { name: "Dashboard", icon: <FaTachometerAlt size={24} /> },
-    { name: "Laporan Kegiatan", icon: <FaClipboardList size={24} /> },
-    { name: "Pengumuman", icon: <FaBullhorn size={24} /> },
-    { name: "Chat Guru", icon: <FaComments size={24} /> },
-    { name: "Profil", icon: <FaUserCog size={24} /> },
-    { name: "Face Recognition", icon: <FaRegSmile size={24} /> },
+    { name: "Dashboard", urlName: "", icon: <FaTachometerAlt size={24} /> },
+    { name: "Laporan Kegiatan", urlName: "report", icon: <FaClipboardList size={24} /> },
+    { name: "Pengumuman", urlName: "announcement", icon: <FaBullhorn size={24} /> },
+    { name: "Chat Guru", urlName: "chat", icon: <FaComments size={24} /> },
+    { name: "Profil", urlName: "profile", icon: <FaUserCog size={24} /> },
+    { name: "Face Recognition", urlName: "face-recognition", icon: <FaRegSmile size={24} /> },
   ];
 
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const [activeMenu, setActiveMenu] = useState("Dashboard");
+  const [activeMenu, setActiveMenu] = useState(activePage);
+
+  useEffect(() => {
+    setActiveMenu(activePage);
+  }, [activePage]);
+
+  const handleSelectMenu = (menuUrl: string) => {
+    setActiveMenu(menuUrl);
+    router.push(`/dashboard/${menuUrl}`);
+  };
 
   const renderContent = () => {
     switch (activeMenu) {
-
-      case "Dashboard":
+      case "":
         return (
           <>
-            <DashboardPageTitle page={activeMenu} />
+            <DashboardPageTitle page="Dashboard" />
             <div className="space-y-6">
               <Weather />
               <Announcement />
@@ -52,49 +69,44 @@ export default function Parent() {
             </div>
           </>
         );
-
-      case "Laporan Kegiatan":
+      case "report":
         return (
           <>
-            <DashboardPageTitle page={activeMenu} />
+            <DashboardPageTitle page="Laporan Kegiatan" />
             <ReportPage />
           </>
         );
-
-      case "Pengumuman":
+      case "announcement":
         return (
           <>
-            <DashboardPageTitle page={activeMenu} />
-            <Announcement />
+            <DashboardPageTitle page="Pengumuman" />
+            <AnnouncementPage />
           </>
         );
-
-      case "Chat Guru":
+      case "chat":
         return (
           <>
-            <DashboardPageTitle page={activeMenu} />
-            <ParentChat />
+
+            <DashboardPageTitle page="Chat Guru" />
+            <LiveChat />
           </>
         );
-
-      case "Profil":
+      case "profile":
         return (
           <>
-            <DashboardPageTitle page={activeMenu} />
+            <DashboardPageTitle page="Profil" />
             <Profile />
           </>
         );
-
-      case "Face Recognition":
+      case "face-recognition":
         return (
           <>
-            <DashboardPageTitle page={activeMenu} />
+            <DashboardPageTitle page="Face Recognition" />
             <FaceRegister />
           </>
         );
-
       default:
-        return null;
+        return <MenuNotFound page={activeMenu} />;
     }
   };
 
@@ -106,7 +118,7 @@ export default function Parent() {
         isOpen={isSidebarOpen}
         onClose={() => setIsSidebarOpen(false)}
         activeMenu={activeMenu}
-        onSelectMenu={setActiveMenu}
+        onSelectMenu={handleSelectMenu}
       />
       {renderContent()}
     </section>
