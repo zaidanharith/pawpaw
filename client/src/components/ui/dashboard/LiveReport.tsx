@@ -71,7 +71,6 @@ const LiveReport: React.FC<LiveReportProps> = ({ onNavigateToReport }) => {
                     },
                 });
                 if (res.data.success && Array.isArray(res.data.data)) {
-                    // Ambil 3 laporan terbaru saja
                     const latest = res.data.data.slice(0, 3);
                     setRecentReports(latest);
                 } else {
@@ -120,7 +119,6 @@ const LiveReport: React.FC<LiveReportProps> = ({ onNavigateToReport }) => {
                     </div>
                 ) : (
                     recentReports.map((report) => {
-                        // Ambil nama kegiatan pertama (jika ada)
                         const rawActivityName = report.activities?.[0]?.name || "";
                         const displayActivityName =
                             kegiatanLabels[rawActivityName] ||

@@ -13,7 +13,9 @@ import {
   Profile, 
   ReportPage,
   MenuNotFound,
-  LiveChat
+  PreviewChat,
+  FaceRegister,
+  RecentMessage
 } from "@/components/ui/dashboard";
 
 import { 
@@ -25,8 +27,6 @@ import {
   FaComments 
 } from "react-icons/fa";
 
-import FaceRegister from "../ui/dashboard/FaceRegister";
-import ParentTeacherChat from "../ui/dashboard/LiveChat";
 
 interface ParentProps {
   activePage?: string;
@@ -41,7 +41,7 @@ export default function Parent({ activePage = "" }: ParentProps) {
     { name: "Pengumuman", urlName: "announcement", icon: <FaBullhorn size={24} /> },
     { name: "Chat Guru", urlName: "chat", icon: <FaComments size={24} /> },
     { name: "Profil", urlName: "profile", icon: <FaUserCog size={24} /> },
-    { name: "Face Recognition", urlName: "face-recognition", icon: <FaRegSmile size={24} /> },
+    { name: "Registrasi Wajah", urlName: "face-registration", icon: <FaRegSmile size={24} /> },
   ];
 
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -62,6 +62,7 @@ export default function Parent({ activePage = "" }: ParentProps) {
         return (
           <>
             <DashboardPageTitle page="Dashboard" />
+            <RecentMessage />
             <Weather />
             <Announcement />
             <LiveReport />
@@ -86,7 +87,7 @@ export default function Parent({ activePage = "" }: ParentProps) {
           <>
 
             <DashboardPageTitle page="Chat Guru" />
-            <LiveChat />
+            <PreviewChat />
           </>
         );
       case "profile":
@@ -96,10 +97,10 @@ export default function Parent({ activePage = "" }: ParentProps) {
             <Profile />
           </>
         );
-      case "face-recognition":
+      case "face-registration":
         return (
           <>
-            <DashboardPageTitle page="Face Recognition" />
+            <DashboardPageTitle page="Registrasi Wajah" />
             <FaceRegister />
           </>
         );
