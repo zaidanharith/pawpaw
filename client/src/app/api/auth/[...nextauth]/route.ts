@@ -26,6 +26,7 @@ const handler = NextAuth({
       },
       async authorize(credentials) {
         try {
+          // Face Token Login
           if (credentials?.faceToken) {
             const data = await authService.verifyFaceToken(credentials.faceToken);
             if (data.success && data.user) {
@@ -35,7 +36,7 @@ const handler = NextAuth({
                 email: data.user.email,
                 username: data.user.username,
                 role: data.user.role,
-                picture: data.user.picture,
+                image: data.user.picture,
                 accessToken: data.token,
                 isPasswordReset: data.user.isPasswordReset
               };
@@ -43,6 +44,7 @@ const handler = NextAuth({
             throw new Error(data.message || "Face login gagal");
           }
 
+          // Credentials Login
           if (!credentials?.username || !credentials?.password) {
             throw new Error("Username dan password wajib diisi");
           }
@@ -53,13 +55,14 @@ const handler = NextAuth({
           });
 
           if (data.success && data.user) {
+            console.log("✅ Login success, token:", data.token?.substring(0, 20));
             return {
               id: data.user.id,
               name: data.user.name,
               email: data.user.email,
               username: data.user.username,
               role: data.user.role,
-              picture: data.user.picture,
+              image: data.user.picture,
               accessToken: data.token,
               isPasswordReset: data.user.isPasswordReset
             };
@@ -67,7 +70,7 @@ const handler = NextAuth({
 
           throw new Error(data.message || "Login gagal");
         } catch (error) {
-          console.error("Credentials authorize error:", error);
+          console.error("❌ Credentials authorize error:", error);
           throw error;
         }
       }
@@ -75,8 +78,9 @@ const handler = NextAuth({
   ],
 
   callbacks: {
-    async signIn({ user, account, profile }) {
-      if (account?.provider === "google") {
+    // SIGN-IN CALLBACK
+    async signIn({ user, account: _account, profile }) {
+      if (_account?.provider === "google") {
         try {
           const googleProfile = profile as { 
             email?: string; 
@@ -103,19 +107,22 @@ const handler = NextAuth({
             user.role = data.user.role;
             user.accessToken = data.token;
             user.isPasswordReset = data.user.isPasswordReset;
+            console.log("✅ Google login success, token:", data.token?.substring(0, 20));
             return true;
           }
 
           return false;
-        } catch {
+        } catch (error) {
+          console.error("❌ Google signIn error:", error);
           user.loginErrorMessage = "Terjadi kesalahan pada server";
-          return true;
+          return false;
         }
       }
 
       return true;
     },
 
+    // JWT CALLBACK
     async jwt({ token, user }) {
       if (user) {
         token.id = user.id;
@@ -123,10 +130,12 @@ const handler = NextAuth({
         token.role = user.role;
         token.accessToken = user.accessToken;
         token.isPasswordReset = user.isPasswordReset;
+        console.log("✅ JWT callback - Token stored:", !!token.accessToken);
       }
       return token;
     },
 
+    // SESSION CALLBACK
     async session({ session, token }) {
       if (token && session.user) {
         session.user.id = token.id as string;
@@ -134,6 +143,7 @@ const handler = NextAuth({
         session.user.role = token.role as "ADMIN" | "TEACHER" | "PARENT";
         session.accessToken = token.accessToken as string;
         session.user.isPasswordReset = token.isPasswordReset as boolean;
+        console.log("✅ Session callback - accessToken exists:", !!session.accessToken);
       }
       return session;
     }
@@ -146,10 +156,11 @@ const handler = NextAuth({
 
   session: {
     strategy: "jwt",
-    maxAge: 24 * 60 * 60
+    maxAge: 24 * 60 * 60 // 24 hours
   },
 
-  secret: process.env.NEXTAUTH_SECRET
+  secret: process.env.NEXTAUTH_SECRET,
+  debug: process.env.NODE_ENV === "development"
 });
 
 export { handler as GET, handler as POST };

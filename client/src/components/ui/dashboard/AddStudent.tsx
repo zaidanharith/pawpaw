@@ -10,6 +10,15 @@ interface NewStudentData {
     address: string;
 }
 
+interface ExtendedUser {
+    role?: string;
+}
+
+interface ExtendedSession {
+    accessToken?: string;
+    user?: ExtendedUser;
+}
+
 const roleColors: Record<string, string> = {
     ADMIN: "#3f9065",
     TEACHER: "#f5bb00",
@@ -38,8 +47,8 @@ const AddStudent: React.FC<AddStudentProps> = ({ isOpen, onClose, onSave }) => {
     const [formData, setFormData] = useState<NewStudentData>(initialForm);
     const [loading, setLoading] = useState(false);
     const { data: session } = useSession();
-    const token = session?.accessToken;
-    const role = (session?.user as any)?.role || "ADMIN";
+    const token = (session as ExtendedSession)?.accessToken;
+    const role = (session as ExtendedSession)?.user?.role || "ADMIN";
     const textColor = role === "ADMIN" ? "#FFFFFF" : "#3d3006";
     const accentColor = roleColors[role] || roleColors.ADMIN;
 

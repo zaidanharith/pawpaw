@@ -34,17 +34,17 @@ interface RecapRow {
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
-// ⭐ FIX NORMALIZER — aman dari error dan tidak akan return never
 function normalizeFromBackendStatus(s: string | null | undefined): string {
-  if (!s) return "hadir"; // default hadir
+  if (!s) return "hadir";
   const v = String(s).trim().toLowerCase();
 
   if (v.includes("sakit") || v === "sick") return "sakit";
   if (v.includes("izin") || v === "permission") return "izin";
-  if (v.includes("alfa") || v.includes("alpha") || v.includes("absent")) return "alpha";
+  if (v.includes("alfa") || v.includes("alpha") || v.includes("absent"))
+    return "alpha";
   if (v.includes("hadir") || v.includes("present")) return "hadir";
 
-  return "hadir"; // fallback
+  return "hadir";
 }
 
 export default function AttendanceRecap() {
@@ -68,7 +68,7 @@ export default function AttendanceRecap() {
   const [recap, setRecap] = useState<RecapRow[]>([]);
   const [error, setError] = useState<string | null>(null);
 
-  // GET Classroom tanpa any
+  // FIXED: Autoselect classroom using functional update (no dependency warning)
   useEffect(() => {
     if (!token) return;
 
@@ -84,9 +84,9 @@ export default function AttendanceRecap() {
 
         setClassrooms(data);
 
-        if (data.length > 0 && !selectedClassroom) {
-          setSelectedClassroom(data[0].id);
-        }
+        setSelectedClassroom(
+          (prev) => prev || (data.length > 0 ? data[0].id : "")
+        );
       } catch (err) {
         console.error("Gagal fetch classrooms", err);
         setClassrooms([]);
@@ -96,7 +96,6 @@ export default function AttendanceRecap() {
     loadClassrooms();
   }, [token]);
 
-  // === GENERATE REKAP ===
   const handleGenerate = async () => {
     setError(null);
 
@@ -106,7 +105,6 @@ export default function AttendanceRecap() {
     setLoading(true);
 
     try {
-      // 1. GET semua siswa
       const studentsRes = await axios.get(`${API_URL}/student`, {
         headers: { Authorization: `Bearer ${token}` },
       });
@@ -115,7 +113,6 @@ export default function AttendanceRecap() {
         ? studentsRes.data.data
         : [];
 
-      // 2. Filter berdasarkan kelas
       const studentsInClass = allStudents.filter(
         (s) =>
           s.classroom?.id === selectedClassroom ||
@@ -125,7 +122,6 @@ export default function AttendanceRecap() {
       const start = new Date(startDate + "T00:00:00");
       const end = new Date(endDate + "T23:59:59");
 
-      // 3. Proses paralel
       const recapRows = await Promise.all(
         studentsInClass.map(async (std): Promise<RecapRow> => {
           const res = await axios.get(
@@ -254,10 +250,7 @@ export default function AttendanceRecap() {
           <tbody>
             {recap.length === 0 ? (
               <tr>
-                <td
-                  colSpan={6}
-                  className="py-6 text-center text-gray-500"
-                >
+                <td colSpan={6} className="py-6 text-center text-gray-500">
                   Klik Generate untuk menampilkan rekap.
                 </td>
               </tr>
@@ -266,7 +259,9 @@ export default function AttendanceRecap() {
                 <tr key={r.studentId} className={i % 2 ? "bg-gray-50" : ""}>
                   <td className="p-2">{i + 1}</td>
                   <td className="p-2">{r.name}</td>
-                  <td className="p-2 text-center text-orange-600 font-semibold">{show(r.sick)}</td>
+                  <td className="p-2 text-center text-orange-600 font-semibold">
+                    {show(r.sick)}
+                  </td>
                   <td className="p-2 text-center">{show(r.permission)}</td>
                   <td className="p-2 text-center">{show(r.absent)}</td>
                   <td className="p-2 text-center">{show(r.present)}</td>
