@@ -75,7 +75,7 @@ router.get(
  *             type: object
  *             required:
  *               - name
- *               - teacherId
+ *               - teacher
  *             properties:
  *               name:
  *                 type: string
