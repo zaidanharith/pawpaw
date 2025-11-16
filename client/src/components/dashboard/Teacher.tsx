@@ -15,7 +15,7 @@ import {
   ReportPage,
   AnnouncementPage,
   MenuNotFound,
-  LiveChat
+  PreviewChat,
 } from "@/components/ui/dashboard";
 
 import { 
@@ -95,7 +95,7 @@ export default function Teacher({ activePage = "" }: TeacherProps) {
         return (
           <>
             <DashboardPageTitle page="Chat Orang Tua Murid" />
-            <LiveChat />
+            <PreviewChat />
           </>
         );
       case "profile":

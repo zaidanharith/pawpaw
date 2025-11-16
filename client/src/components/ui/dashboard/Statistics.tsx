@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useSession, signOut } from "next-auth/react";
-import { useRouter } from "next/navigation";
+import { useSession } from "next-auth/react";
 
 const roleColors: Record<string, string> = {
     ADMIN: "#3f9065",
@@ -69,7 +68,6 @@ const Statistics: React.FC<StatisticsProps> = ({
 
             try {
                 // Fetch Students
-                console.log("📡 Fetching students...");
                 const resStudent = await fetch(`${API_URL}/student`, {
                     method: "GET",
                     headers: {
@@ -118,7 +116,6 @@ const Statistics: React.FC<StatisticsProps> = ({
                 console.log("📊 Student count:", count);
 
                 // Fetch Users
-                console.log("📡 Fetching users...");
                 const resUser = await fetch(`${API_URL}/user`, {
                     method: "GET",
                     headers: {
@@ -183,7 +180,6 @@ const Statistics: React.FC<StatisticsProps> = ({
         fetchStats();
     }, [token, status, router, session]);
 
-    // Handler untuk button Kelola
     const handleManage = (type: "siswa" | "guru" | "admin") => {
         if (type === "siswa" && onNavigateToSiswa) {
             onNavigateToSiswa();
@@ -197,7 +193,7 @@ const Statistics: React.FC<StatisticsProps> = ({
             label: "Siswa", 
             count: studentCount, 
             icon: "👨‍🎓",
-            type: "siswa" as const
+            type: "siswa" as const,
         },
         { 
             label: "Guru", 

@@ -5,11 +5,12 @@ const helmet = require('helmet');
 const routes = require('./routes'); 
 const setupSwagger = require('./config/swagger');
 const prisma = require('./config/prisma');
+const http = require('http');
+const { Server } = require('socket.io');
 
 dotenv.config();
 
 const app = express();
-
 const PORT = process.env.PORT;
 
 app.use(helmet({
@@ -82,7 +83,29 @@ app.use((err, req, res, next) => {
   });
 });
 
-app.listen(PORT, () => {
+const server = http.createServer(app);
+
+const io = new Server(server, {
+  cors: {
+    origin: allowedOrigins,
+    credentials: true
+  }
+});
+
+io.on('connection', (socket) => {
+  console.log('User connected:', socket.id);
+
+  socket.on('chat message', async (msg) => {
+    io.emit('chat message', msg);
+  });
+
+  socket.on('disconnect', () => {
+    console.log('User disconnected:', socket.id);
+  });
+});
+
+// --- Ganti app.listen dengan server.listen ---
+server.listen(PORT, () => {
   console.log(`🚀 Server berjalan di http://localhost:${PORT}`);
   console.log(`📚 API Docs: http://localhost:${PORT}/api/docs`);
   console.log(`🔒 Helmet: Enabled`);
