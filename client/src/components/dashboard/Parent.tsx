@@ -70,7 +70,6 @@ export default function Parent() {
         return (
           <>
             <DashboardPageTitle page={activeMenu} />
-            {/* Jika parent hanya melihat pengumuman */}
             <Announcement />
           </>
         );

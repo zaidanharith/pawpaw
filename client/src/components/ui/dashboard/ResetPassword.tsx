@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useState } from "react";
-import { useSession, getSession } from "next-auth/react";
+import { useSession, getSession, signOut } from "next-auth/react";
 import authService  from "@/services/auth.service";
 import { useEffect } from "react";
 
@@ -22,20 +22,14 @@ interface SessionUser {
 }
 
 type UserProfile = {
+    createdAt?: string;
+    updatedAt?: string;
+    isActive?: boolean;
+    isLogin?: boolean;
+    provider?: string;
+    emailVerified?: string;
+    picture?: string;
     isPasswordReset?: boolean;
-    success?: string;
-    data: {
-        id?: string;
-        username?: string;
-        name?: string;
-        email?: string;
-        role?: "ADMIN" | "TEACHER" | "PARENT";
-        picture?: string;
-        phoneNumber?: string;
-        provider?: string;
-        emailVerified?: Date;
-        isPasswordReset?: boolean;
-    };
 };
 
 export default function ResetPassword() {
@@ -53,12 +47,11 @@ export default function ResetPassword() {
 
     useEffect(() => {
         const fetchProfile = async () => {
-            if (!user?.username) return;
             try {
                 const res = await authService.getProfile(session?.accessToken ?? "");
-                const userDetail = (res && typeof res === "object" && "data" in res) ? res.data : res;
-                if (userDetail) {
-                    setUserDetail(userDetail as UserProfile);
+                const userData = (res && typeof res === "object" && "data" in res) ? res.data : res;
+                if (userData) {
+                    setUserDetail(userData as UserProfile);
                 } else {
                     setUserDetail(null);
                     setMessage("Data profil tidak ditemukan");
@@ -91,18 +84,23 @@ export default function ResetPassword() {
 
             await getSession({ triggerEvent: true });
 
+            if (session?.accessToken) {
+                await authService.logout(session.accessToken);
+            }
+            await signOut({ callbackUrl: "/login" });
+
         } catch {
             setMessage("Gagal reset password.");
         }
         setLoading(false);
     };
 
-    if (userDetail?.isPasswordReset) return null;
+    const passwordReset = userDetail?.isPasswordReset;
 
     return (
-        <section className="bg-white rounded-xl shadow p-5 border-2 border-red-500">
+        <section className={`bg-white rounded-xl shadow p-5 ${passwordReset ? "" : "border-2 border-red-500"}`}>
             <h2 className="text-xl font-bold mb-3">Reset Password</h2>
-            <div className="bg-red-100 border border-red-500 px-3 py-2 rounded-md mb-4 text-red-600 font-semibold text-sm">
+            <div className={`bg-red-100 border border-red-500 px-3 py-2 rounded-md mb-4 text-red-600 font-semibold text-sm ${passwordReset ? "hidden" : ""}`}>
                 Anda disarankan untuk mengganti password setelah akun anda diregistrasikan oleh Admin.
             </div>
             <form onSubmit={handleSubmit} className="flex flex-col gap-3">

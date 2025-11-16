@@ -3,7 +3,6 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
-import { useRouter } from "next/navigation";
 import authService, { AuthResponse } from "@/services/auth.service";
 import Image from "next/image";
 import RoleLabel from "@/components/ui/dashboard/RoleLabel";
@@ -26,7 +25,6 @@ const roleColors: Record<string, string> = {
 
 export default function Profile() {
     const { data: session, status } = useSession();
-    const router = useRouter();
     const [loading, setLoading] = useState(true);
     const role = session?.user?.role || "ADMIN";
     const [user, setUser] = useState<UserProfile | null>(null);
@@ -34,10 +32,6 @@ export default function Profile() {
     const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
-        if (status === "unauthenticated") {
-            router.replace("/login");
-            return;
-        }
         if (status === "authenticated" && session?.accessToken) {
             const fetchProfile = async () => {
                 try {
@@ -59,7 +53,7 @@ export default function Profile() {
         } else if (status !== "loading") {
             setLoading(false);
         }
-    }, [session?.accessToken, status, router]);
+    }, [session?.accessToken, status]);
 
     if (loading) {
         return (
