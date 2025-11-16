@@ -61,11 +61,9 @@ export default function Parent({ activePage = "" }: ParentProps) {
         return (
           <>
             <DashboardPageTitle page="Dashboard" />
-            <div className="space-y-6">
-              <Weather />
-              <Announcement />
-              <LiveReport />
-            </div>
+            <Weather />
+            <Announcement />
+            <LiveReport />
           </>
         );
       case "report":

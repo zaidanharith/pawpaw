@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { FaUser, FaChevronLeft, FaPaperPlane } from "react-icons/fa";
 
@@ -28,6 +28,7 @@ export default function LiveChat() {
   const [activeTab, setActiveTab] = useState<"semua" | "belum">("semua");
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedContact, setSelectedContact] = useState<string | null>(null);
+  const [selectedContactId, setSelectedContactId] = useState<string | null>(null);
   const [messageInput, setMessageInput] = useState("");
   const [chatMessages, setChatMessages] = useState<Message[]>([
     {
@@ -61,113 +62,102 @@ export default function LiveChat() {
       time: "08:36",
     },
   ]);
+  const [contacts, setContacts] = useState<Contact[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const colorClasses = role === "teacher" 
-    ? {
-        header: "bg-yellow-500",
-        headerHover: "hover:bg-yellow-600",
-        userBubble: "bg-teal-100",
-        contactBubble: "bg-yellow-100",
-        input: "bg-yellow-500 placeholder-yellow-100 focus:ring-yellow-600",
-        button: "bg-yellow-500 hover:bg-yellow-600",
-        border: "border-yellow-500",
-        hover: "hover:bg-yellow-50",
-        badge: "bg-yellow-500",
-        tabActive: "bg-yellow-500",
-        focusRing: "focus:ring-yellow-500",
+  useEffect(() => {
+    const fetchMessages = async () => {
+      try {
+        const res = await fetch("/api/messages", {
+          headers: {
+            Authorization: `Bearer ${session?.accessToken}`,
+          },
+        });
+        const data = await res.json();
+        setContacts(
+          data.data.map((msg) => ({
+            id: msg.id,
+            name: msg.sender.name,
+            message: msg.body,
+            time: new Date(msg.createdAt).toLocaleTimeString("id-ID", {
+              hour: "2-digit",
+              minute: "2-digit",
+            }),
+            isRead: msg.isRead,
+          }))
+        );
+      } catch {
+        setContacts([]);
       }
-    : {
-        header: "bg-teal-500",
-        headerHover: "hover:bg-teal-600",
-        userBubble: "bg-teal-100",
-        contactBubble: "bg-yellow-100",
-        input: "bg-teal-500 placeholder-teal-100 focus:ring-teal-600",
-        button: "bg-teal-500 hover:bg-teal-600",
-        border: "border-teal-500",
-        hover: "hover:bg-teal-50",
-        badge: "bg-teal-500",
-        tabActive: "bg-teal-500",
-        focusRing: "focus:ring-teal-500",
-      };
+    };
+    if (session?.accessToken) fetchMessages();
+  }, [session]);
 
-  const contacts: Contact[] = role === "teacher" 
-    ? [
-        {
-          id: 1,
-          name: "Amira S Pohan",
-          badge: "Baru",
-          message: "Halo Bu, saya ingin menanyakan surat izin untuk anak saya.",
-          time: "08:30",
-          isRead: false,
-        },
-        {
-          id: 2,
-          name: "Budi Santoso",
-          message: "Terima kasih Bu atas laporannya hari ini",
-          time: "12:00",
-          isRead: true,
-        },
-        {
-          id: 3,
-          name: "Siti Nurhaliza",
-          badge: "Baru",
-          message: "Bu, apakah besok ada kegiatan outdoor?",
-          time: "08:30",
-          isRead: false,
-        },
-      ]
-    : [
-        {
-          id: 1,
-          name: "Hendy Wicaksono",
-          badge: "Baru",
-          message: "Baik Ibu/Bapak. Bisa dijelaskan lebih lanjut ya, izin untuk keperluan apa?",
-          time: "08:30",
-          isRead: false,
-        },
-        {
-          id: 2,
-          name: "Sarah Qonita",
-          message: "Selamat siang Ibu, Apakah anak-anak sudah selesai kegiatan pembelajarannya?",
-          time: "12:00",
-          isRead: true,
-        },
-        {
-          id: 3,
-          name: "Rani Khairunisa",
-          badge: "Baru",
-          message: "Selamat malam Ibu, apakah untuk Kelas B1 mulai minggu depan sudah mulai ganti topik pembelajaran?",
-          time: "08:30",
-          isRead: false,
-        },
-      ];
+  const colorClasses =
+    role === "teacher"
+      ? {
+          header: "bg-yellow-500",
+          headerHover: "hover:bg-yellow-600",
+          userBubble: "bg-teal-100",
+          contactBubble: "bg-yellow-100",
+          input: "bg-yellow-500 placeholder-yellow-100 focus:ring-yellow-600",
+          button: "bg-yellow-500 hover:bg-yellow-600",
+          border: "border-yellow-500",
+          hover: "hover:bg-yellow-50",
+          badge: "bg-yellow-500",
+          tabActive: "bg-yellow-500",
+          focusRing: "focus:ring-yellow-500",
+        }
+      : {
+          header: "bg-teal-500",
+          headerHover: "hover:bg-teal-600",
+          userBubble: "bg-teal-100",
+          contactBubble: "bg-yellow-100",
+          input: "bg-teal-500 placeholder-teal-100 focus:ring-teal-600",
+          button: "bg-teal-500 hover:bg-teal-600",
+          border: "border-teal-500",
+          hover: "hover:bg-teal-50",
+          badge: "bg-teal-500",
+          tabActive: "bg-teal-500",
+          focusRing: "focus:ring-teal-500",
+        };
 
   const filteredContacts = contacts.filter((contact) => {
-    const matchesSearch = contact.name.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesTab = activeTab === "semua" || (activeTab === "belum" && !contact.isRead);
+    const matchesSearch = contact.name
+      .toLowerCase()
+      .includes(searchQuery.toLowerCase());
+    const matchesTab =
+      activeTab === "semua" ||
+      (activeTab === "belum" && !contact.isRead);
     return matchesSearch && matchesTab;
   });
 
-  const handleSendMessage = () => {
+  const handleSendMessage = async () => {
     if (messageInput.trim()) {
-      const newMessage: Message = {
-        id: chatMessages.length + 1,
-        text: messageInput,
-        sender: "user",
-        time: new Date().toLocaleTimeString("id-ID", { 
-          hour: "2-digit", 
-          minute: "2-digit" 
+      // Kirim ke backend
+      await fetch("/api/messages", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${session?.accessToken}`,
+        },
+        body: JSON.stringify({
+          receiver: selectedContactId, // id user tujuan
+          title: "Chat", // atau sesuai kebutuhan
+          body: messageInput,
         }),
-      };
-      setChatMessages([...chatMessages, newMessage]);
+      });
       setMessageInput("");
+      // Refresh pesan jika perlu
     }
   };
 
   if (selectedContact) {
     return (
       <div className="flex flex-col h-screen bg-gray-50">
-        <div className={`${colorClasses.header} text-white px-4 py-4 flex items-center gap-3 shadow-md`}>
+        <div
+          className={`${colorClasses.header} text-white px-4 py-4 flex items-center gap-3 shadow-md`}
+        >
           <button
             onClick={() => setSelectedContact(null)}
             className={`${colorClasses.headerHover} p-2 rounded-lg transition-colors`}
@@ -266,7 +256,10 @@ export default function LiveChat() {
         {filteredContacts.map((contact) => (
           <div
             key={contact.id}
-            onClick={() => setSelectedContact(contact.name)}
+            onClick={() => {
+              setSelectedContact(contact.name);
+              setSelectedContactId(contact.id.toString());
+            }}
             className={`border ${colorClasses.border} rounded-lg p-4 ${colorClasses.hover} transition-colors cursor-pointer`}
           >
             <div className="flex items-start gap-4">
@@ -280,17 +273,22 @@ export default function LiveChat() {
                 <div className="flex items-center gap-2 mb-2">
                   <h3 className="font-bold text-gray-900">{contact.name}</h3>
                   {contact.badge && (
-                    <span className={`${colorClasses.badge} text-white text-xs font-semibold px-3 py-1 rounded-full`}>
+                    <span
+                      className={`${colorClasses.badge} text-white text-xs font-semibold px-3 py-1 rounded-full`}
+                    >
                       {contact.badge}
                     </span>
                   )}
-                  <span className="ml-auto text-sm text-gray-500">{contact.time}</span>
+                  <span className="ml-auto text-sm text-gray-500">
+                    {contact.time}
+                  </span>
                 </div>
                 <p className="text-gray-700 mb-3">{contact.message}</p>
-                <button 
+                <button
                   onClick={(e) => {
                     e.stopPropagation();
                     setSelectedContact(contact.name);
+                    setSelectedContactId(contact.id.toString());
                   }}
                   className={`w-full ${colorClasses.button} text-white font-semibold py-2 px-4 rounded-lg transition-colors`}
                 >
