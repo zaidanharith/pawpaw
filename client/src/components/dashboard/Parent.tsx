@@ -79,13 +79,8 @@ export default function Parent({ activePage = "" }: ParentProps) {
       case "announcement":
         return (
           <>
-<<<<<<< HEAD
-            <DashboardPageTitle page={activeMenu} />
-            <AnnouncementPage />
-=======
             <DashboardPageTitle page="Pengumuman" />
-            <Announcement />
->>>>>>> 2b689c4644d6faa539362cedb3ed70a1d87b4872
+            <AnnouncementPage />
           </>
         );
       case "chat":
