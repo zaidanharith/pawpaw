@@ -24,12 +24,8 @@ interface AnnouncementProps {
 
 const Announcement: React.FC<AnnouncementProps> = ({ onNavigateToAnnouncement }) => {
     const { data: session } = useSession();
-<<<<<<< HEAD
-    const token = session?.accessToken;
-=======
-
->>>>>>> b5d0e1a1d884c64b50671e2b9aa033e7e68e4228
     const role = (session?.user?.role || "ADMIN").toUpperCase();
+    const token = session?.accessToken;
     const accentColor = roleColors[role] || roleColors.ADMIN;
     const textColor = role === "ADMIN" ? "#FFFFFF" : "#282828";
     const isParent = role === "PARENT";
@@ -91,15 +87,10 @@ const Announcement: React.FC<AnnouncementProps> = ({ onNavigateToAnnouncement })
         
         return "🔔"; // default icon
     };
-
-    const isParent = role === "PARENT";
-
+    
     return (
         <section className="bg-white rounded-xl shadow p-5">
             <div className="flex flex-row items-center justify-between gap-2 mb-4">
-<<<<<<< HEAD
-                <h2 className="font-bold text-xl">Pengumuman Terkini</h2>
-=======
                 <h2 className="font-bold text-xl">Pengumuman</h2>
 
                 {!isParent && (
@@ -113,7 +104,6 @@ const Announcement: React.FC<AnnouncementProps> = ({ onNavigateToAnnouncement })
                         <FaEdit />
                     </button>
                 )}
->>>>>>> b5d0e1a1d884c64b50671e2b9aa033e7e68e4228
             </div>
 
             <div className="flex flex-col gap-3">

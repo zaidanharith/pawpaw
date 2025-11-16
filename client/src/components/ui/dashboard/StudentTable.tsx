@@ -42,21 +42,12 @@ const roleColors: Record<string, string> = {
   PARENT: "#58baab",
 };
 
-<<<<<<< HEAD
-const StudentTable: React.FC = () => {
-    const { data: session } = useSession();
-    const token = session?.accessToken;
-    const role = session?.user?.role || "ADMIN";
-    const accentColor = roleColors[role] || roleColors.ADMIN;
-    const textColor = role === "ADMIN" ? "#FFFFFF" : "#3d3006";
-=======
 export default function StudentTable() {
   const { data: session } = useSession();
   const token = session?.accessToken;
   const role = session?.user?.role || "ADMIN";
   const accentColor = roleColors[role] || roleColors.ADMIN;
   const textColor = role === "ADMIN" ? "#FFFFFF" : "#282828";
->>>>>>> b5d0e1a1d884c64b50671e2b9aa033e7e68e4228
 
   const [allSiswa, setAllSiswa] = useState<Siswa[]>([]);
   const [loading, setLoading] = useState(true);
@@ -296,94 +287,6 @@ export default function StudentTable() {
 
       {isAdminOrTeacher && (
         <>
-<<<<<<< HEAD
-            <section className="bg-white rounded-xl shadow p-5">
-                <div className="flex justify-between items-center mb-3">
-                    <h2 className="text-xl font-bold">Daftar Siswa</h2>
-                    <button
-                        onClick={() => setIsAddStudentOpen(true)}
-                        className="cursor-pointer px-3 py-2 rounded-lg text-sm md:text-base font-semibold hover:opacity-80 transition"
-                        style={{ backgroundColor: accentColor, color: textColor}}
-                        title="Tambah Siswa"
-                    >
-                        <FaUserPlus />
-                    </button>
-                </div>
-                <div className="rounded-xl">
-                    <table className="w-full text-sm text-gray-700 rounded-xl">
-                        <thead style={{ backgroundColor: accentColor, color: textColor}}>
-                            <tr>
-                                <th className="px-4 py-3 text-left font-semibold whitespace-nowrap">Nama Lengkap</th>
-                                <th className="px-4 py-3 text-left font-semibold">Jenis Kelamin</th>
-                                <th className="px-4 py-3 text-left font-semibold">Tanggal Lahir</th>
-                                <th className="px-4 py-3 text-left font-semibold">Alamat</th>
-                                <th className="px-4 py-3 text-left font-semibold">Aksi</th>
-                            </tr>
-                        </thead>
-                        <tbody className="bg-background">
-                            {loading ? (
-                                <tr>
-                                    <td colSpan={5} className="px-4 py-6 text-center text-gray-500">
-                                        Memuat data siswa...
-                                    </td>
-                                </tr>
-                            ) : allSiswa.length === 0 ? (
-                                <tr>
-                                    <td colSpan={5} className="px-4 py-6 text-center text-gray-500">
-                                        Tidak ada data siswa yang tersedia.
-                                    </td>
-                                </tr>
-                            ) : (
-                                allSiswa.map((siswa) => (
-                                    <tr key={siswa.id} className="border-t hover:bg-gray-50 transition-colors">
-                                        <td className="px-4 py-3 font-medium whitespace-nowrap">{siswa.name}</td>
-                                        <td className="px-4 py-3">
-                                            <span
-                                                className="px-3 py-1 rounded-full text-xs font-medium uppercase"
-                                                style={{
-                                                    backgroundColor: genderColors[siswa.gender.toUpperCase()] || genderColors.MALE,
-                                                    color: "#282828"
-                                                }}
-                                            >
-                                                {siswa.gender}
-                                            </span>
-                                        </td>
-                                        <td className="px-4 py-3">{siswa.birthDate}</td>
-                                        <td className="px-4 py-3">{siswa.address}</td>
-                                        <td className="px-4 py-3 flex justify-center sm:justify-start gap-3">
-                                            <button
-                                                onClick={() => handleEditStudent(siswa)}
-                                                className="cursor-pointer hover:scale-110 transition-transform p-1 rounded-full text-blue-500 hover:bg-blue-50"
-                                                title="Edit Siswa"
-                                            >
-                                                <MdEdit className="w-5 h-5" />
-                                            </button>
-                                            <button
-                                                className="cursor-pointer hover:scale-110 transition-transform p-1 rounded-full text-red-500 hover:bg-red-50"
-                                                title="Delete Siswa"
-                                            >
-                                                <MdDelete className="w-5 h-5" />
-                                            </button>
-                                        </td>
-                                    </tr>
-                                ))
-                            )}
-                        </tbody>
-                    </table>
-                </div>
-            </section>
-            <AddStudent
-                isOpen={isAddStudentOpen}
-                onClose={() => setIsAddStudentOpen(false)}
-                onSave={handleSaveStudent}
-            />
-            <EditStudent
-                isOpen={isEditStudentOpen}
-                onClose={() => { setIsEditStudentOpen(false); setEditStudentData(null); }}
-                studentData={editStudentData}
-                onSave={handleSaveEditStudent}
-            />
-=======
           <AddStudent
             isOpen={isAddStudentOpen}
             onClose={() => setIsAddStudentOpen(false)}
@@ -413,7 +316,6 @@ export default function StudentTable() {
             student={selectedStudentForAttendance}
             onSaved={refreshStudents}
           />
->>>>>>> b5d0e1a1d884c64b50671e2b9aa033e7e68e4228
         </>
       )}
     </>
