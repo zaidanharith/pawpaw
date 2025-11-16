@@ -30,7 +30,7 @@ const StudentTable: React.FC = () => {
     const token = session?.accessToken;
     const role = session?.user?.role || "ADMIN";
     const accentColor = roleColors[role] || roleColors.ADMIN;
-    const textColor = role === "ADMIN" ? "#FFFFFF" : "#282828";
+    const textColor = role === "ADMIN" ? "#FFFFFF" : "#3d3006";
 
     const [allSiswa, setAllSiswa] = useState<Siswa[]>([]);
     const [loading, setLoading] = useState(true);
@@ -112,7 +112,7 @@ const StudentTable: React.FC = () => {
                         <FaUserPlus />
                     </button>
                 </div>
-                <div className="rounded-xl overflow-x-scroll">
+                <div className="rounded-xl">
                     <table className="w-full text-sm text-gray-700 rounded-xl">
                         <thead style={{ backgroundColor: accentColor, color: textColor}}>
                             <tr>
@@ -162,7 +162,6 @@ const StudentTable: React.FC = () => {
                                                 <MdEdit className="w-5 h-5" />
                                             </button>
                                             <button
-                                                // onClick={() => ...}
                                                 className="cursor-pointer hover:scale-110 transition-transform p-1 rounded-full text-red-500 hover:bg-red-50"
                                                 title="Delete Siswa"
                                             >

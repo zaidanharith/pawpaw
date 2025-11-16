@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { MdOutlineClose } from "react-icons/md";
 import axios from "axios";
 import { useSession } from "next-auth/react";
+import { text } from "stream/consumers";
 
 const roles = [
     { value: "ADMIN", label: "Admin" },
@@ -23,6 +24,12 @@ interface AddUserProps {
     onSave: (data: NewUserData) => void;
 }
 
+const roleColors: Record<string, string> = {
+    ADMIN: "#3f9065",
+    TEACHER: "#f5bb00",
+    PARENT: "#58baab",
+};
+
 const initialForm: NewUserData = {
     name: "",
     phoneNumber: "",
@@ -36,6 +43,9 @@ const AddUser: React.FC<AddUserProps> = ({ isOpen, onClose, onSave }) => {
     const [loading, setLoading] = useState(false);
     const { data: session } = useSession();
     const token = session?.accessToken;
+    const role = (session?.user as any)?.role || "ADMIN";
+    const textColor = role === "ADMIN" ? "#FFFFFF" : "#3d3006";
+    const accentColor = roleColors[role] || roleColors.ADMIN;
 
     const handleChange = (
         e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
@@ -75,12 +85,14 @@ const AddUser: React.FC<AddUserProps> = ({ isOpen, onClose, onSave }) => {
                 className="absolute inset-0 bg-black/50"
                 onClick={onClose}
             />
-            <div className="relative bg-white rounded-xl w-full max-w-2xl mx-4 shadow-lg">
-                <div className="p-6 border-b border-gray-100 flex justify-between items-center">
-                    <h2 className="text-xl font-bold text-gray-800">Tambah User Baru</h2>
+            <div className="relative bg-white rounded-3xl w-full max-w-2xl mx-4 shadow-lg">
+                <div className="p-6 border-b border-gray-100 rounded-t-2xl flex justify-between items-center"
+                                    style={{ backgroundColor: accentColor }}>
+                    <h2 className="text-xl font-bold"
+                    style={{color:textColor}}>Tambah User Baru</h2>
                     <button
                         onClick={onClose}
-                        className="text-gray-400 hover:text-gray-700 transition cursor-pointer"
+                        className="text-white hover:opacity-80 transition cursor-pointer"
                         title="Close"
                         type="button"
                     >

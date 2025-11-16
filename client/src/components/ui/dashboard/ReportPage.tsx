@@ -1,6 +1,6 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { FaEdit } from "react-icons/fa";
+import { FaEdit, FaClock } from "react-icons/fa";
 import { useSession } from "next-auth/react";
 import axios from "axios";
 import AddReport from "./AddReport";
@@ -53,8 +53,8 @@ const ReportPage: React.FC = () => {
   const role = session?.user?.role || "ADMIN";
 
   const accentColor = roleColors[role] || roleColors.ADMIN;
-  const textColor = role === "ADMIN" ? "#FFFFFF" : "#282828";
-  const dayChipTextColor = role === "ADMIN" ? "#FFFFFF" : "#282828";
+  const textColor = role === "ADMIN" ? "#FFFFFF" : "#3d3006";
+  const dayChipTextColor = role === "ADMIN" ? "#FFFFFF" : "#3d3006";
   const isReadOnly = role === "PARENT";
 
   const [allReports, setAllReports] = useState<Report[]>([]);
@@ -271,7 +271,7 @@ const ReportPage: React.FC = () => {
           {!isReadOnly && (
             <button
               onClick={() => setIsAddReportOpen(true)}
-              className="w-full sm:w-auto flex items-center justify-center gap-2 px-4 py-3 cursor-pointer rounded-xl text-sm md:text-base font-semibold hover:shadow-lg transition"
+              className="w-full sm:w-auto flex items-center justify-center gap-2 px-4 py-3 cursor-pointer rounded-xl text-sm md:text-base font-semibold hover:opacity-80 transition"
               style={{
                 backgroundColor: accentColor,
                 color: textColor,
@@ -310,7 +310,7 @@ const ReportPage: React.FC = () => {
                   {/* Waktu relatif */}
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2 text-gray-500 text-sm">
-                      <span>🕒</span>
+                      <span><FaClock/></span>
                       <span>
                         {getRelativeTime(report.date || report.createdAt)}
                       </span>
@@ -329,8 +329,8 @@ const ReportPage: React.FC = () => {
                     </div>
 
                     <span
-                      className="px-3 py-1 rounded-full text-white text-sm font-semibold"
-                      style={{ backgroundColor: accentColor }}
+                      className="px-3 py-1 rounded-full text-sm font-semibold"
+                      style={{ backgroundColor: accentColor, color: textColor }}
                     >
                       {report.teacher?.name
                         ? `Guru: ${report.teacher.name}`
@@ -346,7 +346,7 @@ const ReportPage: React.FC = () => {
                   {/* Foto */}
                   {report.photos && report.photos.length > 0 && (
                     <div className="text-xs text-gray-500">
-                      📷 {report.photos.length} foto tersedia
+                      📷 {report.photos.length} Foto tersedia
                     </div>
                   )}
 
@@ -357,8 +357,8 @@ const ReportPage: React.FC = () => {
 
                   {/* Tombol detail */}
                   <button
-                    className="w-full py-3 mt-2 rounded-xl font-semibold text-white hover:opacity-90 transition"
-                    style={{ backgroundColor: accentColor }}
+                    className="w-full py-3 mt-2 rounded-xl font-semibold hover:opacity-80 transition cursor-pointer"
+                    style={{ backgroundColor: accentColor, color: textColor }}
                     onClick={() => handleOpenDetail(report)}
                   >
                     Lihat Detail Laporan

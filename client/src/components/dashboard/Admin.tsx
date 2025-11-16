@@ -1,5 +1,4 @@
 "use client";
-
 import { useState } from "react";
 import Navbar from "@/components/layout/Navbar";
 import Sidebar from "@/components/layout/Sidebar";
@@ -9,7 +8,6 @@ import { SiGoogleclassroom } from "react-icons/si";
 import FaceRegister from "../ui/dashboard/FaceRegister";
 
 export default function Admin() {
-
   const menuItems = [
     { name: "Dashboard", icon: <FaTachometerAlt size={24} /> },
     { name: "User", icon: <FaUser size={24} /> },
@@ -20,9 +18,29 @@ export default function Admin() {
     { name: "Profil", icon: <FaUserCog size={24} /> },
     { name: "Face Recognition", icon: <FaRegSmile size={24} /> },
   ];
-
+  
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [activeMenu, setActiveMenu] = useState("Dashboard");
+
+  // Handler untuk navigasi ke halaman Laporan Kegiatan
+  const handleNavigateToReport = () => {
+    setActiveMenu("Laporan Kegiatan");
+  };
+
+  // Handler untuk navigasi ke halaman Pengumuman
+  const handleNavigateToAnnouncement = () => {
+    setActiveMenu("Pengumuman");
+  };
+
+  // Handler untuk navigasi ke halaman User
+  const handleNavigateToUser = () => {
+    setActiveMenu("User");
+  };
+
+  // Handler untuk navigasi ke halaman Siswa
+  const handleNavigateToSiswa = () => {
+    setActiveMenu("Siswa");
+  };
 
   const renderContent = () => {
     switch (activeMenu) {
@@ -31,9 +49,12 @@ export default function Admin() {
           <>
             <DashboardPageTitle page={activeMenu}/>
             <Weather />
-            <Statistics />
-            <LiveReport />
-            <Announcement />
+            <Statistics 
+              onNavigateToUser={handleNavigateToUser}
+              onNavigateToSiswa={handleNavigateToSiswa}
+            />
+            <LiveReport onNavigateToReport={handleNavigateToReport} />
+            <Announcement onNavigateToAnnouncement={handleNavigateToAnnouncement} />
           </>
         );
       case "User":

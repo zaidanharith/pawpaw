@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useSession } from "next-auth/react";
+import { MdOutlineClose } from "react-icons/md";
 
 interface Siswa {
     id: string;
@@ -9,6 +10,12 @@ interface Siswa {
     birthDate: string;
     address: string;
 }
+
+const roleColors: Record<string, string> = {
+    ADMIN: "#3f9065",
+    TEACHER: "#f5bb00",
+    PARENT: "#58baab",
+};
 
 const GENDER_OPTIONS = [
     { value: "LAKI", label: "Laki-Laki" },
@@ -33,6 +40,9 @@ const EditStudent: React.FC<EditStudentProps> = ({ isOpen, onClose, studentData,
     const [loading, setLoading] = useState(false);
     const { data: session } = useSession();
     const token = session?.accessToken;
+    const role = session?.user?.role || "ADMIN";
+    const accentColor = roleColors[role];
+    const textColor = role === "ADMIN" ? "#FFFFFF" : "#3d3006";
 
     useEffect(() => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -93,15 +103,18 @@ const EditStudent: React.FC<EditStudentProps> = ({ isOpen, onClose, studentData,
                 onClick={onClose}
             />
             <div className="relative bg-white rounded-xl w-full max-w-2xl mx-4 shadow-lg">
-                <div className="p-6 border-b border-gray-100 flex justify-between items-center">
-                    <h2 className="text-xl font-bold text-gray-800">Edit Siswa</h2>
+                <div className="p-6 border-b border-gray-100 flex justify-between items-center"
+                    style={{ backgroundColor: accentColor }}>
+                    <h2 className="text-xl font-bold text-gray-800"
+                    style={{color:textColor}}>Edit Siswa</h2>
                     <button 
                         onClick={onClose} 
-                        className="text-gray-400 hover:text-gray-700 transition text-2xl cursor-pointer"
+                        className="hover:opacity-80 transition text-2xl cursor-pointer"
+                        style={{ color: textColor }}
                         title="Close"
                         type="button"
                     >
-                        &times;
+                        <MdOutlineClose className="w-6 h-6 cursor-pointer"/>
                     </button>
                 </div>
                 <form onSubmit={handleSubmit} className="p-6 space-y-2">
@@ -114,7 +127,8 @@ const EditStudent: React.FC<EditStudentProps> = ({ isOpen, onClose, studentData,
                             value={formData.name ?? ""}
                             onChange={handleChange}
                             required
-                            className="w-full border border-gray-300 rounded-lg p-2.5 focus:ring-2 focus:ring-[#3f9065] focus:border-[#3f9065] transition"
+                            className="w-full border border-gray-300 rounded-lg p-2.5 focus:ring-2 focus:outline-none"
+                            style={{ "--tw-ring-color": accentColor } as React.CSSProperties}
                         />
                     </div>
                     <div>
@@ -125,7 +139,8 @@ const EditStudent: React.FC<EditStudentProps> = ({ isOpen, onClose, studentData,
                             value={formData.gender ?? ""}
                             onChange={handleChange}
                             required
-                            className="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-[#3f9065] focus:outline-none"
+                            className="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:outline-none"
+                            style={{ "--tw-ring-color": accentColor } as React.CSSProperties}
                         >
                             {GENDER_OPTIONS.map(option => (
                                 <option key={option.value} value={option.value}>
@@ -143,7 +158,8 @@ const EditStudent: React.FC<EditStudentProps> = ({ isOpen, onClose, studentData,
                             value={formData.birthDate ?? ""}
                             onChange={handleChange}
                             required
-                            className="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-[#3f9065] focus:outline-none"
+                            className="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:outline-none"
+                            style={{ "--tw-ring-color": accentColor } as React.CSSProperties}
                         />
                     </div>
                     <div>
@@ -155,7 +171,8 @@ const EditStudent: React.FC<EditStudentProps> = ({ isOpen, onClose, studentData,
                             value={formData.address ?? ""}
                             onChange={handleChange}
                             required
-                            className="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-[#3f9065] focus:outline-none"
+                            className="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2  focus:outline-none"
+                            style={{ "--tw-ring-color": accentColor } as React.CSSProperties}
                         />
                     </div>
                     <div className="flex justify-end pt-4 gap-3">
@@ -169,7 +186,7 @@ const EditStudent: React.FC<EditStudentProps> = ({ isOpen, onClose, studentData,
                         <button
                             type="submit"
                             disabled={loading}
-                            className="px-4 py-2 text-sm font-medium cursor-pointer rounded-lg text-white bg-[#3f9065] hover:bg-[#347b56] transition shadow-md"
+                            className="px-4 py-2 text-sm font-medium cursor-pointer rounded-lg text-white bg-[#3f9065] hover:opacity-80 transition shadow-md"
                         >
                             {loading ? "Menyimpan..." : "Simpan Perubahan"}
                         </button>

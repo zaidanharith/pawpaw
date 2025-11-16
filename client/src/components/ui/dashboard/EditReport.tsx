@@ -45,8 +45,9 @@ const EditReport: React.FC<EditReportProps> = ({
 }) => {
   const { data: session } = useSession();
   const token = session?.accessToken;
-
-  const role = (session?.user as any)?.role || "ADMIN";
+  const role = session?.user?.role || "ADMIN";
+  const textColor = role === "ADMIN" ? "#FFFFFF" : "#3d3006";
+  const dayChipTextColor = role === "ADMIN" ? "#FFFFFF" : "#3d3006";
   const accentColor = roleColors[role] || roleColors.ADMIN;
 
   const [formData, setFormData] = useState<EditFormData>({
@@ -147,11 +148,14 @@ const EditReport: React.FC<EditReportProps> = ({
       {/* CARD: MAX HEIGHT + SCROLL DI DALAM */}
       <div className="relative bg-white rounded-2xl w-full max-w-2xl mx-4 shadow-xl overflow-hidden flex flex-col max-h-[90vh]">
         {/* HEADER */}
-        <div className="p-6 border-b border-gray-100 flex justify-between items-center">
-          <h2 className="text-xl font-bold text-gray-800">Edit Laporan</h2>
+        <div className="p-6 border-b border-gray-100 flex justify-between items-center"
+        style={{ backgroundColor: accentColor }}>
+          <h2 className="text-xl font-bold text-gray-800"
+          style={{ color: textColor }}>Edit Laporan</h2>
           <button
             onClick={onClose}
-            className="text-gray-400 hover:text-gray-700 transition"
+            className="hover:opacity-80 transition"
+            style={{ color: textColor }}
             title="Close"
             type="button"
           >
@@ -177,7 +181,8 @@ const EditReport: React.FC<EditReportProps> = ({
               name="judul"
               value={formData.judul}
               onChange={handleChange}
-              className="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-[#3f9065] focus:outline-none"
+              className="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:outline-none"
+              style={{'--tw-ring-color': accentColor,} as React.CSSProperties}
               required
             />
           </div>
@@ -194,7 +199,8 @@ const EditReport: React.FC<EditReportProps> = ({
               name="namaKegiatan"
               value={formData.namaKegiatan}
               onChange={handleChange}
-              className="w-full border border-gray-300 rounded-md px-3 py-2 bg-white focus:ring-2 focus:ring-[#3f9065] focus:outline-none"
+              className="w-full border border-gray-300 rounded-md px-3 py-2 bg-white focus:ring-2 focus:outline-none"
+              style={{'--tw-ring-color': accentColor,} as React.CSSProperties}
               required
             >
               {KEGIATAN_OPTIONS.map((opt) => (
@@ -217,7 +223,8 @@ const EditReport: React.FC<EditReportProps> = ({
               name="kelas"
               value={formData.kelas}
               onChange={handleChange}
-              className="w-full border border-gray-300 rounded-md px-3 py-2 bg-white focus:ring-2 focus:ring-[#3f9065] focus:outline-none"
+              className="w-full border border-gray-300 rounded-md px-3 py-2 bg-white focus:ring-2 focus:outline-none"
+              style={{'--tw-ring-color': accentColor,} as React.CSSProperties}
               required
             >
               {KELAS_OPTIONS.map((opt) => (
@@ -240,7 +247,8 @@ const EditReport: React.FC<EditReportProps> = ({
               name="desc"
               value={formData.desc}
               onChange={handleChange}
-              className="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-[#3f9065] focus:outline-none"
+              className="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:outline-none"
+              style={{'--tw-ring-color': accentColor,} as React.CSSProperties}
               rows={4}
               required
             />
@@ -259,7 +267,8 @@ const EditReport: React.FC<EditReportProps> = ({
               name="foto"
               accept="image/*"
               onChange={handleFileChange}
-              className="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-[#3f9065] focus:outline-none"
+              className="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:outline-none"
+              style={{'--tw-ring-color': accentColor,} as React.CSSProperties}
             />
             <p className="text-xs text-gray-500 mt-1">
               Kalau tidak memilih file baru, foto lama akan tetap digunakan.
@@ -283,8 +292,8 @@ const EditReport: React.FC<EditReportProps> = ({
           <button
             type="submit"
             disabled={loading}
-            className="px-4 py-2 text-sm font-semibold cursor-pointer rounded-lg text-gray-800 shadow-md hover:opacity-90 transition"
-            style={{ backgroundColor: accentColor }}
+            className="px-4 py-2 text-sm font-semibold cursor-pointer rounded-lg shadow-md hover:opacity-80 transition"
+            style={{ backgroundColor: accentColor, color: textColor }}
             onClick={(e) => {
               // trigger submit manual karena form di atas pakai onSubmit
               const form = (e.currentTarget.closest("div")!

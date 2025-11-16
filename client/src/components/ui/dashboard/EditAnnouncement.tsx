@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useSession } from "next-auth/react";
+import { MdOutlineClose } from "react-icons/md";
 
 interface Announcement {
     id: string;
@@ -45,7 +46,7 @@ const EditAnnouncement: React.FC<EditAnnouncementProps> = ({
     const { data: session } = useSession();
     const role = session?.user?.role || "ADMIN";
     const accentColor = roleColors[role];
-
+    const textColor = role === "ADMIN" ? "#FFFFFF" : "#282828";
     const token = session?.accessToken;
 
     useEffect(() => {
@@ -104,11 +105,15 @@ const EditAnnouncement: React.FC<EditAnnouncementProps> = ({
         <div className="fixed inset-0 z-50 flex items-center justify-center">
             <div className="absolute inset-0 bg-black/50" onClick={onClose} />
 
-            <div className="relative bg-white rounded-xl w-full max-w-2xl mx-4 shadow-lg">
-                <div className="p-6 border-b border-gray-100 flex justify-between items-center">
-                    <h2 className="text-xl font-bold text-gray-800">Edit Pengumuman</h2>
-                    <button onClick={onClose} className="text-gray-400 hover:text-gray-700 transition text-2xl">
-                        &times;
+            <div className="relative bg-white rounded-3xl w-full max-w-2xl mx-4 shadow-lg">
+                <div className="p-6 border-b border-gray-100 flex rounded-t-2xl justify-between items-center"
+                    style={{ backgroundColor: accentColor }}>
+                    <h2 className="text-xl font-bold text-gray-800"
+                    style={{color: textColor}}>Edit Pengumuman</h2>
+                    <button onClick={onClose} 
+                    className="hover:opacity-80 transition text-2xl"
+                    style={{color: textColor}}>
+                    <MdOutlineClose className="w-6 h-6 cursor-pointer" />
                     </button>
                 </div>
 
@@ -165,7 +170,7 @@ const EditAnnouncement: React.FC<EditAnnouncementProps> = ({
                         <button
                             type="button"
                             onClick={onClose}
-                            className="px-4 py-2 text-sm rounded-lg text-gray-700 border border-gray-300 hover:bg-gray-100"
+                            className="px-4 py-2 text-sm rounded-lg text-gray-700 border border-gray-300 hover:bg-gray-100 cursor-pointer"
                         >
                             Batal
                         </button>
@@ -173,8 +178,8 @@ const EditAnnouncement: React.FC<EditAnnouncementProps> = ({
                         <button
                             type="submit"
                             disabled={loading}
-                            className="px-4 py-2 text-sm rounded-lg text-white shadow-md"
-                            style={{ backgroundColor: accentColor }}
+                            className="px-4 py-2 text-sm font-medium rounded-lg hover:opacity-80 text-white transition shadow-md cursor-pointer"
+                            style={{ backgroundColor: accentColor, color: textColor}}
                         >
                             {loading ? "Menyimpan..." : "Simpan Perubahan"}
                         </button>
