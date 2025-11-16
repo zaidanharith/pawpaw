@@ -7,7 +7,8 @@ import {
   DashboardPageTitle, 
   Weather, 
   LiveReport, 
-  Announcement, 
+  Announcement,
+  AnnouncementPage, 
   Profile, 
   ReportPage 
 } from "@/components/ui/dashboard";
@@ -65,7 +66,7 @@ export default function Parent() {
         return (
           <>
             <DashboardPageTitle page={activeMenu} />
-            <Announcement />
+            <AnnouncementPage />
           </>
         );
 
