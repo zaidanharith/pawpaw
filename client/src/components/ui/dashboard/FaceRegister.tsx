@@ -102,7 +102,7 @@ export default function FaceRegister() {
         setMessage(json.message || "Gagal mendaftarkan wajah.");
         console.error("Register face error:", json);
       }
-    } catch (err) {
+    } catch {
       setMessage("Gagal mendaftarkan wajah.");
     }
   };

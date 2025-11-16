@@ -33,7 +33,6 @@ export default function FaceLogin() {
             videoRef.current?.play();
             setMessage("Kamera siap!");
 
-            // Mulai interval deteksi otomatis
             detectInterval = setInterval(async () => {
               if (!videoRef.current) return;
               const detection = await faceapi
@@ -45,7 +44,6 @@ export default function FaceLogin() {
                 setMessage("Wajah terdeteksi, memverifikasi...");
                 clearInterval(detectInterval!);
 
-                // Proses login otomatis
                 const API_URL = process.env.NEXT_PUBLIC_API_URL;
                 try {
                   const descriptor = Array.from(detection.descriptor);
@@ -68,7 +66,7 @@ export default function FaceLogin() {
                   setMessage("Terjadi kesalahan saat login.");
                 }
               }
-            }, 1200); // deteksi setiap 1.2 detik
+            }, 500); 
           };
         } else {
           setMessage("Browser tidak mendukung kamera");
