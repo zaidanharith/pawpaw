@@ -5,7 +5,7 @@ import { signOut, useSession } from "next-auth/react";
 import { FaSignOutAlt, FaTimes} from "react-icons/fa";
 
 interface SidebarProps {
-  menuItems: { name: string; icon: React.ReactNode }[];
+  menuItems: { name: string; urlName: string; icon: React.ReactNode }[];
   isOpen: boolean;
   onClose: () => void;
   activeMenu: string;
@@ -28,8 +28,8 @@ const Sidebar: React.FC<SidebarProps> = ({
   const [isLoggingOut, setIsLoggingOut] = useState(false);
   const { data: session } = useSession();
 
-  const handleClick = (menu: string) => {
-    onSelectMenu(menu);
+  const handleClick = (menuUrl: string) => {
+    onSelectMenu(menuUrl);
     onClose();
   };
 
@@ -43,7 +43,6 @@ const Sidebar: React.FC<SidebarProps> = ({
 
   const role = session?.user?.role || "ADMIN";
   const sidebarBg = roleColors[role] || roleColors.ADMIN;
-
   const baseTextColor = role === "ADMIN" ? "#ffffff" : "#282828";
 
   return (
@@ -65,19 +64,19 @@ const Sidebar: React.FC<SidebarProps> = ({
         <nav className="flex flex-col gap-4">
           {menuItems.map((menu) => (
             <button
-              key={menu.name}
-              onClick={() => handleClick(menu.name)}
+              key={menu.urlName}
+              onClick={() => handleClick(menu.urlName)}
               style={{
-                color: activeMenu === menu.name
+                color: activeMenu === menu.urlName
                   ? "#282828"
                   : baseTextColor,
-                backgroundColor: activeMenu === menu.name
+                backgroundColor: activeMenu === menu.urlName
                   ? "#fff"
                   : "transparent",
                 borderColor: "#fff"
               }}
               className={`flex items-center gap-3 font-semibold rounded-xl py-2 px-3 transition-all duration-200 cursor-pointer text-lg ${
-                activeMenu === menu.name
+                activeMenu === menu.urlName
                   ? "shadow-sm"
                   : "border-2 hover:bg-white hover:text-[#282828]"
               }`}
