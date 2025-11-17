@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { MdOutlineClose } from "react-icons/md";
 import { useSession } from "next-auth/react";
 import api from "@/lib/api";
@@ -40,6 +40,13 @@ const initialForm: AddFormData = {
   meetingReminder: false,
 };
 
+// **Student Interface**
+interface Student {
+  id: string;
+  name: string;
+  studentNumber: string;
+}
+
 const AddQuarterlyReport: React.FC<AddQuarterlyReportProps> = ({
   isOpen,
   onClose,
@@ -47,7 +54,7 @@ const AddQuarterlyReport: React.FC<AddQuarterlyReportProps> = ({
 }) => {
   const [formData, setFormData] = useState<AddFormData>(initialForm);
   const [loading, setLoading] = useState(false);
-  const [students, setStudents] = useState<any[]>([]);
+  const [students, setStudents] = useState<Student[]>([]);
 
   const { data: session } = useSession();
   const token = session?.accessToken;
@@ -56,12 +63,12 @@ const AddQuarterlyReport: React.FC<AddQuarterlyReportProps> = ({
   const accentColor = roleColors[role] || roleColors.ADMIN;
 
   // Fetch students list when modal opens
-  React.useEffect(() => {
+  useEffect(() => {
     if (!isOpen) return;
 
     const fetchStudents = async () => {
       try {
-        const res = await api.get("/student");
+        const res = await api.get<{ data: Student[] }>("/student");
         setStudents(Array.isArray(res.data.data) ? res.data.data : []);
       } catch (error) {
         console.error("Failed to fetch students:", error);
@@ -122,9 +129,25 @@ const AddQuarterlyReport: React.FC<AddQuarterlyReportProps> = ({
       onSave();
       setFormData(initialForm);
       onClose();
-    } catch (error: any) {
-      console.error("ADD REPORT ERROR:", error?.response || error);
-      alert(error?.response?.data?.message || "Gagal menambah laporan triwulan");
+    } catch (error: unknown) {
+      console.error("ADD REPORT ERROR:", error);
+
+      // Type guard untuk error
+      if (error instanceof Error) {
+        alert(error.message);
+      } else if (
+        typeof error === "object" &&
+        error !== null &&
+        "response" in error &&
+        typeof (error as { response?: { data?: { message?: string } } }).response === "object"
+      ) {
+        const msg =
+          (error as { response?: { data?: { message?: string } } }).response?.data
+            ?.message || "Gagal menambah laporan triwulan";
+        alert(msg);
+      } else {
+        alert("Gagal menambah laporan triwulan");
+      }
     } finally {
       setLoading(false);
     }
@@ -179,9 +202,7 @@ const AddQuarterlyReport: React.FC<AddQuarterlyReportProps> = ({
                 onChange={handleChange}
                 required
                 className="w-full border border-gray-300 rounded-md px-3 py-2 bg-white focus:ring-2 focus:outline-none"
-                style={
-                  { "--tw-ring-color": accentColor } as React.CSSProperties
-                }
+                style={{ "--tw-ring-color": accentColor } as React.CSSProperties}
               >
                 <option value="">-- Pilih Siswa --</option>
                 {students.map((student) => (
@@ -207,9 +228,7 @@ const AddQuarterlyReport: React.FC<AddQuarterlyReportProps> = ({
                 onChange={handleChange}
                 required
                 className="w-full border border-gray-300 rounded-md px-3 py-2 bg-white focus:ring-2 focus:outline-none"
-                style={
-                  { "--tw-ring-color": accentColor } as React.CSSProperties
-                }
+                style={{ "--tw-ring-color": accentColor } as React.CSSProperties}
               >
                 {QUARTER_OPTIONS.map((option) => (
                   <option key={option.value} value={option.value}>
@@ -234,9 +253,7 @@ const AddQuarterlyReport: React.FC<AddQuarterlyReportProps> = ({
                 onChange={handleChange}
                 required
                 className="w-full border border-gray-300 rounded-md px-3 py-2 bg-white focus:ring-2 focus:outline-none"
-                style={
-                  { "--tw-ring-color": accentColor } as React.CSSProperties
-                }
+                style={{ "--tw-ring-color": accentColor } as React.CSSProperties}
               >
                 <option value={2024}>2024</option>
                 <option value={2025}>2025</option>
@@ -260,9 +277,7 @@ const AddQuarterlyReport: React.FC<AddQuarterlyReportProps> = ({
                 rows={3}
                 placeholder="Contoh:&#10;- Siswa aktif dalam kegiatan senam&#10;- Partisipasi bagus dalam bermain&#10;- Mau berbagi mainan"
                 className="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:outline-none"
-                style={
-                  { "--tw-ring-color": accentColor } as React.CSSProperties
-                }
+                style={{ "--tw-ring-color": accentColor } as React.CSSProperties}
               />
               <p className="text-xs text-gray-500 mt-1">
                 Setiap baris akan menjadi satu poin aktivitas
@@ -286,9 +301,7 @@ const AddQuarterlyReport: React.FC<AddQuarterlyReportProps> = ({
                 rows={5}
                 placeholder="Tuliskan evaluasi perkembangan siswa secara detail..."
                 className="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:outline-none"
-                style={
-                  { "--tw-ring-color": accentColor } as React.CSSProperties
-                }
+                style={{ "--tw-ring-color": accentColor } as React.CSSProperties}
               />
             </div>
 
@@ -312,7 +325,7 @@ const AddQuarterlyReport: React.FC<AddQuarterlyReportProps> = ({
           </form>
         </div>
 
-        {/* FOOTER: tombol di luar area scroll */}
+        {/* FOOTER */}
         <div className="px-6 pb-4 pt-2 flex justify-end gap-3 border-t border-gray-100">
           <button
             type="button"

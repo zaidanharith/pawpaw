@@ -19,6 +19,8 @@ import {
   RecentMessage
 } from "@/components/ui/dashboard";
 
+import QuarterlyReportPage from "@/components/ui/dashboard/QuarterlyReportPage"; // import QuarterlyReportPage
+
 import { 
   FaTachometerAlt, 
   FaClipboardList, 
@@ -38,6 +40,7 @@ export default function Parent({ activePage = "" }: ParentProps) {
   const menuItems = [
     { name: "Dashboard", urlName: "", icon: <FaTachometerAlt size={24} /> },
     { name: "Laporan Kegiatan", urlName: "report", icon: <FaClipboardList size={24} /> },
+    { name: "Laporan Triwulan", urlName: "quarterly", icon: <FaClipboardList size={24} /> }, // Tambah menu Quarterly
     { name: "Pengumuman", urlName: "announcement", icon: <FaBullhorn size={24} /> },
     { name: "Chat Guru", urlName: "chat", icon: <FaComments size={24} /> },
     { name: "Profil", urlName: "profile", icon: <FaUserCog size={24} /> },
@@ -62,13 +65,8 @@ export default function Parent({ activePage = "" }: ParentProps) {
         return (
           <>
             <DashboardPageTitle page="Dashboard" />
-
-            {/* Mirip Teacher: Weather di atas */}
             <Weather />
-
-            {/* Parent-only section */}
             <RecentMessage />
-
             <Announcement />
             <LiveReport />
           </>
@@ -79,6 +77,14 @@ export default function Parent({ activePage = "" }: ParentProps) {
           <>
             <DashboardPageTitle page="Laporan Kegiatan" />
             <ReportPage />
+          </>
+        );
+
+      case "quarterly":
+        return (
+          <>
+            <DashboardPageTitle page="Laporan Triwulan" />
+            <QuarterlyReportPage /> {/* Parent bisa melihat QuarterlyReport */}
           </>
         );
 

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { MdOutlineClose } from "react-icons/md";
 import { useSession } from "next-auth/react";
 import api from "@/lib/api";
+import { AxiosError } from "axios";
 
 interface QuarterlyReport {
   id: string;
@@ -67,7 +68,6 @@ const EditQuarterlyReport: React.FC<EditQuarterlyReportProps> = ({
   const textColor = role === "ADMIN" ? "#FFFFFF" : "#3d3006";
   const accentColor = roleColors[role] || roleColors.ADMIN;
 
-  // Set form data when reportData changes
   useEffect(() => {
     if (!reportData) return;
 
@@ -81,9 +81,7 @@ const EditQuarterlyReport: React.FC<EditQuarterlyReportProps> = ({
   }, [reportData, isOpen]);
 
   const handleChange = (
-    e: React.ChangeEvent<
-      HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
-    >
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
   ) => {
     const { name, value, type } = e.target;
 
@@ -133,9 +131,17 @@ const EditQuarterlyReport: React.FC<EditQuarterlyReportProps> = ({
 
       onSave();
       onClose();
-    } catch (error: any) {
-      console.error("EDIT REPORT ERROR:", error?.response || error);
-      alert(error?.response?.data?.message || "Gagal memperbarui laporan triwulan");
+    } catch (error: unknown) {
+      let message = "Gagal memperbarui laporan triwulan";
+
+      if (error instanceof AxiosError) {
+        message = error.response?.data?.message || message;
+      } else if (error instanceof Error) {
+        message = error.message;
+      }
+
+      console.error("EDIT REPORT ERROR:", error);
+      alert(message);
     } finally {
       setLoading(false);
     }
@@ -148,7 +154,7 @@ const EditQuarterlyReport: React.FC<EditQuarterlyReportProps> = ({
       {/* BACKDROP */}
       <div className="absolute inset-0 bg-black/50" onClick={onClose} />
 
-      {/* CARD: MAX HEIGHT + SCROLL DI DALAM */}
+      {/* CARD */}
       <div className="relative bg-white rounded-2xl w-full max-w-2xl mx-4 shadow-xl overflow-hidden flex flex-col max-h-[90vh]">
         {/* HEADER */}
         <div
@@ -172,9 +178,8 @@ const EditQuarterlyReport: React.FC<EditQuarterlyReportProps> = ({
           </button>
         </div>
 
-        {/* BODY FORM: SCROLLABLE */}
+        {/* BODY FORM */}
         <div className="flex-1 overflow-y-auto p-6 space-y-4">
-          {/* Student Info (Read-Only) */}
           <div className="bg-gray-50 border border-gray-200 rounded-lg p-4 space-y-2">
             <p className="text-xs font-medium text-gray-600 uppercase tracking-wide">
               Siswa
@@ -188,7 +193,7 @@ const EditQuarterlyReport: React.FC<EditQuarterlyReportProps> = ({
           </div>
 
           <form id="edit-quarterly-form" onSubmit={handleSubmit} className="space-y-4">
-            {/* Quarter Select */}
+            {/* Quarter */}
             <div>
               <label
                 htmlFor="quarter"
@@ -203,9 +208,7 @@ const EditQuarterlyReport: React.FC<EditQuarterlyReportProps> = ({
                 onChange={handleChange}
                 required
                 className="w-full border border-gray-300 rounded-md px-3 py-2 bg-white focus:ring-2 focus:outline-none"
-                style={
-                  { "--tw-ring-color": accentColor } as React.CSSProperties
-                }
+                style={{ "--tw-ring-color": accentColor } as React.CSSProperties}
               >
                 {QUARTER_OPTIONS.map((option) => (
                   <option key={option.value} value={option.value}>
@@ -215,7 +218,7 @@ const EditQuarterlyReport: React.FC<EditQuarterlyReportProps> = ({
               </select>
             </div>
 
-            {/* Year Select */}
+            {/* Year */}
             <div>
               <label
                 htmlFor="year"
@@ -230,9 +233,7 @@ const EditQuarterlyReport: React.FC<EditQuarterlyReportProps> = ({
                 onChange={handleChange}
                 required
                 className="w-full border border-gray-300 rounded-md px-3 py-2 bg-white focus:ring-2 focus:outline-none"
-                style={
-                  { "--tw-ring-color": accentColor } as React.CSSProperties
-                }
+                style={{ "--tw-ring-color": accentColor } as React.CSSProperties}
               >
                 <option value={2024}>2024</option>
                 <option value={2025}>2025</option>
@@ -256,9 +257,7 @@ const EditQuarterlyReport: React.FC<EditQuarterlyReportProps> = ({
                 rows={3}
                 placeholder="Contoh:&#10;- Siswa aktif dalam kegiatan senam&#10;- Partisipasi bagus dalam bermain"
                 className="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:outline-none"
-                style={
-                  { "--tw-ring-color": accentColor } as React.CSSProperties
-                }
+                style={{ "--tw-ring-color": accentColor } as React.CSSProperties}
               />
               <p className="text-xs text-gray-500 mt-1">
                 Setiap baris akan menjadi satu poin aktivitas
@@ -282,13 +281,11 @@ const EditQuarterlyReport: React.FC<EditQuarterlyReportProps> = ({
                 rows={5}
                 placeholder="Tuliskan evaluasi perkembangan siswa secara detail..."
                 className="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:outline-none"
-                style={
-                  { "--tw-ring-color": accentColor } as React.CSSProperties
-                }
+                style={{ "--tw-ring-color": accentColor } as React.CSSProperties}
               />
             </div>
 
-            {/* Meeting Reminder Checkbox */}
+            {/* Meeting Reminder */}
             <div className="flex items-center gap-3 p-3 bg-amber-50 border border-amber-200 rounded-lg">
               <input
                 type="checkbox"

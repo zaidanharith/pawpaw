@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useEffect, useState } from "react";
 import { FaEdit, FaClock } from "react-icons/fa";
 import { MdEdit, MdDelete } from "react-icons/md";
@@ -5,9 +7,9 @@ import { useSession } from "next-auth/react";
 import axios from "axios";
 import AddQuarterlyReport from "./AddQuarterlyReport";
 import EditQuarterlyReport from "./EditQuarterlyReport";
-import DetailQuarterlyReport from "./DetailQuarterlyRepost";
+import DetailQuarterlyReport from "./DetailQuarterlyReport";
 
-interface QuarterlyReport {
+export interface QuarterlyReport {
   id: string;
   studentName: string;
   studentNumber: string;
@@ -18,6 +20,7 @@ interface QuarterlyReport {
   notes: string;
   activitiesSummary: string[];
   meetingReminder: boolean;
+  attendance?: { hadir: number; sakit: number; izin: number; alpha: number };
   createdAt?: string;
   updatedAt?: string;
 }
@@ -31,13 +34,10 @@ const roleColors: Record<string, string> = {
 const QuarterlyReportPage: React.FC = () => {
   const { data: session } = useSession();
   const token = session?.accessToken;
-
-  // FIX: UPPERCASE ROLE (SANGAT PENTING)
   const role = (session?.user?.role || "ADMIN").toUpperCase();
 
   const accentColor = roleColors[role] || roleColors.ADMIN;
   const textColor = role === "ADMIN" ? "#FFFFFF" : "#3d3006";
-
   const isParent = role === "PARENT";
 
   const [allReports, setAllReports] = useState<QuarterlyReport[]>([]);
@@ -46,11 +46,15 @@ const QuarterlyReportPage: React.FC = () => {
   const [filterQuarter, setFilterQuarter] = useState("");
   const [filterYear, setFilterYear] = useState(new Date().getFullYear());
 
-  // Fetch quarterly reports
+  const [isEditReportOpen, setIsEditReportOpen] = useState(false);
+  const [editReportData, setEditReportData] = useState<QuarterlyReport | null>(null);
+
+  const [detailReport, setDetailReport] = useState<QuarterlyReport | null>(null);
+
+  // Fetch reports
   useEffect(() => {
     const fetchReports = async () => {
       if (!token) return;
-
       setLoading(true);
       try {
         const API_URL = process.env.NEXT_PUBLIC_API_URL;
@@ -61,14 +65,12 @@ const QuarterlyReportPage: React.FC = () => {
             year: filterYear || undefined,
           },
         });
-
         setAllReports(Array.isArray(res.data.data) ? res.data.data : []);
       } catch {
         setAllReports([]);
       }
       setLoading(false);
     };
-
     fetchReports();
   }, [token, filterQuarter, filterYear]);
 
@@ -82,17 +84,11 @@ const QuarterlyReportPage: React.FC = () => {
           year: filterYear || undefined,
         },
       });
-
-      if (Array.isArray(res.data.data)) {
-        setAllReports(res.data.data);
-      }
+      setAllReports(Array.isArray(res.data.data) ? res.data.data : []);
     } catch {
       alert("Gagal refresh data laporan triwulan");
     }
   };
-
-  const [isEditReportOpen, setIsEditReportOpen] = useState(false);
-  const [editReportData, setEditReportData] = useState<QuarterlyReport | null>(null);
 
   const handleSaveNewReport = async () => {
     await handleRefreshReports();
@@ -112,27 +108,20 @@ const QuarterlyReportPage: React.FC = () => {
 
   const handleDeleteReport = async (id: string) => {
     if (!confirm("Apakah Anda yakin ingin menghapus laporan triwulan ini?")) return;
-
     try {
       const API_URL = process.env.NEXT_PUBLIC_API_URL;
-
       await axios.delete(`${API_URL}/quarterly-reports/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
-
       await handleRefreshReports();
     } catch {
       alert("Gagal menghapus laporan triwulan");
     }
   };
 
-  // Date formatting utilities
   const today = new Date();
   const dayNames = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
-  const monthNames = [
-    "Januari", "Februari", "Maret", "April", "Mei", "Juni",
-    "Juli", "Agustus", "September", "Oktober", "November", "Desember"
-  ];
+  const monthNames = ["Januari","Februari","Maret","April","Mei","Juni","Juli","Agustus","September","Oktober","November","Desember"];
   const dayName = dayNames[today.getDay()];
   const dateString = `${today.getDate()} ${monthNames[today.getMonth()]} ${today.getFullYear()}`;
 
@@ -144,7 +133,6 @@ const QuarterlyReportPage: React.FC = () => {
     const diffMins = Math.floor(diffMs / 60000);
     const diffHours = Math.floor(diffMins / 60);
     const diffDays = Math.floor(diffHours / 24);
-
     if (diffMins < 1) return "Baru saja";
     if (diffMins < 60) return `${diffMins} menit yang lalu`;
     if (diffHours < 24) return `${diffHours} jam yang lalu`;
@@ -154,63 +142,50 @@ const QuarterlyReportPage: React.FC = () => {
   const formatDateTime = (dateString?: string) => {
     if (!dateString) return "- | -";
     const date = new Date(dateString);
-    const time = date.toLocaleTimeString("id-ID", {
-      hour: "2-digit",
-      minute: "2-digit",
-    });
-    const dateStr = date.toLocaleDateString("id-ID", {
-      day: "numeric",
-      month: "short",
-      year: "2-digit",
-    });
+    const time = date.toLocaleTimeString("id-ID",{ hour: "2-digit", minute: "2-digit" });
+    const dateStr = date.toLocaleDateString("id-ID",{ day: "numeric", month: "short", year: "2-digit" });
     return `${time} | ${dateStr}`;
   };
-
-  const [detailReport, setDetailReport] = useState<QuarterlyReport | null>(null);
 
   return (
     <>
       {/* HEADER */}
-      <section>
-        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+      <section className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <div
+          className="flex flex-row items-center gap-2 px-4 bg-white rounded-xl w-full sm:w-auto border"
+          style={{ borderColor: accentColor }}
+        >
           <div
-            className="flex flex-row items-center gap-2 px-4 bg-white rounded-xl w-full sm:w-auto border"
-            style={{ borderColor: accentColor }}
+            className="rounded-xl px-3 py-2 my-2 flex flex-col items-center"
+            style={{ backgroundColor: accentColor, color: textColor }}
           >
-            <div
-              className="rounded-xl px-3 py-2 my-2 flex flex-col items-center"
-              style={{ backgroundColor: accentColor, color: textColor }}
-            >
-              <h3 className="font-semibold text-md">{dayName}</h3>
-              <h4 className="font-normal text-sm">{dateString}</h4>
-            </div>
-
-            <div className="text-gray-800 px-3 py-2 flex flex-col items-center">
-              <h3 className="font-semibold text-sm">Total Laporan Triwulan</h3>
-              <h4 className="font-bold text-3xl">{allReports.length}</h4>
-            </div>
+            <h3 className="font-semibold text-md">{dayName}</h3>
+            <h4 className="font-normal text-sm">{dateString}</h4>
           </div>
 
-          {!isParent && (
-            <button
-              onClick={() => setIsAddReportOpen(true)}
-              className="w-full sm:w-auto flex items-center justify-center gap-2 px-4 py-3 cursor-pointer rounded-xl text-sm md:text-base font-semibold hover:opacity-80 transition"
-              style={{ backgroundColor: accentColor, color: textColor }}
-            >
-              <FaEdit /> Buat Laporan Triwulan
-            </button>
-          )}
+          <div className="text-gray-800 px-3 py-2 flex flex-col items-center">
+            <h3 className="font-semibold text-sm">Total Laporan Triwulan</h3>
+            <h4 className="font-bold text-3xl">{allReports.length}</h4>
+          </div>
         </div>
+
+        {!isParent && (
+          <button
+            onClick={() => setIsAddReportOpen(true)}
+            className="w-full sm:w-auto flex items-center justify-center gap-2 px-4 py-3 cursor-pointer rounded-xl text-sm md:text-base font-semibold hover:opacity-80 transition"
+            style={{ backgroundColor: accentColor, color: textColor }}
+          >
+            <FaEdit /> Buat Laporan Triwulan
+          </button>
+        )}
       </section>
 
       {/* FILTER */}
-      <section className="bg-white border rounded-xl p-4 space-y-3"
+      <section className="bg-white border rounded-xl p-4 space-y-3 mt-4"
         style={{ borderColor: accentColor }}>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Filter Kuartal
-            </label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Filter Kuartal</label>
             <select
               value={filterQuarter}
               onChange={(e) => setFilterQuarter(e.target.value)}
@@ -225,9 +200,7 @@ const QuarterlyReportPage: React.FC = () => {
             </select>
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Filter Tahun
-            </label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Filter Tahun</label>
             <select
               value={filterYear}
               onChange={(e) => setFilterYear(Number(e.target.value))}
@@ -256,11 +229,9 @@ const QuarterlyReportPage: React.FC = () => {
           </div>
         ) : (
           allReports.map((report) => (
-            <div
-              key={report.id}
-              className="border rounded-xl p-5 shadow-sm bg-white flex flex-col gap-3"
-              style={{ borderColor: accentColor }}
-            >
+            <div key={report.id} className="border rounded-xl p-5 shadow-sm bg-white flex flex-col gap-3"
+              style={{ borderColor: accentColor }}>
+              
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2 text-gray-500 text-sm">
                   <span><FaClock /></span>
@@ -287,21 +258,20 @@ const QuarterlyReportPage: React.FC = () => {
               </div>
 
               <div>
-                <h2 className="text-xl font-bold text-gray-900">
-                  {report.studentName}
-                </h2>
-                <p className="text-sm text-gray-600">
-                  {report.className} | {report.quarter} {report.year}
-                </p>
+                <h2 className="text-xl font-bold text-gray-900">{report.studentName}</h2>
+                <p className="text-sm text-gray-600">{report.className} | {report.quarter} {report.year}</p>
               </div>
 
               <p className="text-sm text-gray-700">{report.notes}</p>
 
-              <div className="flex gap-2 flex-wrap">
-                <span
-                  className="px-3 py-1 rounded-full text-xs font-semibold"
-                  style={{ backgroundColor: accentColor, color: textColor }}
-                >
+              {report.attendance && (
+                <div className="text-sm text-gray-700">
+                  <strong>Rekap Kehadiran:</strong> H: {report.attendance.hadir}, S: {report.attendance.sakit}, I: {report.attendance.izin}, A: {report.attendance.alpha}
+                </div>
+              )}
+
+              <div className="flex gap-2 flex-wrap mt-2">
+                <span className="px-3 py-1 rounded-full text-xs font-semibold" style={{ backgroundColor: accentColor, color: textColor }}>
                   Guru: {report.teacherName}
                 </span>
                 {report.meetingReminder && (
@@ -311,9 +281,7 @@ const QuarterlyReportPage: React.FC = () => {
                 )}
               </div>
 
-              <p className="text-xs text-gray-500 font-medium">
-                {formatDateTime(report.createdAt)}
-              </p>
+              <p className="text-xs text-gray-500 font-medium">{formatDateTime(report.createdAt)}</p>
 
               <button
                 onClick={() => setDetailReport(report)}
@@ -338,10 +306,7 @@ const QuarterlyReportPage: React.FC = () => {
 
           <EditQuarterlyReport
             isOpen={isEditReportOpen}
-            onClose={() => {
-              setIsEditReportOpen(false);
-              setEditReportData(null);
-            }}
+            onClose={() => { setIsEditReportOpen(false); setEditReportData(null); }}
             reportData={editReportData}
             onSave={handleSaveEditReport}
           />
@@ -356,14 +321,8 @@ const QuarterlyReportPage: React.FC = () => {
           accentColor={accentColor}
           textColor={textColor}
           isParent={isParent}
-          onEdit={() => {
-            handleEditReport(detailReport);
-            setDetailReport(null);
-          }}
-          onDelete={() => {
-            handleDeleteReport(detailReport.id);
-            setDetailReport(null);
-          }}
+          onEdit={!isParent ? () => handleEditReport(detailReport) : undefined}
+          onDelete={!isParent ? () => handleDeleteReport(detailReport.id) : undefined}
         />
       )}
     </>
