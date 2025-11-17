@@ -137,7 +137,10 @@ const LiveReport: React.FC = () => {
                                     </p>
                                     {report.description && (
                                         <p className="text-xs text-gray-400 truncate mt-1">
-                                            {report.description}
+                                    {report.description.length > 60 
+                                        ? `${report.description.substring(0, 60)}...` 
+                                        : report.description
+                                    }
                                         </p>
                                     )}
                                 </div>
