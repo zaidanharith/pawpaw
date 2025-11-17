@@ -46,14 +46,15 @@ const Sidebar: React.FC<SidebarProps> = ({
   const baseTextColor = role === "ADMIN" ? "#ffffff" : "#282828";
 
   return (
-    <div className={`font-sans fixed inset-0 z-100 transition-all duration-300 min-h-screen overflow-y-scroll ${isOpen ? "visible opacity-100" : "invisible opacity-0"}`}>
+    <div className={`font-sans fixed inset-0 z-100 transition-all duration-300 ${isOpen ? "visible opacity-100" : "invisible opacity-0"}`}>
       <div
         className={`absolute inset-0 bg-black bg-opacity-50 transition-all duration-800 ${isOpen ? "opacity-100" : "opacity-0"}`}
         onClick={onClose}
       />
       <aside
-        className={`fixed inset-0 shadow-2xl flex flex-col p-8 transition-all duration-800 ease-in-out ${isOpen ? "translate-y-0" : "-translate-y-full"}`}
+        className={`absolute inset-0 shadow-2xl flex flex-col p-8 transition-all duration-800 ease-in-out ${isOpen ? "translate-y-0" : "-translate-y-full"} h-full overflow-y-auto`}
         style={{ backgroundColor: sidebarBg }}
+        onClick={(e) => e.stopPropagation()}
       >
         <div className="flex items-center justify-between mb-8">
           <span className="text-2xl font-bold" style={{ color: baseTextColor }}>Menu {role.toLowerCase().replace(/^\w/, (c) => c.toUpperCase())}</span>
@@ -89,7 +90,7 @@ const Sidebar: React.FC<SidebarProps> = ({
         <button
           onClick={handleLogout}
           disabled={isLoggingOut}
-          className={`mt-8 w-full py-3 px-4 font-semibold rounded-lg shadow transition cursor-pointer flex items-center justify-center gap-2 ${
+          className={`mt-8 mb-2 w-full py-3 px-4 font-semibold rounded-lg shadow transition cursor-pointer flex items-center justify-center gap-2 ${
             isLoggingOut
               ? "bg-gray-400 text-gray-100 cursor-not-allowed"
               : "bg-red-500 hover:bg-red-600 text-white"

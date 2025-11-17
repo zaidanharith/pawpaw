@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from "react";
 import { FaEdit, FaClock } from "react-icons/fa";
 import { useSession } from "next-auth/react";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import AddReport from "./AddReport";
 import ReportDetail from "./DetailReport";
 import EditReport from "./EditReport";
@@ -84,7 +84,7 @@ const ReportPage: React.FC = () => {
     return () => clearTimeout(t);
   }, [toast]);
 
-  // Fetch reports from API
+  
   useEffect(() => {
     const fetchReports = async () => {
       if (!token) return;
@@ -101,7 +101,9 @@ const ReportPage: React.FC = () => {
         } else {
           setAllReports([]);
         }
-      } catch {
+      } catch (error) {
+        const err = error as AxiosError;
+        console.error("Fetch reports error:", err.response || err);
         setAllReports([]);
       }
       setLoading(false);
@@ -109,7 +111,7 @@ const ReportPage: React.FC = () => {
     fetchReports();
   }, [token]);
 
-  // Refresh reports after add/edit/delete
+  
   const handleRefreshReports = async () => {
     if (!token) return;
     try {
@@ -120,7 +122,9 @@ const ReportPage: React.FC = () => {
       if (res.data.success && Array.isArray(res.data.data)) {
         setAllReports(res.data.data);
       }
-    } catch {
+    } catch (error) {
+      const err = error as AxiosError;
+      console.error("Refresh reports error:", err.response || err);
       showToast("error", "Gagal refresh data laporan");
     }
   };
@@ -136,12 +140,12 @@ const ReportPage: React.FC = () => {
     setIsDetailOpen(true);
   };
 
-  // === DIPANGGIL SAAT KLIK EDIT DI MODAL DETAIL ===
+  
   const handleEditFromDetail = () => {
     if (!selectedReport) return;
-    setEditReportData(selectedReport); // isi data untuk form edit
-    setIsDetailOpen(false);           // tutup modal detail
-    setIsEditReportOpen(true);        // buka modal edit
+    setEditReportData(selectedReport); 
+    setIsDetailOpen(false); 
+    setIsEditReportOpen(true); 
   };
 
   const handleDeleteReport = async (id: string) => {
@@ -157,11 +161,12 @@ const ReportPage: React.FC = () => {
       setIsDetailOpen(false);
       setSelectedReport(null);
       showToast("success", "Laporan berhasil dihapus");
-    } catch (error: any) {
-      console.error("Delete report error:", error?.response || error);
+    } catch (error) {
+      const err = error as AxiosError<{ message: string }>;
+      console.error("Delete report error:", err.response || err);
       showToast(
         "error",
-        error?.response?.data?.message || "Gagal menghapus laporan"
+        err.response?.data?.message || "Gagal menghapus laporan"
       );
     }
   };
@@ -173,7 +178,7 @@ const ReportPage: React.FC = () => {
     showToast("success", "Laporan berhasil diperbarui");
   };
 
-  // Get today's date info
+  
   const today = new Date();
   const dayNames = [
     "Minggu",
@@ -203,14 +208,14 @@ const ReportPage: React.FC = () => {
     monthNames[today.getMonth()]
   } ${today.getFullYear()}`;
 
-  // Count today's reports
+  
   const todayReportsCount = allReports.filter((report) => {
     if (!report.date) return false;
     const reportDate = new Date(report.date);
     return reportDate.toDateString() === today.toDateString();
   }).length;
 
-  // Format relative time
+
   const getRelativeTime = (dateString?: string) => {
     if (!dateString) return "Baru saja";
     const date = new Date(dateString);
@@ -226,7 +231,7 @@ const ReportPage: React.FC = () => {
     return `${diffDays} hari yang lalu`;
   };
 
-  // Format date and time
+
   const formatDateTime = (dateString?: string) => {
     if (!dateString) return "- | -";
     const date = new Date(dateString);
@@ -310,7 +315,9 @@ const ReportPage: React.FC = () => {
                   {/* Waktu relatif */}
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2 text-gray-500 text-sm">
-                      <span><FaClock/></span>
+                      <span>
+                        <FaClock />
+                      </span>
                       <span>
                         {getRelativeTime(report.date || report.createdAt)}
                       </span>

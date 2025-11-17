@@ -16,6 +16,7 @@ import {
   AnnouncementPage,
   MenuNotFound,
   PreviewChat,
+  QuarterlyReportPage,
 } from "@/components/ui/dashboard";
 
 import { 
@@ -40,10 +41,11 @@ export default function Teacher({ activePage = "" }: TeacherProps) {
     { name: "Dashboard", urlName: "", icon: <FaTachometerAlt size={24} /> },
     { name: "Siswa", urlName: "student", icon: <FaUsers size={24} /> },
     { name: "Laporan Kegiatan", urlName: "report", icon: <FaClipboardList size={24} /> },
+    { name: "Laporan Triwulan", urlName: "quarterly-report", icon: <FaClipboardList size={24} /> },
     { name: "Pengumuman", urlName: "announcement", icon: <FaBullhorn size={24} /> },
     { name: "Chat Orang Tua Murid", urlName: "chat", icon: <FaComments size={24} /> },
     { name: "Profil", urlName: "profile", icon: <FaUserCog size={24} /> },
-    { name: "Face Recognition", urlName: "face-recognition", icon: <FaRegSmile size={24} /> },
+    { name: "Registrasi Wajah", urlName: "face-registration", icon: <FaRegSmile size={24} /> },
   ];
 
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -84,6 +86,13 @@ export default function Teacher({ activePage = "" }: TeacherProps) {
             <ReportPage />
           </>
         );
+      case "quarterly-report":
+        return (
+          <>
+            <DashboardPageTitle page="Laporan Triwulan" />
+            <QuarterlyReportPage />
+          </>
+        );
       case "announcement":
         return (
           <>
@@ -105,10 +114,10 @@ export default function Teacher({ activePage = "" }: TeacherProps) {
             <Profile />
           </>
         );
-      case "face-recognition":
+      case "face-registration":
         return (
           <>
-            <DashboardPageTitle page="Face Recognition" />
+            <DashboardPageTitle page="Registrasi Wajah" />
             <FaceRegister />
           </>
         );

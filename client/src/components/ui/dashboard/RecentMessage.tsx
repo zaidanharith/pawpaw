@@ -30,22 +30,22 @@ export default function RecentMessages({ onViewAll }: RecentMessagesProps) {
   ];
 
   return (
-    <div className="bg-yellow-50 border-2 border-yellow-200 rounded-lg p-6">
+    <div className="bg-white rounded-lg p-6">
       <h3 className="font-bold text-lg text-gray-900 mb-4">Pesan</h3>
 
       <div className="space-y-3 mb-4">
         {messages.map((message) => (
           <div
             key={message.id}
-            className="bg-white border border-gray-200 rounded-lg p-4 flex items-start gap-3"
+            className="bg-white border border-teal-500 rounded-lg p-4 flex items-start gap-3 hover:border-teal-300 transition-colors cursor-pointer"
           >
             <FiMessageSquare
               size={24}
-              className="text-yellow-600 mt-1 shrink-0"
+              className="text-teal-600"
             />
-            <div className="flex-1">
-              <p className="font-semibold text-gray-900">{message.title}</p>
-              <p className="text-sm text-gray-500">{message.date}</p>
+            <div className="flex-1 min-w-0">
+              <p className="font-semibold text-gray-900 text-base mb-1">{message.title}</p>
+              <p className="text-sm text-gray-600 truncate">{message.date}</p>
             </div>
           </div>
         ))}
@@ -53,7 +53,7 @@ export default function RecentMessages({ onViewAll }: RecentMessagesProps) {
 
       <button
         onClick={onViewAll}
-        className="w-full bg-teal-500 hover:bg-teal-600 text-white font-semibold py-2 px-4 rounded-lg transition-colors"
+        className="w-full bg-teal-500 hover:bg-teal-600 text-white font-semibold py-2 px-4 rounded-xl transition"
       >
         Lihat Semuanya
       </button>

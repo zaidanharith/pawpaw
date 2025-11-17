@@ -112,7 +112,7 @@ const Announcement: React.FC<AnnouncementProps> = ({ onNavigateToAnnouncement })
                             style={{ borderColor: accentColor, backgroundColor: "#fff" }}
                         >
                             <div
-                                className="p-2 rounded-lg font-bold text-lg flex items-center justify-center min-w-[40px]"
+                                className="p-2 rounded-lg font-bold text-lg flex items-center justify-center min-w-10"
                                 style={{ backgroundColor: accentColor, color: textColor }}
                             >
                                 {getIcon(item.title, item.content)}

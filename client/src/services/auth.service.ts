@@ -1,6 +1,9 @@
 import axios, { AxiosError } from "axios";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL;
+// Get API URL - works on both client and server
+const getApiUrl = () => {
+  return process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000/api";
+};
 
 export interface LoginCredentials {
   username: string;
@@ -56,7 +59,7 @@ interface ErrorResponse {
 export const authService = {
   async login(credentials: LoginCredentials): Promise<AuthResponse> {
     try {
-      const response = await axios.post(`${API_URL}/auth/login`, credentials);
+      const response = await axios.post(`${getApiUrl()}/auth/login`, credentials);
       return response.data;
     } catch (error) {
       console.error("Login service error:", error);
@@ -75,7 +78,7 @@ export const authService = {
 
   async register(data: RegisterData): Promise<AuthResponse> {
     try {
-      const response = await axios.post(`${API_URL}/auth/register`, data);
+      const response = await axios.post(`${getApiUrl()}/auth/register`, data);
       return response.data;
     } catch (error) {
       console.error("Register service error:", error);
@@ -91,7 +94,7 @@ export const authService = {
 
   async googleAuth(data: GoogleAuthData): Promise<AuthResponse> {
     try {
-      const response = await axios.post(`${API_URL}/auth/google`, data);
+      const response = await axios.post(`${getApiUrl()}/auth/google`, data);
       return response.data;
     } catch (error) {
       console.error("Google auth service error:", error);
@@ -109,7 +112,7 @@ export const authService = {
 
   async verifyGoogleToken(token: string): Promise<GoogleAuthData & { sub: string }> {
     try {
-      const response = await axios.post(`${API_URL}/auth/google/verify`, { token });
+      const response = await axios.post(`${getApiUrl()}/auth/google/verify`, { token });
       return response.data;
     } catch (error) {
       console.error("Google token verification error:", error);
@@ -121,7 +124,7 @@ export const authService = {
   async logout(token: string): Promise<{ success: boolean; message: string }> {
     try {
       const response = await axios.post(
-        `${API_URL}/auth/logout`,
+        `${getApiUrl()}/auth/logout`,
         {},
         {
           headers: {
@@ -139,7 +142,7 @@ export const authService = {
 
   async getProfile(token: string): Promise<AuthResponse["user"]> {
     try {
-      const response = await axios.get(`${API_URL}/auth/profile`, {
+      const response = await axios.get(`${getApiUrl()}/auth/profile`, {
         headers: {
           Authorization: `Bearer ${token}`
         }
@@ -155,7 +158,7 @@ export const authService = {
   async resetPassword(username: string, newPassword: string, token?: string): Promise<{ success: boolean; message: string }> {
     try {
       const response = await axios.post(
-        `${API_URL}/auth/reset-password`,
+        `${getApiUrl()}/auth/reset-password`,
         { username, newPassword },
         token
           ? {
@@ -175,7 +178,7 @@ export const authService = {
 
   async verifyFaceToken(faceToken: string): Promise<AuthResponse> {
     try {
-      const response = await axios.post(`${API_URL}/auth/verify-face-token`, { faceToken });
+      const response = await axios.post(`${getApiUrl()}/auth/verify-face-token`, { faceToken });
       return response.data;
     } catch (error) {
       console.error("Verify face token service error:", error);
