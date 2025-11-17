@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Navbar from "@/components/layout/Navbar";
 import Sidebar from "@/components/layout/Sidebar";
+
 import { 
   DashboardPageTitle, 
   Weather, 
@@ -26,7 +27,6 @@ import {
   FaRegSmile, 
   FaComments 
 } from "react-icons/fa";
-
 
 interface ParentProps {
   activePage?: string;
@@ -62,12 +62,18 @@ export default function Parent({ activePage = "" }: ParentProps) {
         return (
           <>
             <DashboardPageTitle page="Dashboard" />
-            <RecentMessage />
+
+            {/* Mirip Teacher: Weather di atas */}
             <Weather />
+
+            {/* Parent-only section */}
+            <RecentMessage />
+
             <Announcement />
             <LiveReport />
           </>
         );
+
       case "report":
         return (
           <>
@@ -75,6 +81,7 @@ export default function Parent({ activePage = "" }: ParentProps) {
             <ReportPage />
           </>
         );
+
       case "announcement":
         return (
           <>
@@ -82,14 +89,15 @@ export default function Parent({ activePage = "" }: ParentProps) {
             <AnnouncementPage />
           </>
         );
+
       case "chat":
         return (
           <>
-
             <DashboardPageTitle page="Chat Guru" />
             <PreviewChat />
           </>
         );
+
       case "profile":
         return (
           <>
@@ -97,6 +105,7 @@ export default function Parent({ activePage = "" }: ParentProps) {
             <Profile />
           </>
         );
+
       case "face-registration":
         return (
           <>
@@ -104,6 +113,7 @@ export default function Parent({ activePage = "" }: ParentProps) {
             <FaceRegister />
           </>
         );
+
       default:
         return <MenuNotFound page={activeMenu} />;
     }
@@ -112,6 +122,7 @@ export default function Parent({ activePage = "" }: ParentProps) {
   return (
     <section className="w-full flex flex-col gap-4 my-5">
       <Navbar setIsSidebarOpen={() => setIsSidebarOpen(true)} />
+
       <Sidebar
         menuItems={menuItems}
         isOpen={isSidebarOpen}
@@ -119,6 +130,7 @@ export default function Parent({ activePage = "" }: ParentProps) {
         activeMenu={activeMenu}
         onSelectMenu={handleSelectMenu}
       />
+
       {renderContent()}
     </section>
   );
