@@ -21,7 +21,8 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="id" className="scroll-smooth">
-      <body className={`${inter.variable} antialiased`}>
+      <body {...(process.env.NODE_ENV === 'development' ? { suppressHydrationWarning: true } : {})}
+        className={`${inter.variable} antialiased`}>
         <SessionProvider>
           <div className="min-h-screen flex flex-col">
             <main className="pt-24 font-sans flex-1">

@@ -19,8 +19,8 @@ export default function Home() {
           </div>
         </section>
         <section id="feature" className="w-full my-5 px-4 py-7 bg-(--color-yellow-light)">
-          <p className='text-center'>Beberapa hal yang Anda butuhkan untuk mendampingi perjalanan belajar anak.</p>
-          <div className='my-7'>
+          <p className='text-center max-w-7xl mx-auto'>Beberapa hal yang Anda butuhkan untuk mendampingi perjalanan belajar anak.</p>
+          <div className='my-7 max-w-7xl mx-auto flex flex-col md:flex-row gap-5 justify-center'>
             <FeatureCard
               title="Live Report"
               description="Guru mengirimkan laporan kegiatan harian siswa lengkap dengan foto atau video, sehingga orang tua dapat memantau perkembangan anak secara langsung."
@@ -37,11 +37,11 @@ export default function Home() {
               imageAlt="Attendance"
             />
           </div>
-          <p className='text-center'>
+          <p className='text-center max-w-7xl mx-auto'>
             Masih ada fitur lainnya yang bisa Anda coba. <a href="/login" className='font-semibold text-blue-500 hover:underline'>Login</a> untuk mulai menggunakan KidConnect sekarang!
           </p>
         </section>
-        <section id="contact" className="px-4 py-7">
+        <section id="contact" className="px-4 py-7 max-w-7xl mx-auto">
           <h1 className='text-center font-bold text-3xl mb-5'>Kontak Kami</h1>
           <p className='text-center'>
             Jika Anda memiliki pertanyaan atau masukan, jangan ragu untuk menghubungi kami melalui email di{" "}

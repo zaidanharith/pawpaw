@@ -15,7 +15,7 @@ const FeatureCard: React.FC<FeatureCardProps> = ({
     imageSrc = "https://res.cloudinary.com/daaeu39vt/image/upload/v1759160604/uploads/Makan_Siang-1759160602584.jpg",
     imageAlt = 'Feature image',
 }) => (
-    <div className="bg-white rounded-xl shadow-md p-6 flex flex-col mb-4">
+    <div className="bg-white rounded-xl shadow-md p-6 flex flex-col w-full md:w-1/3">
         <div className="w-full h-40 mb-4 relative">
             <Image
                 src={imageSrc}

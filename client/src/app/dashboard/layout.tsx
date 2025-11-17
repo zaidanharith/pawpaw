@@ -30,7 +30,7 @@ export default function DashboardLayout({
   }
 
   return (
-    <main className="font-sans">
+    <main className="font-sans max-w-7xl mx-auto">
       {children}
     </main>
   );
