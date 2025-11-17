@@ -39,16 +39,6 @@ export default function Admin({ activePage = "" }: AdminProps) {
     router.push(`/dashboard/${menuUrl}`);
   };
 
-    const handleNavigateToReport = () => {
-    setActiveMenu("report");
-    router.push("/dashboard/report");
-};
-
-    const handleNavigateToAnnouncement = () => {
-    setActiveMenu("announcement");
-    router.push("/dashboard/announcement");
-};
-
   const renderContent = () => {
     switch (activeMenu) {
       case "":
@@ -58,8 +48,8 @@ export default function Admin({ activePage = "" }: AdminProps) {
             <Weather />
             <Statistics 
             />
-            <LiveReport onNavigateToReport={handleNavigateToReport} />
-            <Announcement onNavigateToAnnouncement={handleNavigateToAnnouncement} />
+            <LiveReport/>
+            <Announcement/>
           </>
         );
       case "user":
