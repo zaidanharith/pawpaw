@@ -5,6 +5,7 @@ import axios from "axios";
 import { useSession } from "next-auth/react";
 import { MdOutlineClose, MdEdit, MdDelete } from "react-icons/md";
 import DeleteConfirmation from "../DeleteConfirmation";
+import { text } from "stream/consumers";
 
 interface Student {
   id: string;
@@ -39,6 +40,12 @@ interface AttendanceModalProps {
   student: Student | null;
   onSaved?: () => void;
 }
+
+const roleColors: Record<string, string> = {
+    ADMIN: "#3f9065",
+    TEACHER: "#f5bb00",
+    PARENT: "#58baab",
+};
 
 const STATUS_OPTIONS = [
   { value: "HADIR", label: "Hadir" },
@@ -81,6 +88,9 @@ export default function AttendanceModal({
   const [attendances, setAttendances] = useState<Attendance[]>([]);
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
+  const role = session?.user?.role || "ADMIN";
+  const accentColor = roleColors[role];
+  const textColor = role === "ADMIN" ? "#FFFFFF" : "#3d3006";
 
   const [form, setForm] = useState({
     status: "hadir" as AttendanceStatus,
@@ -286,12 +296,13 @@ export default function AttendanceModal({
     <div className="fixed inset-0 z-50 flex items-center justify-center">
       <div className="absolute inset-0 bg-black/50" onClick={onClose} />
 
-      <div className="relative bg-white rounded-xl w-full max-w-3xl mx-4 shadow-lg">
+      <div className="relative bg-white rounded-2xl w-full max-w-3xl mx-4 shadow-lg">
         {/* HEADER */}
-        <div className="p-4 border-b flex justify-between items-center">
-          <h3 className="text-lg font-semibold">Kehadiran — {student.name}</h3>
+        <div className="p-4 border-b flex rounded-t-2xl justify-between items-center"
+        style={{ backgroundColor: accentColor }}>
+          <h3 className="text-lg font-semibold" style={{color: textColor}}>Kehadiran — {student.name}</h3>
           <button onClick={onClose}>
-            <MdOutlineClose className="w-6 h-6 text-gray-600" />
+            <MdOutlineClose className="w-6 h-6 hover:opacity-80 cursor-pointer" style={{color: textColor}} />
           </button>
         </div>
 
@@ -308,7 +319,8 @@ export default function AttendanceModal({
                 name="date"
                 value={form.date}
                 onChange={handleChange}
-                className="w-full border rounded-md px-3 py-2"
+                className="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:outline-none"
+                style={{ "--tw-ring-color": accentColor } as React.CSSProperties}
                 required
               />
             </div>
@@ -319,7 +331,8 @@ export default function AttendanceModal({
                 name="status"
                 value={form.status}
                 onChange={handleChange}
-                className="w-full border rounded-md px-3 py-2"
+                className="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:outline-none"
+                style={{ "--tw-ring-color": accentColor } as React.CSSProperties}
               >
                 {STATUS_OPTIONS.map((o) => (
                   <option key={o.value} value={o.value.toLowerCase()}>
@@ -337,7 +350,8 @@ export default function AttendanceModal({
                 value={form.notes}
                 onChange={handleChange}
                 placeholder="Contoh: terlambat 10 menit"
-                className="w-full border rounded-md px-3 py-2"
+                className="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:outline-none"
+                style={{ "--tw-ring-color": accentColor } as React.CSSProperties}
               />
             </div>
 
@@ -347,14 +361,15 @@ export default function AttendanceModal({
                   <button
                     type="button"
                     onClick={handleCancelEdit}
-                    className="px-3 py-2 border rounded-lg"
+                    className="px-3 py-2 border text-md rounded-lg cursor-pointer"
                   >
                     Batal
                   </button>
                   <button
                     type="submit"
                     disabled={saving}
-                    className="px-3 py-2 bg-[#f5bb00] text-white rounded-lg"
+                    className="px-3 py-2 bg-[#f5bb00] text-md hover:opacity-80 rounded-lg cursor-pointer"
+                    style={{backgroundColor: accentColor, color: textColor}}
                   >
                     {saving ? "Menyimpan..." : "Simpan Perubahan"}
                   </button>
@@ -363,8 +378,8 @@ export default function AttendanceModal({
                 <button
                   type="submit"
                   disabled={saving}
-                  className="px-3 py-2 bg-[#f5bb00] text-white rounded-lg"
-                >
+                  className="px-3 py-2 text-bold text-md rounded-lg hover:opacity-80 cursor-pointer"
+                  style={{backgroundColor: accentColor, color: textColor}}>
                   {saving ? "Menyimpan..." : "Tambah Kehadiran"}
                 </button>
               )}
@@ -405,13 +420,13 @@ export default function AttendanceModal({
                         <td className="py-2 px-3 flex gap-2">
                           <button
                             onClick={() => handleStartEdit(a)}
-                            className="p-1 hover:bg-gray-100 rounded"
+                            className="p-1 hover:bg-gray-100 rounded cursor-pointer"
                           >
                             <MdEdit className="w-5 h-5 text-blue-600" />
                           </button>
                           <button
                             onClick={() => handleAskDelete(a)}
-                            className="p-1 hover:bg-gray-100 rounded"
+                            className="p-1 hover:bg-gray-100 rounded cursor-pointer"
                           >
                             <MdDelete className="w-5 h-5 text-red-600" />
                           </button>

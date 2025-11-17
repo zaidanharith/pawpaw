@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 import { FaEdit, FaClock } from "react-icons/fa";
 import axios from "axios";
+import Link from "next/link";
 
 interface Report {
     id: string;
@@ -43,11 +44,7 @@ const kegiatanLabels: Record<string, string> = {
     MAKAN: "Makan Siang",
 };
 
-interface LiveReportProps {
-    onNavigateToReport?: () => void; // callback untuk navigasi ke halaman laporan lengkap
-}
-
-const LiveReport: React.FC<LiveReportProps> = ({ onNavigateToReport }) => {
+const LiveReport: React.FC = () => {
     const { data: session } = useSession();
     const token = session?.accessToken;
     const role = session?.user?.role || "ADMIN";
@@ -95,13 +92,6 @@ const LiveReport: React.FC<LiveReportProps> = ({ onNavigateToReport }) => {
         });
     };
 
-    // Handle button click - bisa navigasi ke halaman report atau refresh
-    const handleManageReports = () => {
-        if (onNavigateToReport) {
-            onNavigateToReport();
-        }
-    };
-
     return (
         <section className="bg-white rounded-xl shadow p-5">
             <div className="flex flex-row items-center justify-between gap-2 mb-4">
@@ -126,9 +116,9 @@ const LiveReport: React.FC<LiveReportProps> = ({ onNavigateToReport }) => {
                             "Kegiatan Harian";
 
                         return (
-                            <button
+                            <Link
                                 key={report.id}
-                                onClick={handleManageReports}
+                                href="/dashboard/report"
                                 className="flex items-center cursor-pointer gap-3 p-3 rounded-lg shadow hover:shadow-md border transition-all"
                                 style={{ borderColor: accentColor, backgroundColor: "#fff" }}
                             >
@@ -162,7 +152,7 @@ const LiveReport: React.FC<LiveReportProps> = ({ onNavigateToReport }) => {
                                         </span>
                                     )}
                                 </div>
-                            </button>
+                            </Link>
                         );
                     })
                 )}

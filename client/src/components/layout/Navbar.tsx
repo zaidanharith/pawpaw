@@ -19,7 +19,7 @@ const Navbar = ({ setIsSidebarOpen }: NavbarProps) => {
             <div className='flex items-center justify-between w-full max-w-7xl mx-auto'>
                 <div className='flex items-center gap-2'>
                     {(pathname?.startsWith("/dashboard")) && (status === "authenticated") && session?.user ? (
-                        <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-2 md:hidden">
                             <BurgerButton onClick={() => setIsSidebarOpen && setIsSidebarOpen(true)} />
                             <div className='h-10 w-px bg-gray-500'></div>
                         </div>
@@ -28,7 +28,7 @@ const Navbar = ({ setIsSidebarOpen }: NavbarProps) => {
                         <Image
                             src="/logo.svg"
                             alt="KidConnect Logo"
-                            width={36}
+                            width={36}  
                             height={36}
                             className="object-contain"
                             priority

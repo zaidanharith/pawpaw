@@ -23,3 +23,4 @@ export { default as FaceRegister } from "./FaceRegister";
 export { default as RecentMessage } from "./RecentMessage";
 export { default as EditQuarterlyReport } from "./EditQuarterlyReport";
 export { default as QuarterlyReportPage } from "./QuarterlyReportPage";
+export { default as EditProfile } from "./EditProfile";

@@ -41,6 +41,14 @@ const roleColors: Record<string, string> = {
   PARENT: "#58baab",
 };
 
+type UserRole = "ADMIN" | "TEACHER" | "PARENT";
+
+const textColors: Record<UserRole, string> = {
+    ADMIN: "#ffffff",
+    TEACHER: "#3d3006",
+    PARENT: "#063d35",
+};
+
 const kegiatanLabels: Record<string, string> = {
   SENAM: "Senam",
   BERMAIN: "Bermain",
@@ -54,8 +62,7 @@ const ReportPage: React.FC = () => {
   const role = session?.user?.role || "ADMIN";
 
   const accentColor = roleColors[role] || roleColors.ADMIN;
-  const textColor = role === "ADMIN" ? "#FFFFFF" : "#3d3006";
-  const dayChipTextColor = role === "ADMIN" ? "#FFFFFF" : "#3d3006";
+  const textColor = textColors[role] || textColors.ADMIN;
   const isReadOnly = role === "PARENT";
 
   const [allReports, setAllReports] = useState<Report[]>([]);
@@ -252,7 +259,7 @@ const ReportPage: React.FC = () => {
       <section>
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-center gap-4 w-full sm:w-auto">
-            <div className="rounded-2xl p-3 text-center" style={{ backgroundColor: accentColor, color: dayChipTextColor }}>
+            <div className="rounded-2xl p-3 text-center" style={{ backgroundColor: accentColor, color: textColor }}>
               <div className="font-semibold text-lg">{dayName}</div>
               <div className="text-xs opacity-90">{dateString}</div>
             </div>
@@ -267,7 +274,7 @@ const ReportPage: React.FC = () => {
             <div className="w-full sm:w-auto">
               <button
                 onClick={() => setIsAddReportOpen(true)}
-                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl text-sm md:text-base font-semibold shadow-md hover:shadow-lg transition"
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl text-sm md:text-base font-semibold hover:opacity-80 transition cursor-pointer"
                 style={{ backgroundColor: accentColor, color: textColor }}
               >
                 <FaEdit /> Buat Laporan
@@ -335,9 +342,9 @@ const ReportPage: React.FC = () => {
                   </div>
 
                   <div className="mt-4 flex items-center gap-2">
-                    <button onClick={() => handleOpenDetail(report)} className="flex-1 px-3 py-1.5 rounded-lg font-medium border hover:shadow-sm transition cursor-pointer" style={{ borderColor: accentColor }}>{'Lihat Detail'}</button>
+                    <button onClick={() => handleOpenDetail(report)} className="flex-1 px-3 py-1.5 rounded-lg font-medium hover:opacity-80 transition cursor-pointer" style={{ backgroundColor: accentColor, color: textColor }}>{'Lihat Detail'}</button>
                     {!isReadOnly && (
-                      <button onClick={() => { setEditReportData(report); setIsEditReportOpen(true); }} className="px-3 py-1.5 rounded-lg bg-gray-50 border cursor-pointer" style={{ borderColor: accentColor }}>Edit</button>
+                      <button onClick={() => { setEditReportData(report); setIsEditReportOpen(true); }} className="px-3 py-1.5 rounded-lg bg-gray-50 hover:border-2 border cursor-pointer" style={{ borderColor: accentColor }}>Edit</button>
                     )}
                   </div>
                 </article>

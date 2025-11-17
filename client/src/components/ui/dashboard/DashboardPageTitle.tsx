@@ -7,15 +7,23 @@ const roleColors: Record<string, string> = {
     PARENT: "#58baab",
 };
 
+type UserRole = "ADMIN" | "TEACHER" | "PARENT";
+
+const textColors: Record<UserRole, string> = {
+    ADMIN: "#ffffff",
+    TEACHER: "#3d3006",
+    PARENT: "#063d35",
+};
+
 interface DashboardTitleProps {
     page?: string;
 }
 
 const DashboardPageTitle: React.FC<DashboardTitleProps> = ({ page }) => {
     const { data: session } = useSession();
-    const role = session?.user?.role || "ADMIN";
+    const role = (session?.user?.role as UserRole) || "ADMIN";
+    const textColor = textColors[role] || textColors.ADMIN;
     const accentColor = roleColors[role] || roleColors.ADMIN;
-    const textColor = role === "ADMIN" ? "#FFFFFF" : "#3d3006";
 
     return (
         <div

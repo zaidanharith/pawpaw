@@ -18,6 +18,14 @@ const roleColors: Record<string, string> = {
   PARENT: "#58baab",
 };
 
+type UserRole = "ADMIN" | "TEACHER" | "PARENT";
+
+const textColors: Record<UserRole, string> = {
+    ADMIN: "#ffffff",
+    TEACHER: "#3d3006",
+    PARENT: "#063d35",
+};
+
 const Sidebar: React.FC<SidebarProps> = ({
   menuItems,
   isOpen,
@@ -43,22 +51,21 @@ const Sidebar: React.FC<SidebarProps> = ({
 
   const role = session?.user?.role || "ADMIN";
   const sidebarBg = roleColors[role] || roleColors.ADMIN;
-  const baseTextColor = role === "ADMIN" ? "#ffffff" : "#282828";
+  const textColor = textColors[role] || textColors.ADMIN;
+  const accentColor = roleColors[role] || roleColors.ADMIN;
 
   return (
-    <div className={`font-sans fixed inset-0 z-100 transition-all duration-300 ${isOpen ? "visible opacity-100" : "invisible opacity-0"}`}>
+    <div className={`font-sans fixed inset-0 z-100 transition-all duration-300 ${isOpen ? "visible opacity-100" : "invisible opacity-0"} md:static`}>
       <div
-        className={`absolute inset-0 bg-black bg-opacity-50 transition-all duration-800 ${isOpen ? "opacity-100" : "opacity-0"}`}
-        onClick={onClose}
-      />
+        className={`absolute inset-0 bg-black bg-opacity-50 transition-all duration-800 ${isOpen ? "opacity-100" : "opacity-0"} md:static`}
+        onClick={onClose}/>
       <aside
-        className={`absolute inset-0 shadow-2xl flex flex-col p-8 transition-all duration-800 ease-in-out ${isOpen ? "translate-y-0" : "-translate-y-full"} h-full overflow-y-auto`}
+        className={`absolute inset-0 shadow-2xl flex flex-col p-8 md:px-6 transition-all duration-800 ease-in-out h-full overflow-y-auto ${isOpen ? "translate-y-0" : "-translate-y-full"} md:static md:shadow-none md:rounded-xl md:h-auto`}
         style={{ backgroundColor: sidebarBg }}
-        onClick={(e) => e.stopPropagation()}
-      >
+        onClick={(e) => e.stopPropagation()}>
         <div className="flex items-center justify-between mb-8">
-          <span className="text-2xl font-bold" style={{ color: baseTextColor }}>Menu {role.toLowerCase().replace(/^\w/, (c) => c.toUpperCase())}</span>
-          <button className="hover:text-gray-200 text-2xl p-2 rounded transition cursor-pointer" style={{ color: baseTextColor }} onClick={onClose} aria-label="Close sidebar">
+          <span className="text-2xl font-bold" style={{ color: textColor }}>Menu {role.toLowerCase().replace(/^\w/, (c) => c.toUpperCase())}</span> 
+          <button className="hover:text-gray-200 text-2xl p-2 rounded transition cursor-pointer md:hidden" style={{ color: textColor }} onClick={onClose} aria-label="Close sidebar">
             <FaTimes size={28} />
           </button>
         </div>
@@ -70,7 +77,7 @@ const Sidebar: React.FC<SidebarProps> = ({
               style={{
                 color: activeMenu === menu.urlName
                   ? "#282828"
-                  : baseTextColor,
+                  : textColor,
                 backgroundColor: activeMenu === menu.urlName
                   ? "#fff"
                   : "transparent",
@@ -80,7 +87,7 @@ const Sidebar: React.FC<SidebarProps> = ({
                 activeMenu === menu.urlName
                   ? "shadow-sm"
                   : "border-2 hover:bg-white hover:text-[#282828]"
-              }`}
+              } md:text-base md:gap-2 md:rounded-lg`}
             >
               {menu.icon}
               {menu.name}

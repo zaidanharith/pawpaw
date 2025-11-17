@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 import { FaEdit, FaClock } from "react-icons/fa";
 import axios from "axios";
+import Link from "next/link";
 
 interface Announcement {
     id: string;
@@ -18,11 +19,7 @@ const roleColors: Record<string, string> = {
     PARENT: "#58baab",
 };
 
-interface AnnouncementProps {
-    onNavigateToAnnouncement?: () => void; // callback untuk navigasi ke halaman pengumuman lengkap
-}
-
-const Announcement: React.FC<AnnouncementProps> = ({ onNavigateToAnnouncement }) => {
+const Announcement: React.FC = () => {
     const { data: session } = useSession();
     const role = (session?.user?.role || "ADMIN").toUpperCase();
     const token = session?.accessToken;
@@ -65,13 +62,6 @@ const Announcement: React.FC<AnnouncementProps> = ({ onNavigateToAnnouncement })
         fetchRecentAnnouncements();
     }, [token]);
 
-    // Handle button click - navigasi ke halaman pengumuman atau refresh
-    const handleManageAnnouncements = () => {
-        if (onNavigateToAnnouncement) {
-            onNavigateToAnnouncement();
-        }
-    };
-
     // Get icon based on title or content
     const getIcon = (title: string, content: string) => {
         const lowerTitle = title.toLowerCase();
@@ -105,9 +95,9 @@ const Announcement: React.FC<AnnouncementProps> = ({ onNavigateToAnnouncement })
                     </div>
                 ) : (
                     recentAnnouncements.map((item) => (
-                        <button
+                        <Link
                             key={item.id}
-                            onClick={handleManageAnnouncements}
+                            href="/dashboard/announcement"
                             className="flex items-center gap-3 p-3 rounded-lg shadow hover:shadow-md border cursor-pointer transition-all"
                             style={{ borderColor: accentColor, backgroundColor: "#fff" }}
                         >
@@ -142,7 +132,7 @@ const Announcement: React.FC<AnnouncementProps> = ({ onNavigateToAnnouncement })
                                     </span>
                                 </div>
                             )}
-                        </button>
+                        </Link>
                     ))
                 )}
             </div>

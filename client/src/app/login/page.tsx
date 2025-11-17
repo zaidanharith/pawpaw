@@ -29,19 +29,19 @@ function LoginContent() {
   }
 
   return (
-    <section className="px-4 flex flex-col items-center gap-3">
-      <div className="bg-(--color-orange-light) py-2 px-2 rounded-xl flex gap-2">
+    <section className="px-4 flex flex-col items-center gap-3 max-w-lg mx-auto md:gap-5">
+      <div className="bg-(--color-orange-light) py-2 px-2 rounded-xl flex gap-2 w-full justify-center">
         <button
-          className={`px-2 py-1 rounded-lg font-semibold cursor-pointer border border-background text-background hover:bg-background hover:text-foreground transition duration-200 ${activeForm === "login" ? "bg-background text-foreground" : ""}`}
+          className={`px-2 py-1 rounded-lg font-semibold cursor-pointer border border-background text-background hover:bg-background hover:text-foreground transition duration-200 w-1/2 ${activeForm === "login" ? "bg-background text-foreground" : ""}`}
           onClick={() => setActiveForm("login")}
         >
           Form atau Google
         </button>
         <button
-          className={`px-2 py-1 rounded-lg font-semibold cursor-pointer border border-background text-background hover:bg-background hover:text-foreground transition duration-200 ${activeForm === "face" ? "bg-background text-foreground" : ""}`}
+          className={`px-2 py-1 rounded-lg font-semibold cursor-pointer border border-background text-background hover:bg-background hover:text-foreground transition duration-200 w-1/2 ${activeForm === "face" ? "bg-background text-foreground" : ""}`}
           onClick={() => setActiveForm("face")}
         >
-          Face Recognition
+          Login Wajah
         </button>
       </div>
       {activeForm === "login" ? <LoginForm /> : <FaceLogin />}
