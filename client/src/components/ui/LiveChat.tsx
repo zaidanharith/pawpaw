@@ -347,9 +347,7 @@ export default function LiveChat({ chat, onBack }: LiveChatProps) {
           <button
             onClick={handleSendMessage}
             className="text-white rounded-lg transition-colors shrink-0 p-2 flex items-center justify-center cursor-pointer"
-            aria-la
-            
-            bel="Kirim pesan"
+            aria-label="Kirim pesan"
             style={{ background: accentColor, color: textColor }}
           >
             <IoIosSend className="w-5 h-5" />
