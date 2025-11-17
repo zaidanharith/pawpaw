@@ -146,7 +146,7 @@ export default function ChatList({ onSelectChat }: ChatListProps) {
         <h2 className="font-bold text-xl">Daftar Pesan</h2>
         <button
           onClick={() => setShowNewChat(true)}
-          className="text-xl p-2 rounded-lg text-white hover:opacity-90 transition flex items-center gap-2 cursor-pointer"
+          className="text-xl p-2 rounded-lg text-white hover:opacity-80 transition flex items-center gap-2 cursor-pointer"
           style={{ background: accentColor, color: textColor }}
           title="Mulai chat baru"
         >
@@ -159,7 +159,8 @@ export default function ChatList({ onSelectChat }: ChatListProps) {
           placeholder="Cari Pesan"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
-          className="w-full px-3 py-1.5 border border-gray-300 rounded-lg focus:outline-1"
+          className="w-full px-3 py-1.5 border border-gray-300 rounded-lg focus:ring-2 focus:outline-none"
+          style={{ "--tw-ring-color": accentColor } as React.CSSProperties}
         />
       </div>
       <div className="flex flex-col">
@@ -203,8 +204,9 @@ export default function ChatList({ onSelectChat }: ChatListProps) {
           <div className="bg-white rounded-lg shadow-lg w-full max-w-lg p-4">
             <div className="flex items-center justify-between mb-3">
               <h3 className="font-semibold">Mulai Chat Baru</h3>
-              <button onClick={() => setShowNewChat(false)} className="text-gray-500">
-                <FiX />
+              <button onClick={() => setShowNewChat(false)} 
+                >
+                <FiX className="hover:opacity-80 cursor-pointer w-5 h-5"/>
               </button>
             </div>
 
@@ -213,7 +215,8 @@ export default function ChatList({ onSelectChat }: ChatListProps) {
                 value={usersQuery}
                 onChange={(e) => setUsersQuery(e.target.value)}
                 placeholder="Cari pengguna..."
-                className="w-full px-3 py-1.5 border rounded-md"
+                className="w-full px-3 py-1.5 border border-gray-300 rounded-lg focus:ring-2 focus:outline-none"
+                style={{ "--tw-ring-color": accentColor } as React.CSSProperties}
               />
             </div>
 
@@ -250,7 +253,7 @@ export default function ChatList({ onSelectChat }: ChatListProps) {
             </div>
 
             <div className="mt-3 text-right">
-              <button onClick={() => setShowNewChat(false)} className="px-4 py-2 rounded-md bg-gray-100">Batal</button>
+              <button onClick={() => setShowNewChat(false)} className="px-4 py-2 rounded-md border border-gray-300 hover:bg-gray-100 cursor-pointer">Batal</button>
             </div>
           </div>
         </div>

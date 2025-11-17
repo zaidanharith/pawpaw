@@ -247,7 +247,11 @@ export default function StudentTable() {
                     <td className="px-4 py-3">
                       {siswa.birthDate ? formatBirthDate(siswa.birthDate) : "-"}
                     </td>
-                    <td className="px-4 py-3">{siswa.address}</td>
+                    <td className="px-4 py-3 max-w-[200px]">
+                      <div className="truncate" title={siswa.address}>
+                        {siswa.address}
+                      </div>
+                    </td>
                     <td className="px-4 py-3 text-center">{siswa.attendanceSummary?.hadir || 0}</td>
                     <td className="px-4 py-3 text-center">{siswa.attendanceSummary?.izin || 0}</td>
                     <td className="px-4 py-3 text-center">{siswa.attendanceSummary?.sakit || 0}</td>

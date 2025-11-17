@@ -102,8 +102,8 @@ const EditStudent: React.FC<EditStudentProps> = ({ isOpen, onClose, studentData,
                 className="absolute inset-0 bg-black/50"
                 onClick={onClose}
             />
-            <div className="relative bg-white rounded-xl w-full max-w-2xl mx-4 shadow-lg">
-                <div className="p-6 border-b border-gray-100 flex justify-between items-center"
+            <div className="relative bg-white rounded-3xl w-full max-w-2xl mx-4 shadow-lg">
+                <div className="p-6 border-b border-gray-100 rounded-t-2xl flex justify-between items-center"
                     style={{ backgroundColor: accentColor }}>
                     <h2 className="text-xl font-bold text-gray-800"
                     style={{color:textColor}}>Edit Siswa</h2>
@@ -186,7 +186,8 @@ const EditStudent: React.FC<EditStudentProps> = ({ isOpen, onClose, studentData,
                         <button
                             type="submit"
                             disabled={loading}
-                            className="px-4 py-2 text-sm font-medium cursor-pointer rounded-lg text-white bg-[#3f9065] hover:opacity-80 transition shadow-md"
+                            className="px-4 py-2 text-sm font-medium cursor-pointer rounded-lg text-white hover:opacity-80 transition shadow-md"
+                            style={{backgroundColor: accentColor, color: textColor}}
                         >
                             {loading ? "Menyimpan..." : "Simpan Perubahan"}
                         </button>

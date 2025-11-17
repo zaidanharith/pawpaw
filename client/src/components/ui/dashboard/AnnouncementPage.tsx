@@ -22,15 +22,21 @@ const roleColors: Record<string, string> = {
     PARENT: "#58baab",
 };
 
+type UserRole = "ADMIN" | "TEACHER" | "PARENT";
+
+const textColors: Record<UserRole, string> = {
+    ADMIN: "#ffffff",
+    TEACHER: "#3d3006",
+    PARENT: "#063d35",
+};
+
 const AnnouncementPage: React.FC = () => {
     const { data: session } = useSession();
     const token = session?.accessToken;
-
-    // FIX: UPPERCASE ROLE (SANGAT PENTING)
-    const role = (session?.user?.role || "ADMIN").toUpperCase();
+    const role = (session?.user?.role?.toUpperCase() as UserRole) || "ADMIN";
 
     const accentColor = roleColors[role] || roleColors.ADMIN;
-    const textColor = role === "ADMIN" ? "#FFFFFF" : "#3d3006";
+    const textColor = textColors[role] || textColors.ADMIN;
 
     const isParent = role === "PARENT";
 
@@ -182,7 +188,7 @@ const AnnouncementPage: React.FC = () => {
                     {!isParent && (
                         <button
                             onClick={() => setIsAddAnnouncementOpen(true)}
-                            className="w-full sm:w-auto flex items-center justify-center gap-2 px-4 py-3 cursor-pointer rounded-xl text-sm md:text-base font-semibold hover: transition"
+                            className="w-full sm:w-auto flex items-center justify-center gap-2 px-4 py-3 cursor-pointer rounded-xl text-sm md:text-base font-semibold hover:opacity-80 transition"
                             style={{ backgroundColor: accentColor, color: textColor }}
                         >
                             <FaEdit /> Buat Pengumuman

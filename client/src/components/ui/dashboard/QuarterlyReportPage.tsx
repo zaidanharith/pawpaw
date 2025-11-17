@@ -31,13 +31,21 @@ const roleColors: Record<string, string> = {
   PARENT: "#58baab",
 };
 
+type UserRole = "ADMIN" | "TEACHER" | "PARENT";
+
+const textColors: Record<UserRole, string> = {
+    ADMIN: "#ffffff",
+    TEACHER: "#3d3006",
+    PARENT: "#063d35",
+};
+
 const QuarterlyReportPage: React.FC = () => {
   const { data: session } = useSession();
   const token = session?.accessToken;
-  const role = (session?.user?.role || "ADMIN").toUpperCase();
+  const role = (session?.user?.role?.toUpperCase() as UserRole) || "ADMIN";
 
   const accentColor = roleColors[role] || roleColors.ADMIN;
-  const textColor = role === "ADMIN" ? "#FFFFFF" : "#3d3006";
+  const textColor = textColors[role] || textColors.ADMIN;
   const isParent = role === "PARENT";
 
   const [allReports, setAllReports] = useState<QuarterlyReport[]>([]);
