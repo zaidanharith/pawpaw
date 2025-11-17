@@ -125,16 +125,28 @@ export default function Admin({ activePage = "" }: AdminProps) {
   };
 
   return (
-    <section className="w-full flex flex-col gap-4 my-5">
+    <section className="w-full flex flex-col my-5">
       <Navbar setIsSidebarOpen={() => setIsSidebarOpen(true)} />
-      <Sidebar
-          menuItems={menuItems}
-          isOpen={isSidebarOpen}
-          onClose={() => setIsSidebarOpen(false)}
-          activeMenu={activeMenu}
-          onSelectMenu={handleSelectMenu}
-      />
-      {renderContent()}
+      <div className="md:flex md:flex-row md:gap-4">
+        <div>
+          <Sidebar
+            menuItems={menuItems}
+            isOpen={
+              isSidebarOpen ||
+              (typeof window !== "undefined" && window.innerWidth >= 768)
+            }
+            onClose={() => {
+              if (typeof window === "undefined") return;
+              if (window.innerWidth < 768) setIsSidebarOpen(false);
+            }}
+            activeMenu={activeMenu}
+            onSelectMenu={handleSelectMenu}
+          />
+        </div>
+        <div className="flex flex-col gap-3 md:gap-4 flex-1 min-w-0">
+          {renderContent()}
+        </div>
+      </div>
     </section>
   );
 }
