@@ -2,10 +2,10 @@ import Image from "next/image";
 
 const Gallery = () => {
   const photos = [
-    { id: 1, src: "https://res.cloudinary.com/daaeu39vt/image/upload/v1762849519/uploads/paw-1762849515768.jpg", alt: "Foto Lingkungan TK" },
-    { id: 2, src: "https://res.cloudinary.com/daaeu39vt/image/upload/v1762849519/uploads/paw-1762849515768.jpg", alt: "Foto Anak-Anak" },
-    { id: 3, src: "https://res.cloudinary.com/daaeu39vt/image/upload/v1762849519/uploads/paw-1762849515768.jpg", alt: "Foto Anak-Anak" },
-    { id: 4, src: "https://res.cloudinary.com/daaeu39vt/image/upload/v1762849519/uploads/paw-1762849515768.jpg", alt: "Foto Lingkungan TK" },
+    { id: 1, src: "https://res.cloudinary.com/daaeu39vt/image/upload/v1763342257/uploads/KidConnect-lingkungan-TK-1-1763342250416.jpg", alt: "Foto Lingkungan TK" },
+    { id: 2, src: "https://res.cloudinary.com/daaeu39vt/image/upload/v1763342493/uploads/KidConnect-anak-TK-1-1763342485653.jpg", alt: "Foto Anak-Anak" },
+    { id: 3, src: "https://res.cloudinary.com/daaeu39vt/image/upload/v1763342562/uploads/KidConnect-anak-TK-2-1763342555269.jpg", alt: "Foto Anak-Anak" },
+    { id: 4, src: "https://res.cloudinary.com/daaeu39vt/image/upload/v1763342438/uploads/KidConnect-lingkungan-TK-2-1763342430401.jpg", alt: "Foto Lingkungan TK" },
   ];
 
   return (

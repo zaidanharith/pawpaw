@@ -16,6 +16,7 @@ import {
   AnnouncementPage,
   MenuNotFound,
   PreviewChat,
+  QuarterlyReportPage,
 } from "@/components/ui/dashboard";
 
 import { 
@@ -40,6 +41,7 @@ export default function Teacher({ activePage = "" }: TeacherProps) {
     { name: "Dashboard", urlName: "", icon: <FaTachometerAlt size={24} /> },
     { name: "Siswa", urlName: "student", icon: <FaUsers size={24} /> },
     { name: "Laporan Kegiatan", urlName: "report", icon: <FaClipboardList size={24} /> },
+    { name: "Laporan Triwulan", urlName: "quarterly-report", icon: <FaClipboardList size={24} /> },
     { name: "Pengumuman", urlName: "announcement", icon: <FaBullhorn size={24} /> },
     { name: "Chat Orang Tua Murid", urlName: "chat", icon: <FaComments size={24} /> },
     { name: "Profil", urlName: "profile", icon: <FaUserCog size={24} /> },
@@ -82,6 +84,13 @@ export default function Teacher({ activePage = "" }: TeacherProps) {
           <>
             <DashboardPageTitle page="Laporan Kegiatan" />
             <ReportPage />
+          </>
+        );
+      case "quarterly-report":
+        return (
+          <>
+            <DashboardPageTitle page="Laporan Triwulan" />
+            <QuarterlyReportPage />
           </>
         );
       case "announcement":
