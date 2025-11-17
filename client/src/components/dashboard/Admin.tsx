@@ -24,7 +24,7 @@ export default function Admin({ activePage = "" }: AdminProps) {
     { name: "Laporan Triwulan", urlName: "quarterly-report", icon: <FaClipboardList size={24} /> },
     { name: "Pengumuman", urlName: "announcement", icon: <FaBullhorn size={24} /> },
     { name: "Profil", urlName: "profile", icon: <FaUserCog size={24} /> },
-    { name: "Face Registration", urlName: "face-registration", icon: <FaRegSmile size={24} /> },
+    { name: "Registrasi Wajah", urlName: "face-registration", icon: <FaRegSmile size={24} /> },
   ];
   
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -115,7 +115,7 @@ export default function Admin({ activePage = "" }: AdminProps) {
       case "face-registration":
         return (
           <>
-            <DashboardPageTitle page="Face Registration"/>
+            <DashboardPageTitle page="Registrasi Wajah"/>
             <FaceRegister />
           </>
         );

@@ -93,6 +93,13 @@ router.post(
   messageController.sendMessage
 );
 
+router.patch(
+  '/messages/:id',
+  protect,
+  requireRole('PARENT', 'TEACHER'),
+  messageController.updateMessage
+);
+
 /**
  * @swagger
  * /messages/{id}:

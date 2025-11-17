@@ -7,6 +7,7 @@ const setupSwagger = require('./config/swagger');
 const prisma = require('./config/prisma');
 const http = require('http');
 const { Server } = require('socket.io');
+const jwt = require('jsonwebtoken');
 
 dotenv.config();
 
@@ -92,8 +93,29 @@ const io = new Server(server, {
   }
 });
 
+app.set('io', io);
+
+io.use((socket, next) => {
+  const token = socket.handshake.auth && socket.handshake.auth.token;
+  if (!token) return next(new Error('Unauthorized'));
+  try {
+    const payload = jwt.verify(token, process.env.JWT_SECRET);
+    socket.user = payload;
+    return next();
+  } catch (err) {
+    console.error('Socket auth error', err.message || err);
+    return next(new Error('Invalid token'));
+  }
+});
+
 io.on('connection', (socket) => {
-  console.log('User connected:', socket.id);
+  const userId = socket.user?.id;
+  console.log('User connected:', socket.id, 'userId:', userId);
+
+  if (userId) {
+    socket.join(`user:${userId}`);
+    console.log(`Socket ${socket.id} joined room user:${userId}`);
+  }
 
   socket.on('chat message', async (msg) => {
     io.emit('chat message', msg);
@@ -104,7 +126,6 @@ io.on('connection', (socket) => {
   });
 });
 
-// --- Ganti app.listen dengan server.listen ---
 server.listen(PORT, () => {
   console.log(`🚀 Server berjalan di http://localhost:${PORT}`);
   console.log(`📚 API Docs: http://localhost:${PORT}/api/docs`);
