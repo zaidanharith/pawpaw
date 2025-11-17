@@ -84,7 +84,6 @@ export default function LiveChat({ chat, onBack }: LiveChatProps) {
     const base = (process.env.NEXT_PUBLIC_BACKEND_URL || process.env.NEXT_PUBLIC_API_URL || '').replace(/\/$/, '');
     const socket = io(base, {
       auth: { token: session?.accessToken },
-      transports: ['websocket']
     });
     socketRef.current = socket;
 
@@ -100,23 +99,22 @@ export default function LiveChat({ chat, onBack }: LiveChatProps) {
     const handleIncoming = (msg: MessageType) => {
       if (!msg || !msg.id) return;
       if (!isRelatedToCurrent(msg)) return;
-
       setMessages((prev) => {
-          if (prev.find((m) => m.id === msg.id)) return prev;
+        if (prev.find((m) => m.id === msg.id)) return prev;
 
-          const FIVE_SEC = 5000;
-          const incomingTime = new Date(msg.createdAt).getTime();
-          const filtered = prev.filter((m) => {
-            if (!m.clientTempId) return true;
-            const tempTime = new Date(m.createdAt).getTime();
-            const sameBody = m.body === msg.body;
-            const closeTime = Math.abs(tempTime - incomingTime) <= FIVE_SEC;
-            return !(sameBody && closeTime);
-          });
-
-          const next = [...filtered, { id: msg.id, body: msg.body, sender: msg.sender, createdAt: msg.createdAt, senderId: msg.senderId, receiverId: msg.receiverId }];
+        const incomingTime = new Date(msg.createdAt).getTime();
+        const TEN_SEC = 10000;
+        const tempIndex = prev.findIndex((m) => m.clientTempId && m.sender?.id === currentUserId && m.body === msg.body && Math.abs(new Date(m.createdAt).getTime() - incomingTime) <= TEN_SEC);
+        if (tempIndex !== -1) {
+          const next = [...prev];
+          next[tempIndex] = { id: msg.id, body: msg.body, sender: msg.sender, createdAt: msg.createdAt, senderId: msg.senderId, receiverId: msg.receiverId };
           next.sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
           return next;
+        }
+
+        const next = [...prev, { id: msg.id, body: msg.body, sender: msg.sender, createdAt: msg.createdAt, senderId: msg.senderId, receiverId: msg.receiverId }];
+        next.sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
+        return next;
       });
     };
 
@@ -157,6 +155,23 @@ export default function LiveChat({ chat, onBack }: LiveChatProps) {
 
   const handleSendMessage = async () => {
     if (!messageInput.trim()) return;
+    const tempId = `temp-${Date.now()}`;
+    const tempMsg: MessageType = {
+      id: tempId,
+      clientTempId: tempId,
+      body: messageInput,
+      sender: { id: currentUserId || "me", name: session?.user?.name || "Saya", role: session?.user?.role || "PARENT" },
+      createdAt: new Date().toISOString(),
+      senderId: currentUserId,
+      receiverId: otherId,
+    };
+
+    setMessages((s) => {
+      const next = [...s, tempMsg];
+      next.sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
+      return next;
+    });
+
     try {
       const payload = { receiverId: otherId, title: chat.title || "Chat", body: messageInput };
       const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/messages`, {
@@ -169,18 +184,18 @@ export default function LiveChat({ chat, onBack }: LiveChatProps) {
       });
       const data = await res.json();
       if (data?.data?.id) {
-        const srv = data.data;
+        const srv = data.data as MessageType;
         setMessages((prev) => {
+          const tempIndex = prev.findIndex((m) => m.clientTempId === tempId);
+          if (tempIndex !== -1) {
+            const next = [...prev];
+            next[tempIndex] = { id: srv.id, body: srv.body, sender: srv.sender, createdAt: srv.createdAt, senderId: srv.senderId, receiverId: srv.receiverId };
+            next.sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
+            return next;
+          }
+
           if (prev.find((m) => m.id === srv.id)) return prev;
-          const next = [...prev, { id: srv.id, body: srv.body, sender: srv.sender, createdAt: srv.createdAt }];
-          next.sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
-          return next;
-        });
-      } else {
-        const tempId = `temp-${Date.now()}`;
-        const tempMsg = { id: tempId, clientTempId: tempId, body: messageInput, sender: { id: currentUserId || "me", name: session?.user?.name || "Saya", role: session?.user?.role || "PARENT" }, createdAt: new Date().toISOString() };
-        setMessages((s) => {
-          const next = [...s, tempMsg];
+          const next = [...prev, { id: srv.id, body: srv.body, sender: srv.sender, createdAt: srv.createdAt, senderId: srv.senderId, receiverId: srv.receiverId }];
           next.sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
           return next;
         });

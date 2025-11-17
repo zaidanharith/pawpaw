@@ -1,6 +1,7 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import { FaEdit, FaClock } from "react-icons/fa";
+import Image from "next/image";
 import { useSession } from "next-auth/react";
 import axios, { AxiosError } from "axios";
 import AddReport from "./AddReport";
@@ -77,7 +78,6 @@ const ReportPage: React.FC = () => {
     setToast({ type, message });
   };
 
-  // auto-hide toast
   useEffect(() => {
     if (!toast) return;
     const t = setTimeout(() => setToast(null), 3000);
@@ -250,45 +250,34 @@ const ReportPage: React.FC = () => {
   return (
     <>
       <section>
-        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-          {/* CARD TANGGAL + TOTAL LAPORAN */}
-          <div
-            className="flex flex-row items-center gap-2 px-4 bg-white border rounded-xl w-full sm:w-auto"
-            style={{ borderColor: accentColor }}
-          >
-            <div
-              className="rounded-xl px-3 py-2 my-2 flex flex-col items-center"
-              style={{
-                backgroundColor: accentColor,
-                color: dayChipTextColor,
-              }}
-            >
-              <h3 className="font-semibold text-md">{dayName}</h3>
-              <h4 className="font-normal text-sm">{dateString}</h4>
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex items-center gap-4 w-full sm:w-auto">
+            <div className="rounded-2xl p-3 text-center" style={{ backgroundColor: accentColor, color: dayChipTextColor }}>
+              <div className="font-semibold text-lg">{dayName}</div>
+              <div className="text-xs opacity-90">{dateString}</div>
             </div>
-            <div className="text-gray-800 px-3 py-2 flex flex-col items-center">
-              <h3 className="font-semibold text-sm">Total Laporan Hari Ini</h3>
-              <h4 className="font-bold text-3xl">{todayReportsCount}</h4>
+
+            <div className="bg-white border rounded-2xl px-4 py-3 shadow-sm" style={{ borderColor: accentColor }}>
+              <div className="text-sm text-gray-600">Total Laporan Hari Ini</div>
+              <div className="font-bold text-3xl mt-1">{todayReportsCount}</div>
             </div>
           </div>
 
-          {/* BUTTON BUAT LAPORAN */}
           {!isReadOnly && (
-            <button
-              onClick={() => setIsAddReportOpen(true)}
-              className="w-full sm:w-auto flex items-center justify-center gap-2 px-4 py-3 cursor-pointer rounded-xl text-sm md:text-base font-semibold hover:opacity-80 transition"
-              style={{
-                backgroundColor: accentColor,
-                color: textColor,
-              }}
-            >
-              <FaEdit /> Buat Laporan
-            </button>
+            <div className="w-full sm:w-auto">
+              <button
+                onClick={() => setIsAddReportOpen(true)}
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl text-sm md:text-base font-semibold shadow-md hover:shadow-lg transition"
+                style={{ backgroundColor: accentColor, color: textColor }}
+              >
+                <FaEdit /> Buat Laporan
+              </button>
+            </div>
           )}
         </div>
       </section>
 
-      <section className="flex flex-col gap-4">
+      <section className="mt-4">
         {loading ? (
           <div className="border rounded-xl p-10 shadow-sm bg-white text-center text-gray-500">
             Memuat data laporan...
@@ -298,7 +287,7 @@ const ReportPage: React.FC = () => {
             Belum ada laporan yang tersedia.
           </div>
         ) : (
-          <>
+          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
             {allReports.map((report) => {
               const rawActivityName = report.activities?.[0]?.name || "";
               const displayActivityName =
@@ -306,74 +295,55 @@ const ReportPage: React.FC = () => {
                 rawActivityName ||
                 "Kegiatan Harian";
 
+              const teacherName = report.teacher?.name || "Guru";
+
               return (
-                <div
+                <article
                   key={report.id}
-                  className="border rounded-xl p-5 shadow-sm bg-white flex flex-col gap-3"
+                  className="bg-white border rounded-2xl p-4 shadow-sm flex flex-col justify-between h-full"
                   style={{ borderColor: accentColor }}
                 >
-                  {/* Waktu relatif */}
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2 text-gray-500 text-sm">
-                      <span>
-                        <FaClock />
-                      </span>
-                      <span>
-                        {getRelativeTime(report.date || report.createdAt)}
-                      </span>
+                  <div>
+                    <div className="flex items-start justify-between">
+                      <div>
+                        <h3 className="text-lg font-bold text-gray-900">{report.title}</h3>
+                        <div className="mt-1 text-sm text-gray-600">{displayActivityName}</div>
+                      </div>
+
+                      <div className="flex flex-col items-end text-right">
+                        <div className="px-3 py-1 rounded-xl text-sm font-semibold" style={{ backgroundColor: accentColor, color: textColor }}>{teacherName}</div>
+                        <div className="mt-2 text-xs text-gray-500 flex items-center gap-2"><FaClock /> {getRelativeTime(report.date || report.createdAt)}</div>
+                      </div>
                     </div>
+
+                    <p className="mt-3 text-sm text-gray-700">{report.description || "Tidak ada deskripsi."}</p>
+
+                    {report.photos && report.photos.length > 0 ? (
+                      <div className="mt-3 flex items-center gap-2">
+                        {report.photos.slice(0,3).map((p) => (
+                          <div key={p.id} className="w-16 h-12 relative rounded-md overflow-hidden border">
+                            <Image src={p.path || p.filename} alt={p.originalName || 'photo'} fill style={{ objectFit: 'cover' }} />
+                          </div>
+                        ))}
+                        {report.photos.length > 3 && <div className="text-xs text-gray-500">+{report.photos.length - 3} lainnya</div>}
+                      </div>
+                    ) : (
+                      <div className="mt-3 text-xs text-gray-400">Tidak ada foto</div>
+                    )}
+
+                    <div className="mt-2 text-xs text-gray-500">{formatDateTime(report.date || report.createdAt)}</div>
                   </div>
 
-                  {/* Judul + Badge */}
-                  <div className="flex justify-between items-start">
-                    <div>
-                      <h2 className="text-xl font-bold text-gray-900">
-                        {report.title}
-                      </h2>
-                      <p className="text-gray-700 font-medium">
-                        {displayActivityName}
-                      </p>
-                    </div>
-
-                    <span
-                      className="px-3 py-1 rounded-full text-sm font-semibold"
-                      style={{ backgroundColor: accentColor, color: textColor }}
-                    >
-                      {report.teacher?.name
-                        ? `Guru: ${report.teacher.name}`
-                        : "Guru"}
-                    </span>
+                  <div className="mt-4 flex items-center gap-2">
+                    <button onClick={() => handleOpenDetail(report)} className="flex-1 px-3 py-1.5 rounded-lg font-medium border hover:shadow-sm transition cursor-pointer" style={{ borderColor: accentColor }}>{'Lihat Detail'}</button>
+                    {!isReadOnly && (
+                      <button onClick={() => { setEditReportData(report); setIsEditReportOpen(true); }} className="px-3 py-1.5 rounded-lg bg-gray-50 border cursor-pointer" style={{ borderColor: accentColor }}>Edit</button>
+                    )}
                   </div>
-
-                  {/* Deskripsi */}
-                  <p className="text-sm text-gray-700">
-                    {report.description || "Tidak ada deskripsi."}
-                  </p>
-
-                  {/* Foto */}
-                  {report.photos && report.photos.length > 0 && (
-                    <div className="text-xs text-gray-500">
-                      📷 {report.photos.length} Foto tersedia
-                    </div>
-                  )}
-
-                  {/* Jam & tanggal */}
-                  <p className="text-xs text-gray-500 font-medium">
-                    {formatDateTime(report.date || report.createdAt)}
-                  </p>
-
-                  {/* Tombol detail */}
-                  <button
-                    className="w-full py-3 mt-2 rounded-xl font-semibold hover:opacity-80 transition cursor-pointer"
-                    style={{ backgroundColor: accentColor, color: textColor }}
-                    onClick={() => handleOpenDetail(report)}
-                  >
-                    Lihat Detail Laporan
-                  </button>
-                </div>
+                </article>
               );
             })}
-          </>
+          </div>
         )}
       </section>
 
