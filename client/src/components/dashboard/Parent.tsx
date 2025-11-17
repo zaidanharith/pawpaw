@@ -39,7 +39,6 @@ export default function Parent({ activePage = "" }: ParentProps) {
   const router = useRouter();
   const { data: session } = useSession();
 
-  // Role colors
   const roleColors: Record<string, string> = {
     ADMIN: "#3f9065",
     TEACHER: "#f5bb00",
