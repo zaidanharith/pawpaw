@@ -56,7 +56,7 @@ export default function ChatList({ onSelectChat }: ChatListProps) {
         });
         const d = await res.json();
         if (cancelled) return;
-        const list = Array.isArray(d.data)
+        const list: { id: string; name: string; role?: string }[] = Array.isArray(d.data)
           ? d.data.map((u: unknown) => {
               const uu = u as { id: string; name: string; role?: string };
               return { id: uu.id, name: uu.name, role: uu.role };
