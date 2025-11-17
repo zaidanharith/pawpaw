@@ -15,6 +15,18 @@ interface AdminProps {
 
 export default function Admin({ activePage = "" }: AdminProps) {
   const router = useRouter();
+  
+  // Role colors
+  const roleColors: Record<string, string> = {
+    ADMIN: "#3f9065",
+    TEACHER: "#f5bb00",
+    PARENT: "#58baab",
+  };
+  
+  const accentColor = roleColors.ADMIN || "#3f9065";
+  const textColor = "#FFFFFF";
+  const isParent = false;
+  
   const menuItems = [
     { name: "Dashboard", urlName: "", icon: <FaTachometerAlt size={24} /> },
     { name: "User", urlName: "user", icon: <FaUser size={24} /> },
@@ -39,16 +51,6 @@ export default function Admin({ activePage = "" }: AdminProps) {
     router.push(`/dashboard/${menuUrl}`);
   };
 
-    const handleNavigateToReport = () => {
-    setActiveMenu("report");
-    router.push("/dashboard/report");
-};
-
-    const handleNavigateToAnnouncement = () => {
-    setActiveMenu("announcement");
-    router.push("/dashboard/announcement");
-};
-
   const renderContent = () => {
     switch (activeMenu) {
       case "":
@@ -58,8 +60,8 @@ export default function Admin({ activePage = "" }: AdminProps) {
             <Weather />
             <Statistics 
             />
-            <LiveReport onNavigateToReport={handleNavigateToReport} />
-            <Announcement onNavigateToAnnouncement={handleNavigateToAnnouncement} />
+            <LiveReport/>
+            <Announcement/>
           </>
         );
       case "user":
@@ -94,7 +96,7 @@ export default function Admin({ activePage = "" }: AdminProps) {
         return (
           <>
             <DashboardPageTitle page="Laporan Triwulan" />
-            <QuarterlyReportPage />
+            <QuarterlyReportPage accentColor={accentColor} textColor={textColor} isParent={isParent} />
           </>
         );
       case "announcement":

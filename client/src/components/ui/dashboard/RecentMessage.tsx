@@ -1,4 +1,5 @@
 import { FiMessageSquare } from "react-icons/fi";
+import { useSession } from "next-auth/react";
 
 interface RecentMessage {
   id: number;
@@ -6,11 +7,29 @@ interface RecentMessage {
   date: string;
 }
 
+const roleColors: Record<string, string> = {
+    ADMIN: "#3f9065",
+    TEACHER: "#f5bb00",
+    PARENT: "#58baab",
+};
+
+type UserRole = "ADMIN" | "TEACHER" | "PARENT";
+
+const textColors: Record<UserRole, string> = {
+    ADMIN: "#ffffff",
+    TEACHER: "#3d3006",
+    PARENT: "#063d35",
+};
+
 interface RecentMessagesProps {
   onViewAll?: () => void;
 }
 
 export default function RecentMessages({ onViewAll }: RecentMessagesProps) {
+    const { data: session } = useSession();
+    const role = (session?.user?.role as UserRole) || "ADMIN";
+    const textColor = textColors[role] || textColors.ADMIN;
+    const accentColor = roleColors[role] || roleColors.ADMIN;
   const messages: RecentMessage[] = [
     {
       id: 1,
@@ -53,7 +72,8 @@ export default function RecentMessages({ onViewAll }: RecentMessagesProps) {
 
       <button
         onClick={onViewAll}
-        className="w-full bg-teal-500 hover:bg-teal-600 text-white font-semibold py-2 px-4 rounded-xl transition"
+        className="w-full bg-teal-500 hover:brightness-90 font-semibold py-2 px-4 rounded-xl transition cursor-pointer"
+        style={{color: textColor}}
       >
         Lihat Semuanya
       </button>

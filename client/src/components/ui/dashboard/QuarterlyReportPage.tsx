@@ -1,331 +1,308 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
-import { FaEdit, FaClock } from "react-icons/fa";
-import { MdEdit, MdDelete } from "react-icons/md";
-import { useSession } from "next-auth/react";
+import { FC, useEffect, useState } from "react";
 import axios from "axios";
-import AddQuarterlyReport from "./AddQuarterlyReport";
-import EditQuarterlyReport from "./EditQuarterlyReport";
+import { toast } from "sonner";
+import { useSession } from "next-auth/react";
+
 import DetailQuarterlyReport from "./DetailQuarterlyReport";
+import FormQuarterlyReport from "./FormQuarterlyReport";
+
+import { Download, Edit, Plus, Trash2 } from "lucide-react";
 
 export interface QuarterlyReport {
   id: string;
-  studentName: string;
-  studentNumber: string;
-  className: string;
   quarter: string;
   year: number;
-  teacherName: string;
-  notes: string;
-  activitiesSummary: string[];
-  meetingReminder: boolean;
-  attendance?: { hadir: number; sakit: number; izin: number; alpha: number };
-  createdAt?: string;
-  updatedAt?: string;
+  title?: string;
+  meetingDate?: string;
+  notes?: string;
+  activitiesSummary?: string[];
+  createdAt: string;
+  updatedAt: string;
+  classroom?: {
+    id: string;
+    name: string;
+    teacher: {
+      name: string;
+      email: string;
+    };
+  } | null;
 }
 
-const roleColors: Record<string, string> = {
-  ADMIN: "#3f9065",
-  TEACHER: "#f5bb00",
-  PARENT: "#58baab",
-};
+interface QuarterlyReportPageProps {
+  accentColor: string;
+  textColor: string;
+  isParent: boolean;
+}
 
-const QuarterlyReportPage: React.FC = () => {
+const QuarterlyReportPage: FC<QuarterlyReportPageProps> = ({
+  accentColor,
+  textColor,
+  isParent,
+}) => {
+  const [reports, setReports] = useState<QuarterlyReport[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  const [selectedReport, setSelectedReport] = useState<QuarterlyReport | null>(
+    null
+  );
+  const [isFormOpen, setIsFormOpen] = useState(false);
+  const [editingReport, setEditingReport] = useState<QuarterlyReport | null>(null);
+
   const { data: session } = useSession();
   const token = session?.accessToken;
-  const role = (session?.user?.role || "ADMIN").toUpperCase();
 
-  const accentColor = roleColors[role] || roleColors.ADMIN;
-  const textColor = role === "ADMIN" ? "#FFFFFF" : "#3d3006";
-  const isParent = role === "PARENT";
-
-  const [allReports, setAllReports] = useState<QuarterlyReport[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [isAddReportOpen, setIsAddReportOpen] = useState(false);
-  const [filterQuarter, setFilterQuarter] = useState("");
-  const [filterYear, setFilterYear] = useState(new Date().getFullYear());
-
-  const [isEditReportOpen, setIsEditReportOpen] = useState(false);
-  const [editReportData, setEditReportData] = useState<QuarterlyReport | null>(null);
-
-  const [detailReport, setDetailReport] = useState<QuarterlyReport | null>(null);
-
-  // Fetch reports
-  useEffect(() => {
-    const fetchReports = async () => {
-      if (!token) return;
+  const fetchReports = async () => {
+    try {
       setLoading(true);
-      try {
-        const API_URL = process.env.NEXT_PUBLIC_API_URL;
-        const res = await axios.get(`${API_URL}/quarterly-reports`, {
-          headers: { Authorization: `Bearer ${token}` },
-          params: {
-            quarter: filterQuarter || undefined,
-            year: filterYear || undefined,
-          },
-        });
-        setAllReports(Array.isArray(res.data.data) ? res.data.data : []);
-      } catch {
-        setAllReports([]);
+
+      const url = `${process.env.NEXT_PUBLIC_API_URL}/report`;
+
+      const res = await axios.get(url, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      if (res.data.success) {
+        setReports(res.data.data);
       }
+    } catch (err) {
+      console.error(err);
+      toast.error("Gagal mengambil data laporan");
+    } finally {
       setLoading(false);
-    };
+    }
+  };
+
+  useEffect(() => {
     fetchReports();
-  }, [token, filterQuarter, filterYear]);
+  }, []);
 
-  const handleRefreshReports = async () => {
+  const handleDelete = async (id: string) => {
+    if (!confirm("Hapus laporan ini?")) return;
+
     try {
-      const API_URL = process.env.NEXT_PUBLIC_API_URL;
-      const res = await axios.get(`${API_URL}/quarterly-reports`, {
-        headers: { Authorization: `Bearer ${token}` },
-        params: {
-          quarter: filterQuarter || undefined,
-          year: filterYear || undefined,
-        },
-      });
-      setAllReports(Array.isArray(res.data.data) ? res.data.data : []);
-    } catch {
-      alert("Gagal refresh data laporan triwulan");
+      const res = await axios.delete(
+        `${process.env.NEXT_PUBLIC_API_URL}/report/${id}`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+
+      if (res.data.success) {
+        toast.success("Laporan berhasil dihapus");
+        setReports((prev) => prev.filter((r) => r.id !== id));
+        setSelectedReport(null);
+      }
+    } catch (err) {
+      console.error(err);
+      toast.error("Gagal menghapus laporan");
     }
   };
 
-  const handleSaveNewReport = async () => {
-    await handleRefreshReports();
-    setIsAddReportOpen(false);
-  };
-
-  const handleEditReport = (report: QuarterlyReport) => {
-    setEditReportData(report);
-    setIsEditReportOpen(true);
-  };
-
-  const handleSaveEditReport = async () => {
-    await handleRefreshReports();
-    setIsEditReportOpen(false);
-    setEditReportData(null);
-  };
-
-  const handleDeleteReport = async (id: string) => {
-    if (!confirm("Apakah Anda yakin ingin menghapus laporan triwulan ini?")) return;
+  const handleDownloadPdf = async (id: string, classroomName: string) => {
     try {
-      const API_URL = process.env.NEXT_PUBLIC_API_URL;
-      await axios.delete(`${API_URL}/quarterly-reports/${id}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      await handleRefreshReports();
-    } catch {
-      alert("Gagal menghapus laporan triwulan");
+
+      const res = await axios.get(
+        `${process.env.NEXT_PUBLIC_API_URL}/report/${id}/pdf`,
+        {
+          responseType: "blob",
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+
+      const url = window.URL.createObjectURL(new Blob([res.data]));
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = `quarterly-report-${classroomName}-${Date.now()}.pdf`;
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      window.URL.revokeObjectURL(url);
+
+      toast.success("PDF berhasil diunduh");
+    } catch (err) {
+      console.error(err);
+      toast.error("Gagal mengunduh PDF");
     }
   };
 
-  const today = new Date();
-  const dayNames = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
-  const monthNames = ["Januari","Februari","Maret","April","Mei","Juni","Juli","Agustus","September","Oktober","November","Desember"];
-  const dayName = dayNames[today.getDay()];
-  const dateString = `${today.getDate()} ${monthNames[today.getMonth()]} ${today.getFullYear()}`;
-
-  const getRelativeTime = (dateString?: string) => {
-    if (!dateString) return "Baru saja";
-    const date = new Date(dateString);
-    const now = new Date();
-    const diffMs = now.getTime() - date.getTime();
-    const diffMins = Math.floor(diffMs / 60000);
-    const diffHours = Math.floor(diffMins / 60);
-    const diffDays = Math.floor(diffHours / 24);
-    if (diffMins < 1) return "Baru saja";
-    if (diffMins < 60) return `${diffMins} menit yang lalu`;
-    if (diffHours < 24) return `${diffHours} jam yang lalu`;
-    return `${diffDays} hari yang lalu`;
+  const openCreateForm = () => {
+    setEditingReport(null);
+    setIsFormOpen(true);
   };
 
-  const formatDateTime = (dateString?: string) => {
-    if (!dateString) return "- | -";
-    const date = new Date(dateString);
-    const time = date.toLocaleTimeString("id-ID",{ hour: "2-digit", minute: "2-digit" });
-    const dateStr = date.toLocaleDateString("id-ID",{ day: "numeric", month: "short", year: "2-digit" });
-    return `${time} | ${dateStr}`;
+  const openEditForm = (report: QuarterlyReport) => {
+    setEditingReport(report);
+    setIsFormOpen(true);
   };
+
+  const handleFormClosed = (shouldReload?: boolean) => {
+    setIsFormOpen(false);
+    setEditingReport(null);
+    if (shouldReload) fetchReports();
+  };
+
+ 
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center p-8">
+        <p className="text-gray-500">Memuat laporan...</p>
+      </div>
+    );
+  }
 
   return (
-    <>
+    <div className="space-y-6">
       {/* HEADER */}
-      <section className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <div
-          className="flex flex-row items-center gap-2 px-4 bg-white rounded-xl w-full sm:w-auto border"
-          style={{ borderColor: accentColor }}
-        >
-          <div
-            className="rounded-xl px-3 py-2 my-2 flex flex-col items-center"
-            style={{ backgroundColor: accentColor, color: textColor }}
-          >
-            <h3 className="font-semibold text-md">{dayName}</h3>
-            <h4 className="font-normal text-sm">{dateString}</h4>
-          </div>
-
-          <div className="text-gray-800 px-3 py-2 flex flex-col items-center">
-            <h3 className="font-semibold text-sm">Total Laporan Triwulan</h3>
-            <h4 className="font-bold text-3xl">{allReports.length}</h4>
-          </div>
-        </div>
+      <div className="flex items-center justify-between">
+        <h2 className="text-2xl font-bold" style={{ color: textColor }}>
+          Laporan Triwulan
+        </h2>
 
         {!isParent && (
           <button
-            onClick={() => setIsAddReportOpen(true)}
-            className="w-full sm:w-auto flex items-center justify-center gap-2 px-4 py-3 cursor-pointer rounded-xl text-sm md:text-base font-semibold hover:opacity-80 transition"
-            style={{ backgroundColor: accentColor, color: textColor }}
+            onClick={openCreateForm}
+            style={{ backgroundColor: accentColor }}
+            className="flex items-center gap-2 rounded-lg px-4 py-2 text-white transition hover:shadow-lg"
           >
-            <FaEdit /> Buat Laporan Triwulan
+            <Plus size={20} />
+            Buat Laporan Baru
           </button>
         )}
-      </section>
+      </div>
 
-      {/* FILTER */}
-      <section className="bg-white border rounded-xl p-4 space-y-3 mt-4"
-        style={{ borderColor: accentColor }}>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Filter Kuartal</label>
-            <select
-              value={filterQuarter}
-              onChange={(e) => setFilterQuarter(e.target.value)}
-              className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2"
-              style={{ '--tw-ring-color': accentColor } as React.CSSProperties}
-            >
-              <option value="">Semua Kuartal</option>
-              <option value="Q1">Q1 (Januari - Maret)</option>
-              <option value="Q2">Q2 (April - Juni)</option>
-              <option value="Q3">Q3 (Juli - September)</option>
-              <option value="Q4">Q4 (Oktober - Desember)</option>
-            </select>
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Filter Tahun</label>
-            <select
-              value={filterYear}
-              onChange={(e) => setFilterYear(Number(e.target.value))}
-              className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2"
-              style={{ '--tw-ring-color': accentColor } as React.CSSProperties}
-            >
-              <option value={2024}>2024</option>
-              <option value={2025}>2025</option>
-              <option value={2026}>2026</option>
-            </select>
-          </div>
-        </div>
-      </section>
-
-      {/* LIST */}
-      <section className="flex flex-col gap-4 mt-4">
-        {loading ? (
-          <div className="border rounded-xl p-10 shadow-sm bg-white text-center text-gray-500"
-            style={{ borderColor: accentColor }}>
-            Memuat data laporan triwulan...
-          </div>
-        ) : allReports.length === 0 ? (
-          <div className="border rounded-xl p-10 shadow-sm bg-white text-center text-gray-500"
-            style={{ borderColor: accentColor }}>
-            Belum ada laporan triwulan yang tersedia.
-          </div>
-        ) : (
-          allReports.map((report) => (
-            <div key={report.id} className="border rounded-xl p-5 shadow-sm bg-white flex flex-col gap-3"
-              style={{ borderColor: accentColor }}>
-              
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2 text-gray-500 text-sm">
-                  <span><FaClock /></span>
-                  <span>{getRelativeTime(report.createdAt)}</span>
-                </div>
-
-                {!isParent && (
-                  <div className="flex gap-2">
-                    <button
-                      onClick={() => handleEditReport(report)}
-                      className="cursor-pointer hover:scale-110 transition-transform p-2 rounded-full text-blue-500 hover:bg-blue-50"
-                    >
-                      <MdEdit className="w-5 h-5" />
-                    </button>
-
-                    <button
-                      onClick={() => handleDeleteReport(report.id)}
-                      className="cursor-pointer hover:scale-110 transition-transform p-2 rounded-full text-red-500 hover:bg-red-50"
-                    >
-                      <MdDelete className="w-5 h-5" />
-                    </button>
-                  </div>
-                )}
-              </div>
-
-              <div>
-                <h2 className="text-xl font-bold text-gray-900">{report.studentName}</h2>
-                <p className="text-sm text-gray-600">{report.className} | {report.quarter} {report.year}</p>
-              </div>
-
-              <p className="text-sm text-gray-700">{report.notes}</p>
-
-              {report.attendance && (
-                <div className="text-sm text-gray-700">
-                  <strong>Rekap Kehadiran:</strong> H: {report.attendance.hadir}, S: {report.attendance.sakit}, I: {report.attendance.izin}, A: {report.attendance.alpha}
-                </div>
-              )}
-
-              <div className="flex gap-2 flex-wrap mt-2">
-                <span className="px-3 py-1 rounded-full text-xs font-semibold" style={{ backgroundColor: accentColor, color: textColor }}>
-                  Guru: {report.teacherName}
-                </span>
-                {report.meetingReminder && (
-                  <span className="px-3 py-1 bg-amber-100 text-amber-700 rounded-full text-xs font-semibold">
-                    📅 Ada Pertemuan Orang Tua
-                  </span>
-                )}
-              </div>
-
-              <p className="text-xs text-gray-500 font-medium">{formatDateTime(report.createdAt)}</p>
-
-              <button
-                onClick={() => setDetailReport(report)}
-                className="w-full py-3 mt-2 rounded-xl font-semibold text-white hover:opacity-80 transition cursor-pointer"
-                style={{ backgroundColor: accentColor, color: textColor }}
-              >
-                Lihat Detail Laporan Triwulan
-              </button>
-            </div>
-          ))
-        )}
-      </section>
-
-      {/* ADD & EDIT MODALS */}
-      {!isParent && (
-        <>
-          <AddQuarterlyReport
-            isOpen={isAddReportOpen}
-            onClose={() => setIsAddReportOpen(false)}
-            onSave={handleSaveNewReport}
-          />
-
-          <EditQuarterlyReport
-            isOpen={isEditReportOpen}
-            onClose={() => { setIsEditReportOpen(false); setEditReportData(null); }}
-            reportData={editReportData}
-            onSave={handleSaveEditReport}
-          />
-        </>
+      {/* FORM MODAL */}
+      {isFormOpen && (
+        <FormQuarterlyReport
+          onClose={handleFormClosed}
+          editingReport={editingReport}
+          accentColor={accentColor}
+          textColor={textColor}
+        />
       )}
 
       {/* DETAIL MODAL */}
-      {detailReport && (
+      {selectedReport && (
         <DetailQuarterlyReport
-          report={detailReport}
-          onClose={() => setDetailReport(null)}
+          report={selectedReport}
+          onClose={() => setSelectedReport(null)}
           accentColor={accentColor}
           textColor={textColor}
           isParent={isParent}
-          onEdit={!isParent ? () => handleEditReport(detailReport) : undefined}
-          onDelete={!isParent ? () => handleDeleteReport(detailReport.id) : undefined}
+          onEdit={() => {
+            openEditForm(selectedReport);
+            setSelectedReport(null);
+          }}
+          onDelete={() => handleDelete(selectedReport.id)}
         />
       )}
-    </>
+
+      {/* TABLE */}
+      <div className="overflow-x-auto rounded-lg border border-gray-200 bg-white">
+        {reports.length === 0 ? (
+          <div className="p-8 text-center text-gray-500">
+            Belum ada laporan triwulan
+          </div>
+        ) : (
+          <table className="w-full">
+            <thead className="bg-gray-50">
+              <tr>
+                <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700">
+                  Kelas
+                </th>
+                <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700">
+                  Kuartal
+                </th>
+                <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700">
+                  Guru
+                </th>
+                <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700">
+                  Catatan
+                </th>
+                <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700">
+                  Dibuat
+                </th>
+                <th className="px-6 py-3 text-center text-sm font-semibold text-gray-700">
+                  Aksi
+                </th>
+              </tr>
+            </thead>
+
+            <tbody className="divide-y divide-gray-200">
+              {reports.map((report) => (
+                <tr key={report.id} className="hover:bg-gray-50">
+                  <td className="px-6 py-4 text-sm font-medium text-gray-900">
+                    <button
+                      type="button"
+                      onClick={() => setSelectedReport(report)}
+                      className="text-left text-blue-600 hover:underline"
+                    >
+                      {report.classroom?.name ?? "-"}
+                    </button>
+                  </td>
+
+                  <td className="px-6 py-4 text-sm text-gray-600">
+                    {report.quarter} {report.year}
+                  </td>
+
+                  <td className="px-6 py-4 text-sm text-gray-600">
+                    {report.classroom?.teacher?.name ?? "-"}
+                  </td>
+
+                  <td className="px-6 py-4 text-sm text-gray-600 max-w-xs">
+                    <p className="line-clamp-2">
+                      {report.notes ?? report.title ?? "-"}
+                    </p>
+                  </td>
+
+                  <td className="px-6 py-4 text-sm text-gray-600">
+                    {new Date(report.createdAt).toLocaleDateString("id-ID")}
+                  </td>
+
+                  <td className="px-6 py-4">
+                    <div className="flex items-center justify-center gap-2">
+                      <button
+                        onClick={() =>
+                          handleDownloadPdf(
+                            report.id,
+                            report.classroom?.name ?? "report"
+                          )
+                        }
+                        className="rounded p-2 text-blue-600 hover:bg-blue-100"
+                        title="Unduh PDF"
+                      >
+                        <Download size={18} />
+                      </button>
+
+                      {!isParent && (
+                        <>
+                          <button
+                            onClick={() => openEditForm(report)}
+                            className="rounded p-2 text-yellow-600 hover:bg-yellow-100"
+                            title="Edit"
+                          >
+                            <Edit size={18} />
+                          </button>
+
+                          <button
+                            onClick={() => handleDelete(report.id)}
+                            className="rounded p-2 text-red-600 hover:bg-red-100"
+                            title="Hapus"
+                          >
+                            <Trash2 size={18} />
+                          </button>
+                        </>
+                      )}
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
+      </div>
+    </div>
   );
 };
 
