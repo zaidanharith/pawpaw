@@ -17,6 +17,13 @@ const studentController = {
               }
             }
           }
+          ,
+          parent: {
+            select: {
+              id: true,
+              name: true
+            }
+          }
         },
         orderBy: {
           name: 'asc'
@@ -63,6 +70,14 @@ const studentController = {
               }
             }
           }
+          ,
+          parent: {
+            select: {
+              id: true,
+              name: true,
+              email: true
+            }
+          }
         }
       });
 
@@ -88,7 +103,7 @@ const studentController = {
 
   createStudent: async (req, res) => {
     try {
-      const { name, gender, address, birthDate, classroomId, isActive } = req.body;
+      const { name, gender, address, birthDate, classroomId, isActive, parentId } = req.body;
 
       if (!name || !gender || !birthDate || !classroomId) {
         return res.status(400).json({ 
@@ -112,9 +127,7 @@ const studentController = {
         });
       }
 
-      const classroom = await prisma.classroom.findUnique({ 
-        where: { id: classroomId } 
-      });
+      const classroom = await prisma.classroom.findUnique({ where: { id: classroomId } });
 
       if (!classroom) {
         return res.status(404).json({ 
@@ -123,23 +136,34 @@ const studentController = {
         });
       }
 
+      const createData = {
+        name,
+        gender,
+        address: address || null,
+        birthDate: new Date(birthDate),
+        classroomId,
+        isActive: typeof isActive === 'boolean' ? isActive : true,
+        activityIds: []
+      };
+
+      if (parentId !== undefined && parentId !== null && parentId !== '') {
+        if (typeof parentId !== 'string' || parentId.length !== 24) {
+          return res.status(400).json({ success: false, message: 'Parent ID tidak valid' });
+        }
+
+        const parent = await prisma.user.findUnique({ where: { id: parentId } });
+        if (!parent) {
+          return res.status(404).json({ success: false, message: 'Orang tua (parent) tidak ditemukan' });
+        }
+
+        createData.parentId = parentId;
+      }
+
       const student = await prisma.student.create({
-        data: {
-          name,
-          gender,
-          address: address || null,
-          birthDate: new Date(birthDate),
-          classroomId,
-          isActive: typeof isActive === 'boolean' ? isActive : true,
-          activityIds: []
-        },
+        data: createData,
         include: {
-          classroom: {
-            select: { 
-              id: true, 
-              name: true 
-            }
-          }
+          classroom: { select: { id: true, name: true } },
+          parent: { select: { id: true, name: true, email: true } }
         }
       });
 
@@ -160,7 +184,7 @@ const studentController = {
   updateStudent: async (req, res) => {
     try {
       const { id } = req.params;
-      const { name, gender, address, birthDate, classroomId, isActive, activityIds } = req.body;
+      const { name, gender, address, birthDate, classroomId, isActive, activityIds, parentId } = req.body;
 
       if (!id || id.length !== 24) {
         return res.status(400).json({ 
@@ -204,6 +228,21 @@ const studentController = {
         }
         updateData.activityIds = activityIds;
       }
+      if (parentId !== undefined) {
+        if (parentId && parentId.length !== 24) {
+          return res.status(400).json({ success: false, message: 'Parent ID tidak valid' });
+        }
+
+        if (parentId) {
+          const parent = await prisma.user.findUnique({ where: { id: parentId } });
+          if (!parent) {
+            return res.status(404).json({ success: false, message: 'Orang tua (parent) tidak ditemukan' });
+          }
+          updateData.parentId = parentId;
+        } else {
+          updateData.parentId = null;
+        }
+      }
       if (classroomId !== undefined) {
         if (!classroomId || classroomId.length !== 24) {
           return res.status(400).json({ 
@@ -227,12 +266,8 @@ const studentController = {
         where: { id },
         data: updateData,
         include: {
-          classroom: {
-            select: { 
-              id: true, 
-              name: true 
-            }
-          }
+          classroom: { select: { id: true, name: true } },
+          parent: { select: { id: true, name: true, email: true } }
         }
       });
 

@@ -43,6 +43,7 @@ model User {
   sentMessages        Message[]         @relation("SentMessages")
   receivedMessages    Message[]         @relation("ReceivedMessages")
   quarterlyReports    QuarterlyReport[]
+  students            Student[]
 
   @@map("users")
 }
@@ -139,6 +140,8 @@ model Student {
   address   String?
   birthDate DateTime
   isActive  Boolean  @default(true)
+  parentId  String?  @db.ObjectId
+  parent    User?    @relation(fields: [parentId], references: [id], onDelete: SetNull)
 
   // Relations
   classroomId String    @db.ObjectId

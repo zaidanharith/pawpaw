@@ -83,10 +83,11 @@ router.get(
  *         application/json:
  *           schema:
  *             $ref: '#/components/schemas/Student'
- *           example:
- *             name: Agatha
- *             age: 10
- *             classroomId: 64b5f72a9c9f2a001c23a8f5
+  *           example:
+  *             name: Agatha
+  *             age: 10
+  *             classroomId: 64b5f72a9c9f2a001c23a8f5
+  *             parentId: 64b5f72a9c9f2a001c23a8f6
  *     responses:
  *       201:
  *         description: Siswa berhasil ditambahkan
