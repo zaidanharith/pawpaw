@@ -383,6 +383,81 @@ const authController = {
     }
   },
 
+  updateProfile: async (req, res) => {
+    try {
+      // Cek apakah user terautentikasi
+      if (!req.user || !req.user.id) {
+        return res.status(401).json({
+          success: false,
+          message: 'Unauthorized: User tidak ditemukan'
+        });
+      }
+
+      // Ambil data dari request body
+      const { name, username, email, phoneNumber } = req.body;
+
+      if (!name || !username || !email || !phoneNumber) {
+        return res.status(400).json({
+          success: false,
+          message: 'Semua field wajib diisi'
+        });
+      }
+
+      // Cari user berdasarkan ID
+      const user = await prisma.user.findUnique({
+        where: { id: req.user.id }
+      });
+
+      if (!user) {
+        return res.status(404).json({
+          success: false,
+          message: 'User tidak ditemukan'
+        });
+      }
+
+      // Update data user
+      const updatedUser = await prisma.user.update({
+        where: { id: req.user.id },
+        data: {
+          name,
+          username,
+          email,
+          phoneNumber
+        }
+      });
+
+      res.status(200).json({
+        success: true,
+        message: 'Profil berhasil diperbarui',
+        data: {
+          id: updatedUser.id,
+          username: updatedUser.username,
+          name: updatedUser.name,
+          email: updatedUser.email,
+          phoneNumber: updatedUser.phoneNumber,
+          role: updatedUser.role,
+          picture: updatedUser.picture,
+          provider: updatedUser.provider,
+          emailVerified: updatedUser.emailVerified,
+          isLogin: updatedUser.isLogin,
+          isPasswordReset: updatedUser.isPasswordReset,
+          isActive: updatedUser.isActive,
+          createdAt: updatedUser.createdAt,
+          updatedAt: updatedUser.updatedAt
+        }
+      });
+
+    } catch (error) {
+      console.error('Update profile error:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Terjadi error di server',
+        error: error.message
+      });
+    }
+  },
+
+
   resetPassword: async (req, res) => {
     try {
       const { username, newPassword } = req.body;
