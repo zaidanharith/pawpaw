@@ -2,8 +2,11 @@
 
 import { useSession } from "next-auth/react";
 import Image from "next/image";
-import { IoIosArrowBack } from "react-icons/io";
+import { IoIosArrowBack, IoIosSend } from "react-icons/io";
+import { FiEdit, FiTrash2, FiX, FiCheck } from "react-icons/fi";
 import { Chat } from "./ChatList";
+import { useEffect, useRef, useState } from "react";
+import { io, Socket } from "socket.io-client";
 
 const roleColors: Record<string, string> = {
   ADMIN: "#3f9065",
@@ -21,6 +24,227 @@ export default function LiveChat({ chat, onBack }: LiveChatProps) {
   const role = session?.user?.role || "PARENT";
   const accentColor = roleColors[role] || roleColors.ADMIN;
   const textColor = role === "PARENT" ? "#FFFFFF" : "#282828";
+  type MessageType = {
+    id: string;
+    body: string;
+    sender: { id: string; name: string; role: string };
+    createdAt: string;
+    senderId?: string;
+    receiverId?: string;
+    clientTempId?: string;
+  };
+  const [messages, setMessages] = useState<MessageType[]>([]);
+  const [messageInput, setMessageInput] = useState("");
+  const containerRef = useRef<HTMLDivElement | null>(null);
+
+  const currentUserId = session?.user?.id;
+  const otherUser = chat.senderId === currentUserId ? chat.receiver : chat.sender;
+  const otherId = chat.senderId === currentUserId ? chat.receiverId : chat.senderId;
+  const socketRef = useRef<Socket | null>(null);
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [editingText, setEditingText] = useState<string>("");
+
+  useEffect(() => {
+    const fetchHistory = async () => {
+      setMessages([]);
+      try {
+        const url = `${process.env.NEXT_PUBLIC_API_URL}/messages?otherId=${otherId}`;
+        const res = await fetch(url, {
+          headers: { Authorization: `Bearer ${session?.accessToken}` },
+        });
+        const data = await res.json();
+        if (Array.isArray(data.data)) {
+          const msgs = data.data as MessageType[];
+          const formatted = msgs
+              .filter((m) => {
+                const s = m.senderId ?? m.sender?.id;
+                const r = m.receiverId ?? (m as MessageType & { receiver?: { id?: string } }).receiver?.id;
+                return (
+                  (s === otherId && r === currentUserId) || (s === currentUserId && r === otherId)
+                );
+              })
+            .map((m) => ({ id: m.id, body: m.body, sender: m.sender, createdAt: m.createdAt }));
+          formatted.sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
+          setMessages(formatted);
+        } else {
+          setMessages([]);
+        }
+      } catch (err) {
+        console.error(err);
+        setMessages([]);
+      }
+    };
+
+    if (otherId && session?.accessToken) fetchHistory();
+  }, [otherId, chat, session, currentUserId]);
+
+  useEffect(() => {
+    if (!session?.accessToken || !currentUserId) return;
+
+    const base = (process.env.NEXT_PUBLIC_BACKEND_URL || process.env.NEXT_PUBLIC_API_URL || '').replace(/\/$/, '');
+    const socket = io(base, {
+      auth: { token: session?.accessToken },
+      transports: ['websocket']
+    });
+    socketRef.current = socket;
+
+    socket.on('connect', () => {
+    });
+
+    const isRelatedToCurrent = (msg: MessageType) => {
+      const s = msg.senderId ?? msg.sender?.id;
+      const r = msg.receiverId ?? (msg as MessageType & { receiver?: { id?: string } }).receiver?.id;
+      return ((s === otherId && r === currentUserId) || (s === currentUserId && r === otherId));
+    };
+
+    const handleIncoming = (msg: MessageType) => {
+      if (!msg || !msg.id) return;
+      if (!isRelatedToCurrent(msg)) return;
+
+      setMessages((prev) => {
+          if (prev.find((m) => m.id === msg.id)) return prev;
+
+          const FIVE_SEC = 5000;
+          const incomingTime = new Date(msg.createdAt).getTime();
+          const filtered = prev.filter((m) => {
+            if (!m.clientTempId) return true;
+            const tempTime = new Date(m.createdAt).getTime();
+            const sameBody = m.body === msg.body;
+            const closeTime = Math.abs(tempTime - incomingTime) <= FIVE_SEC;
+            return !(sameBody && closeTime);
+          });
+
+          const next = [...filtered, { id: msg.id, body: msg.body, sender: msg.sender, createdAt: msg.createdAt, senderId: msg.senderId, receiverId: msg.receiverId }];
+          next.sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
+          return next;
+      });
+    };
+
+    socket.on('message:received', handleIncoming);
+    socket.on('message:sent', handleIncoming);
+    const handleUpdated = (msg: MessageType) => {
+      if (!msg || !msg.id) return;
+      if (!isRelatedToCurrent(msg)) return;
+      setMessages((prev) => prev.map((m) => (m.id === msg.id ? { ...m, body: msg.body, createdAt: msg.createdAt } : m)));
+    };
+
+    socket.on('message:updated', handleUpdated);
+
+    const handleDeleted = (payload: { id: string; senderId?: string; receiverId?: string }) => {
+      if (!payload || !payload.id) return;
+      setMessages((prev) => prev.filter((m) => m.id !== payload.id));
+    };
+    socket.on('message:deleted', handleDeleted);
+
+    socket.on('disconnect', () => {
+    });
+
+    return () => {
+      socket.off('message:received', handleIncoming);
+      socket.off('message:sent', handleIncoming);
+      socket.off('message:updated', handleUpdated);
+      socket.off('message:deleted', handleDeleted);
+      socket.disconnect();
+      socketRef.current = null;
+    };
+  }, [session?.accessToken, currentUserId, otherId]);
+
+  useEffect(() => {
+    if (containerRef.current) {
+      containerRef.current.scrollTop = containerRef.current.scrollHeight;
+    }
+  }, [messages]);
+
+  const handleSendMessage = async () => {
+    if (!messageInput.trim()) return;
+    try {
+      const payload = { receiverId: otherId, title: chat.title || "Chat", body: messageInput };
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/messages`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${session?.accessToken}`,
+        },
+        body: JSON.stringify(payload),
+      });
+      const data = await res.json();
+      if (data?.data?.id) {
+        const srv = data.data;
+        setMessages((prev) => {
+          if (prev.find((m) => m.id === srv.id)) return prev;
+          const next = [...prev, { id: srv.id, body: srv.body, sender: srv.sender, createdAt: srv.createdAt }];
+          next.sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
+          return next;
+        });
+      } else {
+        const tempId = `temp-${Date.now()}`;
+        const tempMsg = { id: tempId, clientTempId: tempId, body: messageInput, sender: { id: currentUserId || "me", name: session?.user?.name || "Saya", role: session?.user?.role || "PARENT" }, createdAt: new Date().toISOString() };
+        setMessages((s) => {
+          const next = [...s, tempMsg];
+          next.sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
+          return next;
+        });
+      }
+      setMessageInput("");
+    } catch (err) {
+      console.error("Failed to send message", err);
+    }
+  };
+
+  const handleStartEdit = (msg: MessageType) => {
+    if (msg.id.startsWith('temp-')) return;
+    setEditingId(msg.id);
+    setEditingText(msg.body);
+  };
+
+  const handleCancelEdit = () => {
+    setEditingId(null);
+    setEditingText("");
+  };
+
+  const handleSaveEdit = async (id: string) => {
+    const newBody = editingText.trim();
+    if (!newBody) return;
+    try {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/messages/${id}`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${session?.accessToken}`,
+        },
+        body: JSON.stringify({ body: newBody }),
+      });
+      const data = await res.json();
+      if (data?.data?.id) {
+        const updated = data.data as MessageType;
+        setMessages((prev) => prev.map((m) => (m.id === updated.id ? { ...m, body: updated.body, createdAt: updated.createdAt } : m)));
+      }
+    } catch (err) {
+      console.error('Failed to update message', err);
+    } finally {
+      handleCancelEdit();
+    }
+  };
+
+  const handleDeleteMessage = async (id: string) => {
+    if (id.startsWith('temp-')) {
+      setMessages((prev) => prev.filter((m) => m.id !== id));
+      return;
+    }
+    if (!confirm('Hapus pesan ini?')) return;
+    try {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/messages/${id}`, {
+        method: 'DELETE',
+        headers: { Authorization: `Bearer ${session?.accessToken}` },
+      });
+      const data = await res.json();
+      if (data?.success) {
+        setMessages((prev) => prev.filter((m) => m.id !== id));
+      }
+    } catch (err) {
+      console.error('Failed to delete message', err);
+    }
+  };
 
   return (
     <>
@@ -29,26 +253,90 @@ export default function LiveChat({ chat, onBack }: LiveChatProps) {
           <IoIosArrowBack />
         </button>
         <div className="flex items-center">
-          <Image src="/default-user.png" alt="Foto Profil" width={40} height={40} className="rounded-full object-cover mr-3 border"/>
+          <Image src={"/default-user.png"} alt="Foto Profil" width={40} height={40} className="rounded-full object-cover mr-3 border" />
         </div>
-        <h2 className="font-bold text-xl">Budi Santoso</h2>
+        <h2 className="font-bold text-xl">{otherUser?.name}</h2>
       </div>
-      <div className="flex flex-col gap-4 overflow-y-scroll">
 
-        {/* Bubble chat dari user lain */}
-        <div className="flex items-start">
-          <Image src="/default-user.png" alt="User" width={32} height={32} className="rounded-full object-cover mr-2 border" />
-          <div className="bg-gray-100 rounded-lg px-4 py-2 max-w-xs">
-            <span className="text-sm">Halo Ibu/Bapak, saya ijin pendamping di kelas Anak TK A. Ada yang bisa saya bantu hari ini?</span>
-          </div>
-        </div>
+      <div ref={containerRef} className="flex-1 flex flex-col gap-4 overflow-y-auto p-2">
+        {messages.map((m) => {
+          const isMine = m.sender?.id === currentUserId;
+          return (
+            <div key={m.id} className={`flex ${isMine ? "justify-end" : "justify-start"}`}>
+              <div
+                className={`rounded-lg px-4 py-2 max-w-[75%] ${isMine ? "text-right relative" : "text-left"}`}
+                style={{ background: isMine ? accentColor : "#f3f4f6", color: isMine ? textColor : "#111827" }}>
+                {isMine ? (
+                  editingId === m.id ? (
+                    <div>
+                      <textarea
+                        value={editingText}
+                        onChange={(e) => setEditingText(e.target.value)}
+                        className="w-full p-2 rounded-md text-sm"
+                        rows={3}
+                      />
+                      <div className="flex gap-2 justify-end mt-2">
+                        <button
+                          onClick={handleCancelEdit}
+                          aria-label="Batal"
+                          className="p-2 rounded bg-gray-200 text-sm cursor-pointer text-black"
+                        >
+                          <FiX size={16} />
+                        </button>
+                        <button
+                          onClick={() => handleSaveEdit(m.id)}
+                          aria-label="Simpan"
+                          className="p-2 rounded bg-green-600 text-white text-sm cursor-pointer"
+                        >
+                          <FiCheck size={16} />
+                        </button>
+                      </div>
+                    </div>
+                  ) : (
+                    <div>
+                      <div className={`text-xs mt-1 ${isMine ? "text-white" : "text-gray-400"}`}>{new Date(m.createdAt).toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit" })}</div>
+                      <div className="text-sm">{m.body}</div>
+                      <div className="flex gap-2 justify-end mt-2">
+                        <button onClick={() => handleStartEdit(m)} aria-label="Edit pesan" className="p-0 ml-2 cursor-pointer" style={{ background: 'transparent', padding: 0, border: 'none', color: textColor }}>
+                          <FiEdit size={16} />
+                        </button>
+                        <button onClick={() => handleDeleteMessage(m.id)} aria-label="Hapus pesan" className="p-0 ml-2 cursor-pointer" style={{ background: 'transparent', padding: 0, border: 'none', color: textColor }}>
+                          <FiTrash2 size={16} />
+                        </button>
+                      </div>
+                    </div>
+                  )
+                ) : (
+                  <>
+                    <div className={`text-xs mt-1 ${isMine ? "text-white" : "text-gray-400"}`}>{new Date(m.createdAt).toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit" })}</div>
+                    <div className="text-sm">{m.body}</div>
+                  </>
+                )}
+              </div>
+            </div>
+          );
+        })}
+      </div>
 
-        {/* Bubble chat dari user sendiri */}
-        <div className="flex items-end justify-end">
-          <div style={{ background: accentColor, color: textColor }} className="rounded-lg px-4 py-2 max-w-xs">
-            <span className="text-sm">Saya ingin bertanya tentang jadwal pelajaran.</span>
-          </div>
-          <Image src="/default-user.png" alt="Me" width={32} height={32} className="rounded-full object-cover ml-2 border" />
+      <div className="bg-white border-t border-gray-200 p-4">
+        <div className="flex items-center gap-3">
+          <input
+            type="text"
+            placeholder="Tuliskan pesan disini..."
+            value={messageInput}
+            onChange={(e) => setMessageInput(e.target.value)}
+            onKeyDown={(e) => e.key === "Enter" && handleSendMessage()}
+            className={`w-full px-3 py-1.5 border border-gray-300 rounded-lg focus:outline-1`}
+          />
+
+          <button
+            onClick={handleSendMessage}
+            className="text-white rounded-lg transition-colors shrink-0 p-2 flex items-center justify-center cursor-pointer"
+            aria-label="Kirim pesan"
+            style={{ background: accentColor, color: textColor }}
+          >
+            <IoIosSend className="w-5 h-5" />
+          </button>
         </div>
       </div>
     </>
