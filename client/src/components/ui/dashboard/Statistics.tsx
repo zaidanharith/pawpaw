@@ -8,6 +8,14 @@ const roleColors: Record<string, string> = {
     PARENT: "#58baab",
 };
 
+type UserRole = "ADMIN" | "TEACHER" | "PARENT";
+
+const textColors: Record<UserRole, string> = {
+    ADMIN: "#ffffff",
+    TEACHER: "#3d3006",
+    PARENT: "#063d35",
+};
+
 type User = {
     id: string;
     name: string;
@@ -20,7 +28,7 @@ const Statistics: React.FC = () => {
     const { data: session } = useSession();
     const role = session?.user?.role || "ADMIN";
     const cardColor = roleColors[role] || roleColors.ADMIN;
-    const textColor = role === "TEACHER" ? "#282828" : "#fff";
+    const textColor = textColors[role] || textColors.ADMIN;
 
     const [studentCount, setStudentCount] = useState<number>(0);
     const [teacherCount, setTeacherCount] = useState<number>(0);
