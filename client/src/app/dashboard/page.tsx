@@ -9,8 +9,8 @@ export default function DashboardPage() {
     const role = session?.user?.role;
 
     return (
-        <div className="px-4 flex flex-col items-center">
-            <main className="w-full">
+        <div className="px-4 md:px-0 flex flex-col items-center">
+            <main className="w-full md:px-4">
                 <header className="flex items-center justify-start gap-2 mt-2">
                     <h1 className="font-bold text-foreground text-2xl min-w-5">
                         Halo, {session?.user?.name || "User"}

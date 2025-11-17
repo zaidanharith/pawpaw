@@ -315,6 +315,44 @@ router.get('/auth/me', protect, authController.getProfile);
 
 /**
  * @swagger
+ * /auth/profile:
+ *   put:
+ *     summary: Edit Profil User
+ *     tags: [Auth]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       description: Data yang akan diperbarui oleh user (Name, Username, Email, Phone Number)
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               name:
+ *                 type: string
+ *               username:
+ *                 type: string
+ *               email:
+ *                 type: string
+ *               phoneNumber:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Berhasil memperbarui profil
+ *       400:
+ *         description: Bad request (field tidak lengkap)
+ *       401:
+ *         description: Tidak sah (token tidak valid)
+ *       404:
+ *         description: User tidak ditemukan
+ *       500:
+ *         description: Internal server error
+ */
+router.put('/auth/profile', protect, authController.updateProfile);
+
+/**
+ * @swagger
  * /auth/verify-face-token:
  *   post:
  *     summary: Verifikasi Face Token

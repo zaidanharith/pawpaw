@@ -115,7 +115,6 @@ export default function StudentTable() {
     setLoading(false);
   };
 
-  // --- useEffect React 18+ compliant
   useEffect(() => {
     if (!token) return;
     const fetchData = async () => {
@@ -228,10 +227,10 @@ export default function StudentTable() {
                     key={siswa.id}
                     className="border-t hover:bg-gray-50 transition-colors"
                   >
-                    <td className="px-4 py-3 font-medium whitespace-nowrap">
+                    <td className="px-4 py-1.5 font-medium whitespace-nowrap">
                       {siswa.name}
                     </td>
-                    <td className="px-4 py-3">
+                    <td className="px-4 py-1.5">
                       <span
                         className="px-3 py-1 rounded-full text-xs font-medium uppercase"
                         style={{
@@ -244,20 +243,16 @@ export default function StudentTable() {
                         {siswa.gender === "MALE" ? "Laki-Laki" : "Perempuan"}
                       </span>
                     </td>
-                    <td className="px-4 py-3">
+                    <td className="px-4 py-1.5">
                       {siswa.birthDate ? formatBirthDate(siswa.birthDate) : "-"}
                     </td>
-                    <td className="px-4 py-3 max-w-[200px]">
-                      <div className="truncate" title={siswa.address}>
-                        {siswa.address}
-                      </div>
-                    </td>
-                    <td className="px-4 py-3 text-center">{siswa.attendanceSummary?.hadir || 0}</td>
-                    <td className="px-4 py-3 text-center">{siswa.attendanceSummary?.izin || 0}</td>
-                    <td className="px-4 py-3 text-center">{siswa.attendanceSummary?.sakit || 0}</td>
-                    <td className="px-4 py-3 text-center">{siswa.attendanceSummary?.alfa || 0}</td>
+                    <td className="px-4 py-1.5">{siswa.address}</td>
+                    <td className="px-4 py-1.5 text-center">{siswa.attendanceSummary?.hadir || 0}</td>
+                    <td className="px-4 py-1.5 text-center">{siswa.attendanceSummary?.izin || 0}</td>
+                    <td className="px-4 py-1.5 text-center">{siswa.attendanceSummary?.sakit || 0}</td>
+                    <td className="px-4 py-1.5 text-center">{siswa.attendanceSummary?.alfa || 0}</td>
                     {isAdminOrTeacher && (
-                      <td className="px-4 py-3 flex justify-center sm:justify-start gap-3">
+                      <td className="px-4 py-1.5 flex justify-center sm:justify-start gap-3">
                         <button
                           onClick={() => handleEditStudent(siswa)}
                           className="cursor-pointer hover:scale-110 transition-transform p-1 rounded-full text-blue-500 hover:bg-blue-50"
