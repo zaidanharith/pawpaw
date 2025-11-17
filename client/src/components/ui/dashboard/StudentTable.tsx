@@ -42,12 +42,20 @@ const roleColors: Record<string, string> = {
   PARENT: "#58baab",
 };
 
+type UserRole = "ADMIN" | "TEACHER" | "PARENT";
+
+const textColors: Record<UserRole, string> = {
+    ADMIN: "#ffffff",
+    TEACHER: "#3d3006",
+    PARENT: "#063d35",
+};
+
 export default function StudentTable() {
   const { data: session } = useSession();
   const token = session?.accessToken;
   const role = session?.user?.role || "ADMIN";
   const accentColor = roleColors[role] || roleColors.ADMIN;
-  const textColor = role === "ADMIN" ? "#FFFFFF" : "#282828";
+  const textColor = textColors[role] || textColors.ADMIN;
 
   const [allSiswa, setAllSiswa] = useState<Siswa[]>([]);
   const [loading, setLoading] = useState(true);
@@ -166,6 +174,11 @@ export default function StudentTable() {
       year: "numeric",
     });
 
+  const truncateAddress = (address: string, maxLength: number = 30) => {
+    if (address.length <= maxLength) return address;
+    return address.substring(0, maxLength) + '...';
+  };
+
   return (
     <>
       <section className="bg-white rounded-xl shadow p-5">
@@ -183,7 +196,7 @@ export default function StudentTable() {
           )}
         </div>
 
-        <div className="rounded-xl overflow-x-scroll">
+        <div className="rounded-xl overflow-x-auto">
           <table className="w-full text-sm text-gray-700 rounded-xl">
             <thead style={{ backgroundColor: accentColor, color: textColor }}>
               <tr>
@@ -246,7 +259,7 @@ export default function StudentTable() {
                     <td className="px-4 py-1.5">
                       {siswa.birthDate ? formatBirthDate(siswa.birthDate) : "-"}
                     </td>
-                    <td className="px-4 py-1.5">{siswa.address}</td>
+                    <td className="px-4 py-1.5 max-w-[200px] truncate">{siswa.address}</td>
                     <td className="px-4 py-1.5 text-center">{siswa.attendanceSummary?.hadir || 0}</td>
                     <td className="px-4 py-1.5 text-center">{siswa.attendanceSummary?.izin || 0}</td>
                     <td className="px-4 py-1.5 text-center">{siswa.attendanceSummary?.sakit || 0}</td>
