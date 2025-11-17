@@ -48,16 +48,6 @@ export default function Admin({ activePage = "" }: AdminProps) {
     router.push("/dashboard/announcement");
 };
 
-    const handleNavigateToUser = () => {
-    setActiveMenu("user");
-    router.push("/dashboard/user");
-};
-
-    const handleNavigateToSiswa = () => {
-    setActiveMenu("student");
-    router.push("/dashboard/student");
-};
-
   const renderContent = () => {
     switch (activeMenu) {
       case "":
@@ -66,8 +56,6 @@ export default function Admin({ activePage = "" }: AdminProps) {
             <DashboardPageTitle page="Dashboard"/>
             <Weather />
             <Statistics 
-              onNavigateToUser={handleNavigateToUser}
-              onNavigateToSiswa={handleNavigateToSiswa}
             />
             <LiveReport onNavigateToReport={handleNavigateToReport} />
             <Announcement onNavigateToAnnouncement={handleNavigateToAnnouncement} />
