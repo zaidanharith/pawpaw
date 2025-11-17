@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Navbar from "@/components/layout/Navbar";
 import Sidebar from "@/components/layout/Sidebar";
-import { DashboardPageTitle, Statistics, Weather, LiveReport, Announcement, Profile, UserTable, StudentTable, ReportPage, AnnouncementPage, ClassPage, ResetPassword, MenuNotFound } from "@/components/ui/dashboard";
+import { DashboardPageTitle, Statistics, Weather, LiveReport, Announcement, Profile, UserTable, StudentTable, ReportPage, AnnouncementPage, ClassPage, ResetPassword, MenuNotFound, QuarterlyReportPage } from "@/components/ui/dashboard";
 import { FaTachometerAlt, FaUser, FaUsers, FaClipboardList, FaBullhorn, FaUserCog, FaRegSmile, } from "react-icons/fa";
 import { SiGoogleclassroom } from "react-icons/si";
 import FaceRegister from "../ui/dashboard/FaceRegister";
@@ -21,6 +21,7 @@ export default function Admin({ activePage = "" }: AdminProps) {
     { name: "Siswa", urlName: "student", icon: <FaUsers size={24} /> },
     { name: "Kelas", urlName: "class", icon: <SiGoogleclassroom size={24} /> },
     { name: "Laporan Kegiatan", urlName: "report", icon: <FaClipboardList size={24} /> },
+    { name: "Laporan Triwulan", urlName: "quarterly-report", icon: <FaClipboardList size={24} /> },
     { name: "Pengumuman", urlName: "announcement", icon: <FaBullhorn size={24} /> },
     { name: "Profil", urlName: "profile", icon: <FaUserCog size={24} /> },
     { name: "Face Registration", urlName: "face-registration", icon: <FaRegSmile size={24} /> },
@@ -85,8 +86,15 @@ export default function Admin({ activePage = "" }: AdminProps) {
       case "report":
         return (
           <>
-            <DashboardPageTitle page="Laporan Kegiatan"/>
+            <DashboardPageTitle page="Laporan Kegiatan" />
             <ReportPage />
+          </>
+        );
+      case "quarterly-report":
+        return (
+          <>
+            <DashboardPageTitle page="Laporan Triwulan" />
+            <QuarterlyReportPage />
           </>
         );
       case "announcement":
