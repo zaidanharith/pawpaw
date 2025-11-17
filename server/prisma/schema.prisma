@@ -42,7 +42,6 @@ model User {
   liveReports         LiveReport[]
   sentMessages        Message[]         @relation("SentMessages")
   receivedMessages    Message[]         @relation("ReceivedMessages")
-  quarterlyReports    QuarterlyReport[]
   students            Student[]
 
   @@map("users")
@@ -152,7 +151,7 @@ model Student {
 
   attendances      Attendance[]
   messages         Message[]
-  quarterlyReports QuarterlyReport[]
+  
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -268,24 +267,18 @@ model Message {
 
 // ===== QUARTERLY REPORT MODEL =====
 model QuarterlyReport {
-  id                String   @id @default(auto()) @map("_id") @db.ObjectId
+  id                String      @id @default(auto()) @map("_id") @db.ObjectId
   quarter           Quarter
   year              Int
-  activitiesSummary String[]
-  notes             String?
-  meetingReminder   Boolean  @default(false)
+  title             String?
+  meetingDate       DateTime?
 
-  // Relations
-  studentId String  @db.ObjectId
-  student   Student @relation(fields: [studentId], references: [id], onDelete: Cascade)
-
-  teacherId String @db.ObjectId
-  teacher   User   @relation(fields: [teacherId], references: [id], onDelete: Cascade)
+  liveReportIds   String[]      @db.ObjectId
+  attendanceIds String[]   @db.ObjectId
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  @@unique([studentId, quarter, year])
   @@map("quarterly_reports")
 }
 

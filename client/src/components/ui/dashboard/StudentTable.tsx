@@ -73,7 +73,6 @@ export default function StudentTable() {
 
   const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
-  // --- function to fetch students + attendance
   const fetchStudentsWithAttendance = async () => {
     if (!token) return;
     setLoading(true);

@@ -60,7 +60,7 @@ const Sidebar: React.FC<SidebarProps> = ({
         className={`absolute inset-0 bg-black bg-opacity-50 transition-all duration-800 ${isOpen ? "opacity-100" : "opacity-0"} md:static`}
         onClick={onClose}/>
       <aside
-        className={`absolute inset-0 shadow-2xl flex flex-col p-8 md:px-6 transition-all duration-800 ease-in-out h-full overflow-y-auto ${isOpen ? "translate-y-0" : "-translate-y-full"} md:static md:shadow-none md:rounded-xl md:h-auto`}
+        className={`absolute inset-0 shadow-2xl flex flex-col p-8 md:px-6 transition-all duration-800 ease-in-out h-full overflow-y-auto ${isOpen ? "translate-y-0" : "-translate-y-full"} md:static md:shadow-none md:rounded-xl md:h-auto lg:min-w-xs`}
         style={{ backgroundColor: sidebarBg }}
         onClick={(e) => e.stopPropagation()}>
         <div className="flex items-center justify-between mb-8">

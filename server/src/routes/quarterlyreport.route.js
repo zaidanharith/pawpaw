@@ -1,3 +1,5 @@
+// routes/quarterlyReport.routes.js
+
 const express = require("express");
 const router = express.Router();
 const quarterlyReportController = require("../controllers/quarterlyReport.controller");
@@ -6,26 +8,28 @@ const { protect, requireRole } = require("../middleware/auth.middleware");
 /**
  * @swagger
  * tags:
- *   name: Quarterly Report
- *   description: Manajemen laporan triwulan siswa
+ *   name: QuarterlyReport
+ *   description: Manajemen laporan triwulan
  */
 
 /**
  * @swagger
  * /report:
  *   get:
- *     summary: Ambil semua laporan triwulan
- *     tags: [Quarterly Report]
+ *     summary: Lihat semua laporan triwulan
+ *     tags: [QuarterlyReport]
  *     security:
  *       - bearerAuth: []
  *     responses:
  *       200:
- *         description: Berhasil mengambil data laporan
+ *         description: Daftar laporan triwulan
+ *       403:
+ *         description: Akses ditolak
  */
 router.get(
   "/report",
   protect,
-  requireRole("ADMIN", "TEACHER"),
+  requireRole("ADMIN", "TEACHER", "PARENT"),
   quarterlyReportController.getQuarterlyReports
 );
 
@@ -33,20 +37,20 @@ router.get(
  * @swagger
  * /report/{id}:
  *   get:
- *     summary: Ambil laporan triwulan berdasarkan ID
- *     tags: [Quarterly Report]
+ *     summary: Lihat laporan triwulan berdasarkan ID
+ *     tags: [QuarterlyReport]
  *     security:
  *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id
- *         required: true
  *         schema:
  *           type: string
- *         description: ID quarterly report
+ *         required: true
+ *         description: ID laporan
  *     responses:
  *       200:
- *         description: Data laporan ditemukan
+ *         description: Detail laporan
  *       404:
  *         description: Laporan tidak ditemukan
  */
@@ -61,37 +65,79 @@ router.get(
  * @swagger
  * /report:
  *   post:
- *     summary: Tambah laporan triwulan baru untuk siswa
- *     tags: [Quarterly Report]
+ *     summary: Buat laporan triwulan baru (otomatis berdasarkan 90 hari terakhir)
+ *     tags: [QuarterlyReport]
  *     security:
  *       - bearerAuth: []
+ *     requestBody:
+ *       required: false
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               title:
+ *                 type: string
+ *                 example: Rekap Kegiatan Q1 2025
+ *               meetingDate:
+ *                 type: string
+ *                 format: date-time
+ *                 example: 2025-03-31T10:00:00.000Z
+ *     responses:
+ *       201:
+ *         description: Laporan berhasil dibuat
+ *       400:
+ *         description: Duplikat atau input tidak valid
+ */
+router.post(
+  "/report",
+  protect,
+  requireRole("ADMIN", "TEACHER"),
+  quarterlyReportController.generateQuarterlyReport
+);
+
+/**
+ * @swagger
+ * /report/{id}:
+ *   put:
+ *     summary: Perbarui laporan triwulan
+ *     tags: [QuarterlyReport]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: ID laporan
  *     requestBody:
  *       required: true
  *       content:
  *         application/json:
  *           schema:
  *             type: object
- *             required:
- *               - studentId
- *               - teacherId
  *             properties:
- *               studentId:
+ *               title:
  *                 type: string
- *                 description: ID siswa
- *               teacherId:
+ *               meetingDate:
  *                 type: string
- *                 description: ID guru yang membuat laporan
+ *                 format: date-time
+ *               activitiesSummary:
+ *                 type: array
+ *                 items:
+ *                   type: string
  *     responses:
- *       201:
- *         description: Quarterly report berhasil dibuat
+ *       200:
+ *         description: Laporan berhasil diperbarui
  *       400:
- *         description: Laporan untuk kuartal ini sudah ada
+ *         description: Input tidak valid
  */
-router.post(
-  "/report",
+router.put(
+  "/report/:id",
   protect,
-  requireRole("TEACHER"),
-  quarterlyReportController.generateQuarterlyReport
+  requireRole("ADMIN", "TEACHER"),
+  quarterlyReportController.updateQuarterlyReport
 );
 
 /**
@@ -99,16 +145,16 @@ router.post(
  * /report/{id}:
  *   delete:
  *     summary: Hapus laporan triwulan
- *     tags: [Quarterly Report]
+ *     tags: [QuarterlyReport]
  *     security:
  *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id
- *         required: true
  *         schema:
  *           type: string
- *         description: ID quarterly report
+ *         required: true
+ *         description: ID laporan
  *     responses:
  *       200:
  *         description: Laporan berhasil dihapus
@@ -126,27 +172,32 @@ router.delete(
  * @swagger
  * /report/{id}/pdf:
  *   get:
- *     summary: Download laporan triwulan dalam bentuk PDF
- *     tags: [Quarterly Report]
+ *     summary: Unduh laporan triwulan dalam format PDF
+ *     tags: [QuarterlyReport]
  *     security:
  *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id
- *         required: true
  *         schema:
  *           type: string
- *         description: ID quarterly report
+ *         required: true
+ *         description: ID laporan
  *     responses:
  *       200:
- *         description: File PDF laporan triwulan
+ *         description: PDF file
+ *         content:
+ *           application/pdf:
+ *             schema:
+ *               type: string
+ *               format: binary
  *       404:
  *         description: Laporan tidak ditemukan
  */
 router.get(
   "/report/:id/pdf",
   protect,
-  requireRole("ADMIN", "TEACHER"),
+  requireRole("ADMIN", "TEACHER", "PARENT"),
   quarterlyReportController.downloadQuarterlyReportPdf
 );
 
