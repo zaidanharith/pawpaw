@@ -7,6 +7,7 @@ declare module "next-auth" {
       id: string;
       username: string;
       role: "ADMIN" | "TEACHER" | "PARENT";
+      phoneNumber?: string | null;
       isPasswordReset?: boolean;
     } & DefaultSession["user"];
     accessToken?: string;
@@ -16,6 +17,7 @@ declare module "next-auth" {
     id: string;
     username: string;
     role: "ADMIN" | "TEACHER" | "PARENT";
+    phoneNumber?: string | null;
     accessToken?: string;
     loginErrorMessage?: string;
     isPasswordReset?: boolean;
@@ -27,6 +29,7 @@ declare module "next-auth/jwt" {
     id: string;
     username: string;
     role: "ADMIN" | "TEACHER" | "PARENT";
+    phoneNumber?: string | null;
     accessToken?: string;
     isPasswordReset?: boolean;
   }
