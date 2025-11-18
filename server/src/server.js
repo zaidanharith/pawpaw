@@ -90,46 +90,126 @@ const io = new Server(server, {
   cors: {
     origin: allowedOrigins,
     credentials: true
-  }
+  },
+  pingTimeout: 60000,
+  pingInterval: 25000
 });
 
+// Make io accessible in routes/controllers
 app.set('io', io);
 
+// Socket.IO Authentication Middleware
 io.use((socket, next) => {
   const token = socket.handshake.auth && socket.handshake.auth.token;
-  if (!token) return next(new Error('Unauthorized'));
+  if (!token) {
+    console.log('Socket connection rejected: No token');
+    return next(new Error('Unauthorized'));
+  }
   try {
     const payload = jwt.verify(token, process.env.JWT_SECRET);
     socket.user = payload;
+    console.log('Socket authenticated for user:', payload.id);
     return next();
   } catch (err) {
-    console.error('Socket auth error', err.message || err);
+    console.error('Socket auth error:', err.message || err);
     return next(new Error('Invalid token'));
   }
 });
 
+// Store active socket connections by userId
+const userSockets = new Map();
+
 io.on('connection', (socket) => {
   const userId = socket.user?.id;
-  console.log('User connected:', socket.id, 'userId:', userId);
+  console.log('✅ User connected:', socket.id, 'userId:', userId);
 
-  if (userId) {
-    socket.join(`user:${userId}`);
-    console.log(`Socket ${socket.id} joined room user:${userId}`);
+  if (!userId) {
+    console.log('❌ No userId found, disconnecting socket');
+    socket.disconnect();
+    return;
   }
 
+  // Join user-specific room
+  socket.join(`user:${userId}`);
+  console.log(`📍 Socket ${socket.id} joined room: user:${userId}`);
+
+  // Store socket reference
+  if (!userSockets.has(userId)) {
+    userSockets.set(userId, new Set());
+  }
+  userSockets.get(userId).add(socket.id);
+
+  // Handle join event for specific conversation
+  socket.on('join', (data) => {
+    const { otherId, userId: clientUserId } = data;
+    console.log(`🔗 Join event: userId=${clientUserId}, otherId=${otherId}`);
+    
+    if (otherId && clientUserId) {
+      // Create a room for this conversation
+      const roomId = [clientUserId, otherId].sort().join('-');
+      socket.join(roomId);
+      console.log(`📍 Socket ${socket.id} joined conversation room: ${roomId}`);
+    }
+  });
+
+  // Handle legacy chat message (optional, for backward compatibility)
   socket.on('chat message', async (msg) => {
+    console.log('📨 Chat message received:', msg);
     io.emit('chat message', msg);
   });
 
   socket.on('disconnect', () => {
-    console.log('User disconnected:', socket.id);
+    console.log('❌ User disconnected:', socket.id);
+    
+    // Remove socket reference
+    if (userSockets.has(userId)) {
+      userSockets.get(userId).delete(socket.id);
+      if (userSockets.get(userId).size === 0) {
+        userSockets.delete(userId);
+      }
+    }
+  });
+
+  socket.on('error', (err) => {
+    console.error('Socket error:', err);
   });
 });
+
+// Helper function to emit message events
+// This should be called from your message controller
+function emitMessageEvent(event, message, senderId, receiverId) {
+  console.log(`📤 Emitting ${event}:`, {
+    messageId: message.id,
+    senderId,
+    receiverId
+  });
+
+  // Emit to sender
+  if (senderId) {
+    io.to(`user:${senderId}`).emit(event, message);
+    console.log(`  → Emitted to sender: user:${senderId}`);
+  }
+
+  // Emit to receiver
+  if (receiverId && receiverId !== senderId) {
+    io.to(`user:${receiverId}`).emit(event, message);
+    console.log(`  → Emitted to receiver: user:${receiverId}`);
+  }
+
+  // Emit to conversation room
+  const roomId = [senderId, receiverId].filter(Boolean).sort().join('-');
+  io.to(roomId).emit(event, message);
+  console.log(`  → Emitted to room: ${roomId}`);
+}
+
+// Export helper for use in controllers
+app.set('emitMessageEvent', emitMessageEvent);
 
 server.listen(PORT, () => {
   console.log(`🚀 Server berjalan di http://localhost:${PORT}`);
   console.log(`📚 API Docs: http://localhost:${PORT}/api/docs`);
   console.log(`🔒 Helmet: Enabled`);
+  console.log(`🔌 Socket.IO: Ready`);
 });
 
 process.on('SIGTERM', async () => {
@@ -137,3 +217,5 @@ process.on('SIGTERM', async () => {
   await prisma.$disconnect();
   process.exit(0);
 });
+
+module.exports = { io, emitMessageEvent };
