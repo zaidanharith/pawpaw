@@ -95,45 +95,128 @@ pawpaw/
 │   ├── package.json
 │   ├── postcss.config.mjs
 │   ├── tsconfig.json
+|   ├── .next
+|   |   ├── build/
+|   |   ├── chace/
+|   |   ├── logs/
+|   |   ├── server/
+|   |   ├── static/
+|   |   ├── types/
+|   |   ├── build-manifest.json
+|   |   ├── fallback-build-manifest.json
+|   |   ├── package.json
+|   |   ├── prerender-manifest.json
+|   |   └── routes-manifest.json
+|   ├── node_modules/
 │   ├── public/
-│   │   └── images/
+│   |   ├── images/
+|   |   ├── models/
+|   |   ├── default-user.png
+|   |   ├── google669cb8f46a.html
+|   |   ├── logo.svg
+|   |   ├── next.svg
+|   |   ├── vercel.svg
 │   └── src/
 │       ├── app/
 │       │   ├── globals.css
 │       │   ├── layout.tsx
 │       │   ├── page.tsx
+|       |   ├── not.found.tsx
+|       |   ├── error.tsx
+|       |   ├── favicon.ico
 │       │   ├── api/
 │       │   │   └── auth/
 │       │   │       └── [...nextauth]/
 │       │   │           └── route.ts
-│       │   ├── auth/
-│       │   │   ├── layout.tsx
-│       │   │   ├── login/
-│       │   │   │   └── page.tsx
-│       │   │   └── register/
-│       │   │       └── page.tsx
-│       │   └── dashboard/
-│       │       ├── layout.tsx
-│       │       └── page.tsx
+│       │   ├── dashboard/
+│       │   │   ├── [page]
+|       |   |   |    ├──layout.tsx
+|       |   |   |    ├── page.tsx
+│       │   ├── login/
+│       │   │   ├── page.tsx
+|       |   |   ├── layput.tsx
+│       │   ├── privacy-policy/
+│       │   |   └── page.tsx
+|       |   └── terms-of-services/
+|       |   |   └── page.tsx
 │       ├── components/
 │       │   ├── auth/
 │       │   │   ├── LoginForm.tsx
+|       |   |   ├── FaceLogin.tsx
+|       |   |   ├── LoginGoogleButton.tsx
 │       │   │   └── RegisterForm.tsx
+|       |   ├── dashboard/
+|       |   |    ├── Admin.tsx
+|       |   |    ├── Parent.tsx
+|       |   |    ├── Teacher.tsx
+|       |   |    └── index.ts
 │       │   ├── layout/
 │       │   │   ├── Navbar.tsx
+|       |   |   ├── Footer.tsx
 │       │   │   └── Sidebar.tsx
 │       │   ├── providers/
 │       │   │   └── SessionProvider.tsx
 │       │   └── ui/
-│       │       ├── Button.tsx
-│       │       ├── Card.tsx
-│       │       └── Input.tsx
+│       │   |   ├── dashboard/
+|       |   |        ├── AddAnnouncement.tsx
+|       |   |        ├── AddClass.tsx
+|       |   |        ├── AddReport.tsx
+|       |   |        ├── AddStudent.tsx
+|       |   |        ├── AddUser.tsx
+|       |   |        ├── Announcement.tsx
+|       |   |        ├── AnnouncementDetail.tsx
+|       |   |        ├── AnnouncementPage.tsx
+|       |   |        ├── Attendance.tsx
+|       |   |        ├── AttendanceRecap.tsx
+|       |   |        ├── ClassPage.tsx
+|       |   |        ├── DasboardPageTitle.tsx
+|       |   |        ├── DetailQuarterlyReport.tsx
+|       |   |        ├── DetailReport.tsx
+|       |   |        ├── EditAnnouncement.tsx
+|       |   |        ├── EditClass.tsx
+|       |   |        ├── EditProfile.tsx
+|       |   |        ├── EditQuarterlyReport.tsx
+|       |   |        ├── EditReport.tsx
+|       |   |        ├── EditStudent.tsx
+|       |   |        ├── EditUser.tsx
+|       |   |        ├── FaceRegister.tsx
+|       |   |        ├── FormQuarterlyReport.tsx
+|       |   |        ├── index.ts
+|       |   |        ├── LiveReport.tsx
+|       |   |        ├── LiveReport.tsc
+|       |   |        ├── LiveReportCard.tsx
+|       |   |        ├── LiveReportFilter.tsx
+|       |   |        ├── LiveReportPage.tsx
+|       |   |        ├── MenuNotFound.tsx
+|       |   |        ├── PreviewChat.tsx
+|       |   |        ├── Profile.tsx
+|       |   |        ├── QuarterlyReportList.tsx
+|       |   |        ├── QuarterlyReportPage.tsx
+|       |   |        ├── RecentAnnouncement.tsx
+|       |   |        ├── RecentMessage.tsx
+|       |   |        ├── ReportPage.tsx
+|       |   |        ├── ResetPassword.tsx
+|       |   |        ├── RoleLabel.tsx
+|       |   |        ├── Statistic.tsx
+|       |   |        ├── StudentTable.tsx
+|       |   |        ├── UserTable.tsx
+|       |   |        ├── Weather.tsx
+|       |   |   ├── BurgerButton.tsx
+|       |   |   ├── ChatList.tsx
+|       |   |   ├── DeleteConfirmation.tsx
+|       |   |   ├── FeatureCard.tsx
+|       |   |   ├── Gallery.tsx
+|       |   |   ├── Input.tsx
+|       |   |   ├── LiveChat.tsx
+|       |   |   ├── Loading.tsx
+|       |   |   └── Button.tsx
 │       ├── hooks/
-│       │   └── auth.ts
+│       │   └── useAuth.ts
 │       ├── lib/
 │       │   └── api.ts
 │       ├── services/
-│       │   └── auth.service.ts
+│       │   ├── auth.service.ts
+|       |   └── faceAuth.service.ts
 │       ├── styles/
 │       └── types/
 │           └── next-auth.d.ts
@@ -185,6 +268,9 @@ pawpaw/
   <img src="https://img.shields.io/badge/-Cloudinary-3448C5?style=for-the-badge&logo=cloudinary&logoColor=white"/>
   <img src="https://img.shields.io/badge/-Swagger-85EA2D?style=for-the-badge&logo=swagger&logoColor=black"/>
   <img src="https://img.shields.io/badge/-Weather%20API-FF9A00?style=for-the-badge&logo=openweathermap&logoColor=white"/>
+  <img src="https://img.shields.io/badge/-Socket.io-010101?style=for-the-badge&logo=socketdotio&logoColor=white"/>
+  <img src="https://img.shields.io/badge/-Gmail-EA4335?style=for-the-badge&logo=gmail&logoColor=white"/>
+  <img src="https://img.shields.io/badge/-Helmet.js-4C4C4C?style=for-the-badge&logo=helmet&logoColor=white"/>
 </p>
 
 ### Frontend
@@ -194,6 +280,7 @@ pawpaw/
   <img src="https://img.shields.io/badge/-TypeScript-3178C6?style=for-the-badge&logo=typescript&logoColor=white"/>
   <img src="https://img.shields.io/badge/-Tailwind%20CSS-06B6D4?style=for-the-badge&logo=tailwindcss&logoColor=white"/>
   <img src="https://img.shields.io/badge/-NextAuth.js-000000?style=for-the-badge&logo=next.js&logoColor=white"/>
+  <img src="https://img.shields.io/badge/-FACE/API.js-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black"/>
 </p>
 
 ### Authentication & Authorization

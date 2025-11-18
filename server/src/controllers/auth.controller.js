@@ -385,6 +385,8 @@ const authController = {
     }
   },
 
+// Tambahkan atau update method updateProfile di auth.controller.js
+
   updateProfile: async (req, res) => {
     try {
       if (!req.user || !req.user.id) {
@@ -396,10 +398,10 @@ const authController = {
 
       const { name, username, email, phoneNumber, pictureId } = req.body;
 
-      if (!name || !username || !email || !phoneNumber) {
+      if (!name || !username || !email) {
         return res.status(400).json({
           success: false,
-          message: 'Semua field wajib diisi'
+          message: 'Nama, username, dan email wajib diisi'
         });
       }
 
@@ -414,14 +416,47 @@ const authController = {
         });
       }
 
+      // Cek apakah username atau email sudah digunakan user lain
+      const existingUser = await prisma.user.findFirst({
+        where: {
+          OR: [
+            { email },
+            { username }
+          ],
+          NOT: {
+            id: req.user.id
+          }
+        }
+      });
+
+      if (existingUser) {
+        let message = 'Email sudah digunakan oleh user lain';
+        if (existingUser.username === username) {
+          message = 'Username sudah digunakan oleh user lain';
+        }
+        
+        return res.status(400).json({
+          success: false,
+          message
+        });
+      }
+
+      // Update data user
+      const updateData = {
+        name,
+        username,
+        email,
+        phoneNumber: phoneNumber || null
+      };
+
+      // Hanya update picture jika ada perubahan
+      if (picture !== undefined && picture !== user.picture) {
+        updateData.picture = picture;
+      }
+
       const updatedUser = await prisma.user.update({
         where: { id: req.user.id },
-        data: {
-          name,
-          username,
-          email,
-          phoneNumber
-        }
+        data: updateData
       });
 
       res.status(200).json({

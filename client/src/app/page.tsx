@@ -1,6 +1,7 @@
 import Navbar from '@/components/layout/Navbar';
 import FeatureCard from '../components/ui/FeatureCard';
 import Gallery from '@/components/ui/Gallery';
+import Image from 'next/image';
 
 export default function Home() {
   return (
@@ -42,13 +43,20 @@ export default function Home() {
           </p>
         </section>
         <section id="contact" className="px-4 py-7 max-w-7xl mx-auto">
-          <h1 className='text-center font-bold text-3xl mb-5'>Kontak Kami</h1>
+          <h1 className='text-center font-bold text-3xl mb-5'>Tech Stack</h1>
           <p className='text-center'>
-            Jika Anda memiliki pertanyaan atau masukan, jangan ragu untuk menghubungi kami melalui email di{" "}
-            <a href="mailto:kidconnect.paw@gmail.com" className='font-semibold text-blue-500 hover:underline'>
-              kidconnect.paw@gmail.com
-            </a>.
+            KidConnect dibangun menggunakan teknologi modern terkemuka.
           </p>
+          <div className='flex justify-center mt-5 gap-7 items-center flex-wrap'>
+            <Image src="/nodejs.svg" alt="Tech Stack" width={100} height={100} />
+            <Image src="/expressjs.png" alt="Tech Stack" width={60} height={60} />
+            <Image src="/mongodb.png" alt="Tech Stack" width={60} height={60} />
+            <Image src="/cloudinary.png" alt="Tech Stack" width={60} height={60} />
+            <Image src="/google.svg" alt="Tech Stack" width={60} height={60} />
+            <Image src="/next.svg" alt="Tech Stack" width={150} height={150} />
+            <Image src="/tailwindcss.svg" alt="Tech Stack" width={60} height={60} />
+            <Image src="/vercel.png" alt="Tech Stack" width={60} height={60} />
+          </div>
         </section>
       </main>
     </>

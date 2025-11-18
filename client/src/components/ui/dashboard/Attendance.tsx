@@ -5,7 +5,6 @@ import axios from "axios";
 import { useSession } from "next-auth/react";
 import { MdOutlineClose, MdEdit, MdDelete } from "react-icons/md";
 import DeleteConfirmation from "../DeleteConfirmation";
-import { text } from "stream/consumers";
 
 interface Student {
   id: string;
@@ -42,9 +41,9 @@ interface AttendanceModalProps {
 }
 
 const roleColors: Record<string, string> = {
-    ADMIN: "#3f9065",
-    TEACHER: "#f5bb00",
-    PARENT: "#58baab",
+  ADMIN: "#3f9065",
+  TEACHER: "#f5bb00",
+  PARENT: "#58baab",
 };
 
 const STATUS_OPTIONS = [
@@ -54,7 +53,7 @@ const STATUS_OPTIONS = [
   { value: "ALFA", label: "Alfa" },
 ] as const;
 
-// NORMALISASI STATUS DARI BACKEND
+
 function normalizeStatusFromBackend(raw?: string | null): AttendanceStatus {
   if (!raw) return "hadir";
   const s = raw.toLowerCase();
@@ -65,14 +64,13 @@ function normalizeStatusFromBackend(raw?: string | null): AttendanceStatus {
   return "hadir";
 }
 
-// FRONTEND -> BACKEND ENUM
+// Frontend → Backend ENUM
 function convertStatusToBackend(s: AttendanceStatus): string {
   switch (s) {
     case "hadir": return "HADIR";
     case "izin": return "IZIN";
     case "sakit": return "SAKIT";
     case "alfa": return "ALFA";
-    default: return String(s).toUpperCase();
   }
 }
 
@@ -84,13 +82,14 @@ export default function AttendanceModal({
 }: AttendanceModalProps) {
   const { data: session } = useSession();
   const token = session?.accessToken;
+  const role = session?.user?.role || "ADMIN";
+
+  const accentColor = roleColors[role];
+  const textColor = role === "ADMIN" ? "#FFFFFF" : "#3d3006";
 
   const [attendances, setAttendances] = useState<Attendance[]>([]);
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
-  const role = session?.user?.role || "ADMIN";
-  const accentColor = roleColors[role];
-  const textColor = role === "ADMIN" ? "#FFFFFF" : "#3d3006";
 
   const [form, setForm] = useState({
     status: "hadir" as AttendanceStatus,
@@ -104,7 +103,7 @@ export default function AttendanceModal({
 
   const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
-  // LOAD DATA
+  //LOAD DATA
   useEffect(() => {
     if (!isOpen || !student || !token) return;
 
@@ -118,26 +117,30 @@ export default function AttendanceModal({
           { headers: { Authorization: `Bearer ${token}` } }
         );
 
-        const rawData: RawAttendance[] = Array.isArray(res.data?.data)
-          ? res.data.data
-          : Array.isArray(res.data?.attendances)
-          ? res.data.attendances
-          : [];
+        const rawData: RawAttendance[] =
+          Array.isArray(res.data?.data)
+            ? res.data.data
+            : Array.isArray(res.data?.attendances)
+            ? res.data.attendances
+            : [];
 
-        const normalized: Attendance[] = rawData
-          .map((r) => ({
-            id: r.id,
-            studentId: r.studentId,
-            status: normalizeStatusFromBackend(r.status),
-            date: r.date,
-            notes: r.notes ?? r.note ?? null,
-            createdAt: r.createdAt ?? r.created_at,
-          }))
-          .filter((x: Attendance) => Boolean(x.date));
+        const normalized: Attendance[] = rawData.map((r) => ({
+          id: r.id,
+          studentId: r.studentId,
+          status: normalizeStatusFromBackend(r.status),
+          date: r.date,
+          notes: r.notes ?? r.note ?? null,
+          createdAt: r.createdAt ?? r.created_at,
+        }));
 
         if (!cancelled) setAttendances(normalized);
-      } catch (err) {
+      } catch (err: unknown) {
         console.error("Gagal fetch:", err);
+
+        if (axios.isAxiosError(err)) {
+          console.error("Error Response:", err.response?.data);
+        }
+
         if (!cancelled) setAttendances([]);
       } finally {
         if (!cancelled) setLoading(false);
@@ -145,8 +148,9 @@ export default function AttendanceModal({
     };
 
     load();
-    return () => { cancelled = true; };
+    return () => { cancelled = true };
   }, [isOpen, student, token, API_URL]);
+
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
@@ -155,28 +159,37 @@ export default function AttendanceModal({
     setForm((prev) => ({ ...prev, [name]: value }));
   };
 
-  // CREATE / UPDATE
+  //ADD / UPDATE
   const handleAddOrUpdate = async (e?: React.FormEvent) => {
     if (e) e.preventDefault();
     if (!token || !student) return;
 
     setSaving(true);
+
     try {
       const payload = {
-        studentId: student.id,
+        student: student.id,
         status: convertStatusToBackend(form.status),
-        date: form.date,
+        date: new Date(form.date).toISOString(),
         notes: form.notes || null,
       };
 
       if (editingId) {
-        await axios.put(`${API_URL}/attendance/${editingId}`, payload, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
+        await axios.put(
+          `${API_URL}/attendance/${editingId}`,
+          {
+            status: payload.status,
+            date: payload.date,
+            notes: payload.notes,
+          },
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
       } else {
-        await axios.post(`${API_URL}/attendance/create`, payload, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
+        await axios.post(
+          `${API_URL}/attendance/create`,
+          payload,
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
       }
 
       onSaved?.();
@@ -187,38 +200,47 @@ export default function AttendanceModal({
         notes: "",
       });
 
-      // Reload data
+      // Reload
       const res = await axios.get(
         `${API_URL}/attendance/student/${student.id}`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
 
-      const rawData: RawAttendance[] = Array.isArray(res.data?.data)
-        ? res.data.data
-        : Array.isArray(res.data?.attendances)
-        ? res.data.attendances
-        : [];
+      const rawData: RawAttendance[] =
+        Array.isArray(res.data?.data)
+          ? res.data.data
+          : Array.isArray(res.data?.attendances)
+          ? res.data.attendances
+          : [];
 
-      const normalized: Attendance[] = rawData
-        .map((r) => ({
-          id: r.id,
-          studentId: r.studentId,
-          status: normalizeStatusFromBackend(r.status),
-          date: r.date,
-          notes: r.notes ?? r.note ?? null,
-          createdAt: r.createdAt ?? r.created_at,
-        }))
-        .filter((x: Attendance) => Boolean(x.date));
+      const normalized: Attendance[] = rawData.map((r) => ({
+        id: r.id,
+        studentId: r.studentId,
+        status: normalizeStatusFromBackend(r.status),
+        date: r.date,
+        notes: r.notes ?? r.note ?? null,
+        createdAt: r.createdAt ?? r.created_at,
+      }));
 
       setAttendances(normalized);
-    } catch (err) {
-      console.error("Gagal simpan:", err);
-      alert("Gagal menyimpan kehadiran.");
+
+    } catch (err: unknown) {
+      console.error("❌ Gagal simpan:", err);
+
+      if (axios.isAxiosError(err)) {
+        console.error("❌ Error response:", err.response?.data);
+
+        const msg = err.response?.data?.message || "Gagal menyimpan kehadiran.";
+        alert(msg);
+      } else {
+        alert("Terjadi kesalahan tidak dikenal.");
+      }
     } finally {
       setSaving(false);
     }
   };
 
+  //EDIT
   const handleStartEdit = (a: Attendance) => {
     setEditingId(a.id);
     setForm({
@@ -237,6 +259,7 @@ export default function AttendanceModal({
     });
   };
 
+  //DELETE
   const handleAskDelete = (a: Attendance) => {
     setAttendanceToDelete(a);
     setShowDeleteConfirm(true);
@@ -244,11 +267,11 @@ export default function AttendanceModal({
 
   const handleConfirmDelete = async () => {
     if (!token || !attendanceToDelete) return;
-
     try {
-      await axios.delete(`${API_URL}/attendance/${attendanceToDelete.id}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      await axios.delete(
+        `${API_URL}/attendance/${attendanceToDelete.id}`,
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
 
       setShowDeleteConfirm(false);
       setAttendanceToDelete(null);
@@ -259,30 +282,35 @@ export default function AttendanceModal({
         { headers: { Authorization: `Bearer ${token}` } }
       );
 
-      const rawData: RawAttendance[] = Array.isArray(res.data?.data)
-        ? res.data.data
-        : Array.isArray(res.data?.attendances)
-        ? res.data.attendances
-        : [];
+      const rawData: RawAttendance[] =
+        Array.isArray(res.data?.data)
+          ? res.data.data
+          : Array.isArray(res.data?.attendances)
+          ? res.data.attendances
+          : [];
 
-      const normalized: Attendance[] = rawData
-        .map((r) => ({
-          id: r.id,
-          studentId: r.studentId,
-          status: normalizeStatusFromBackend(r.status),
-          date: r.date,
-          notes: r.notes ?? r.note ?? null,
-          createdAt: r.createdAt ?? r.created_at,
-        }))
-        .filter((x: Attendance) => Boolean(x.date));
+      const normalized: Attendance[] = rawData.map((r) => ({
+        id: r.id,
+        studentId: r.studentId,
+        status: normalizeStatusFromBackend(r.status),
+        date: r.date,
+        notes: r.notes ?? r.note ?? null,
+        createdAt: r.createdAt ?? r.created_at,
+      }));
 
       setAttendances(normalized);
-    } catch (err) {
+    } catch (err: unknown) {
       console.error("Gagal hapus:", err);
-      alert("Gagal menghapus kehadiran.");
+
+      if (axios.isAxiosError(err)) {
+        alert(err.response?.data?.message || "Gagal menghapus kehadiran.");
+      } else {
+        alert("Terjadi kesalahan tidak dikenal.");
+      }
     }
   };
 
+ 
   const formatDate = (iso: string) =>
     new Date(iso).toLocaleDateString("id-ID", {
       day: "2-digit",
@@ -297,16 +325,20 @@ export default function AttendanceModal({
       <div className="absolute inset-0 bg-black/50" onClick={onClose} />
 
       <div className="relative bg-white rounded-2xl w-full max-w-3xl mx-4 shadow-lg">
-        {/* HEADER */}
-        <div className="p-4 border-b flex rounded-t-2xl justify-between items-center"
-        style={{ backgroundColor: accentColor }}>
-          <h3 className="text-lg font-semibold" style={{color: textColor}}>Kehadiran — {student.name}</h3>
+        {/* Header */}
+        <div
+          className="p-4 border-b flex rounded-t-2xl justify-between items-center"
+          style={{ backgroundColor: accentColor }}
+        >
+          <h3 className="text-lg font-semibold" style={{ color: textColor }}>
+            Kehadiran — {student.name}
+          </h3>
           <button onClick={onClose}>
-            <MdOutlineClose className="w-6 h-6 hover:opacity-80 cursor-pointer" style={{color: textColor}} />
+            <MdOutlineClose className="w-6 h-6 hover:opacity-80 cursor-pointer" style={{ color: textColor }} />
           </button>
         </div>
 
-        {/* BODY */}
+        {/* Body */}
         <div className="p-4 space-y-4 max-h-[70vh] overflow-auto">
           <form
             onSubmit={handleAddOrUpdate}
@@ -319,7 +351,7 @@ export default function AttendanceModal({
                 name="date"
                 value={form.date}
                 onChange={handleChange}
-                className="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:outline-none"
+                className="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2"
                 style={{ "--tw-ring-color": accentColor } as React.CSSProperties}
                 required
               />
@@ -331,7 +363,7 @@ export default function AttendanceModal({
                 name="status"
                 value={form.status}
                 onChange={handleChange}
-                className="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:outline-none"
+                className="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2"
                 style={{ "--tw-ring-color": accentColor } as React.CSSProperties}
               >
                 {STATUS_OPTIONS.map((o) => (
@@ -350,7 +382,7 @@ export default function AttendanceModal({
                 value={form.notes}
                 onChange={handleChange}
                 placeholder="Contoh: terlambat 10 menit"
-                className="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:outline-none"
+                className="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2"
                 style={{ "--tw-ring-color": accentColor } as React.CSSProperties}
               />
             </div>
@@ -368,8 +400,8 @@ export default function AttendanceModal({
                   <button
                     type="submit"
                     disabled={saving}
-                    className="px-3 py-2 bg-[#f5bb00] text-md hover:opacity-80 rounded-lg cursor-pointer"
-                    style={{backgroundColor: accentColor, color: textColor}}
+                    className="px-3 py-2 rounded-lg hover:opacity-80 cursor-pointer"
+                    style={{ backgroundColor: accentColor, color: textColor }}
                   >
                     {saving ? "Menyimpan..." : "Simpan Perubahan"}
                   </button>
@@ -378,22 +410,21 @@ export default function AttendanceModal({
                 <button
                   type="submit"
                   disabled={saving}
-                  className="px-3 py-2 text-bold text-md rounded-lg hover:opacity-80 cursor-pointer"
-                  style={{backgroundColor: accentColor, color: textColor}}>
+                  className="px-3 py-2 rounded-lg hover:opacity-80 cursor-pointer"
+                  style={{ backgroundColor: accentColor, color: textColor }}
+                >
                   {saving ? "Menyimpan..." : "Tambah Kehadiran"}
                 </button>
               )}
             </div>
           </form>
 
-          {/* TABLE */}
+          {/* Table */}
           <div>
             <h4 className="font-semibold text-sm mb-2">Riwayat Kehadiran</h4>
 
             {loading ? (
-              <div className="text-center text-gray-500 py-6">
-                Memuat data...
-              </div>
+              <div className="text-center text-gray-500 py-6">Memuat data...</div>
             ) : attendances.length === 0 ? (
               <div className="text-center text-gray-500 py-6">
                 Belum ada data kehadiran.
@@ -424,6 +455,7 @@ export default function AttendanceModal({
                           >
                             <MdEdit className="w-5 h-5 text-blue-600" />
                           </button>
+
                           <button
                             onClick={() => handleAskDelete(a)}
                             className="p-1 hover:bg-gray-100 rounded cursor-pointer"
