@@ -5,7 +5,6 @@ import axios from "axios";
 import { useSession } from "next-auth/react";
 import { MdOutlineClose, MdEdit, MdDelete } from "react-icons/md";
 import DeleteConfirmation from "../DeleteConfirmation";
-import { text } from "stream/consumers";
 
 interface Student {
   id: string;
@@ -155,25 +154,37 @@ export default function AttendanceModal({
     setForm((prev) => ({ ...prev, [name]: value }));
   };
 
-  // CREATE / UPDATE
+  // ========================================
+  // 🔧 REVISI 1: CREATE / UPDATE FUNCTION
+  // ========================================
   const handleAddOrUpdate = async (e?: React.FormEvent) => {
     if (e) e.preventDefault();
     if (!token || !student) return;
 
     setSaving(true);
     try {
+      // 🔧 FIX: Backend expect field "student" bukan "studentId"
+      // 🔧 FIX: Convert date ke ISO string
       const payload = {
-        studentId: student.id,
+        student: student.id,  // ← CHANGED: dari studentId ke student
         status: convertStatusToBackend(form.status),
-        date: form.date,
+        date: new Date(form.date).toISOString(), // ← ADDED: toISOString()
         notes: form.notes || null,
       };
 
+      console.log('📤 Payload being sent:', payload); // ← DEBUG
+
       if (editingId) {
-        await axios.put(`${API_URL}/attendance/${editingId}`, payload, {
+        // UPDATE: backend tidak perlu field "student" saat update
+        await axios.put(`${API_URL}/attendance/${editingId}`, {
+          status: payload.status,
+          date: payload.date,
+          notes: payload.notes
+        }, {
           headers: { Authorization: `Bearer ${token}` },
         });
       } else {
+        // CREATE: gunakan payload dengan field "student"
         await axios.post(`${API_URL}/attendance/create`, payload, {
           headers: { Authorization: `Bearer ${token}` },
         });
@@ -211,13 +222,20 @@ export default function AttendanceModal({
         .filter((x: Attendance) => Boolean(x.date));
 
       setAttendances(normalized);
-    } catch (err) {
-      console.error("Gagal simpan:", err);
-      alert("Gagal menyimpan kehadiran.");
+    } catch (err: any) {
+      console.error("❌ Gagal simpan:", err);
+      console.error("❌ Error response:", err.response?.data); // ← DEBUG
+      
+      // 🔧 IMPROVED: Tampilkan pesan error yang lebih detail
+      const errorMsg = err.response?.data?.message || "Gagal menyimpan kehadiran.";
+      alert(errorMsg);
     } finally {
       setSaving(false);
     }
   };
+  // ========================================
+  // 🔧 END REVISI 1
+  // ========================================
 
   const handleStartEdit = (a: Attendance) => {
     setEditingId(a.id);
