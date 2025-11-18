@@ -269,6 +269,7 @@ pawpaw/
   <img src="https://img.shields.io/badge/-Swagger-85EA2D?style=for-the-badge&logo=swagger&logoColor=black"/>
   <img src="https://img.shields.io/badge/-Weather%20API-FF9A00?style=for-the-badge&logo=openweathermap&logoColor=white"/>
   <img src="https://img.shields.io/badge/-Socket.io-010101?style=for-the-badge&logo=socketdotio&logoColor=white"/>
+  <img src="https://img.shields.io/badge/-Gmail-EA4335?style=for-the-badge&logo=gmail&logoColor=white"/>
 </p>
 
 ### Frontend
