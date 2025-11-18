@@ -27,7 +27,7 @@ export default function Home() {
               imageAlt="Attendance"
             />
             <FeatureCard
-              title="Direct Message"
+              title="Live Chat"
               description="Berkomunikasi langsung dengan guru untuk mendukung perkembangan anak."
               imageAlt="Attendance"
             />

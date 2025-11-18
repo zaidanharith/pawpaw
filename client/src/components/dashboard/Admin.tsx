@@ -8,6 +8,7 @@ import { DashboardPageTitle, Statistics, Weather, LiveReport, Announcement, Prof
 import { FaTachometerAlt, FaUser, FaUsers, FaClipboardList, FaBullhorn, FaUserCog, FaRegSmile, } from "react-icons/fa";
 import { SiGoogleclassroom } from "react-icons/si";
 import FaceRegister from "../ui/dashboard/FaceRegister";
+import { HiDocumentReport } from "react-icons/hi";
 
 interface AdminProps {
   activePage?: string;
@@ -22,7 +23,7 @@ export default function Admin({ activePage = "" }: AdminProps) {
     { name: "Siswa", urlName: "student", icon: <FaUsers size={24} /> },
     { name: "Kelas", urlName: "class", icon: <SiGoogleclassroom size={24} /> },
     { name: "Laporan Kegiatan", urlName: "report", icon: <FaClipboardList size={24} /> },
-    { name: "Laporan Triwulan", urlName: "quarterly-report", icon: <FaClipboardList size={24} /> },
+    { name: "Laporan Triwulan", urlName: "quarterly-report", icon: <HiDocumentReport size={24} /> },
     { name: "Pengumuman", urlName: "announcement", icon: <FaBullhorn size={24} /> },
     { name: "Profil", urlName: "profile", icon: <FaUserCog size={24} /> },
     { name: "Registrasi Wajah", urlName: "face-registration", icon: <FaRegSmile size={24} /> },

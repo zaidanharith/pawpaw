@@ -30,6 +30,8 @@ import {
   FaComments
 } from "react-icons/fa";
 
+import { HiDocumentReport } from "react-icons/hi";
+
 import FaceRegister from "../ui/dashboard/FaceRegister";
 
 interface TeacherProps {
@@ -43,7 +45,7 @@ export default function Teacher({ activePage = "" }: TeacherProps) {
     { name: "Dashboard", urlName: "", icon: <FaTachometerAlt size={24} /> },
     { name: "Siswa", urlName: "student", icon: <FaUsers size={24} /> },
     { name: "Laporan Kegiatan", urlName: "report", icon: <FaClipboardList size={24} /> },
-    { name: "Laporan Triwulan", urlName: "quarterly-report", icon: <FaClipboardList size={24} /> },
+    { name: "Laporan Triwulan", urlName: "quarterly-report", icon: <HiDocumentReport size={24} /> },
     { name: "Pengumuman", urlName: "announcement", icon: <FaBullhorn size={24} /> },
     { name: "Chat Orang Tua Murid", urlName: "chat", icon: <FaComments size={24} /> },
     { name: "Profil", urlName: "profile", icon: <FaUserCog size={24} /> },

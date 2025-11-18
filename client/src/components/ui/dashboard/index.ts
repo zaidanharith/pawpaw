@@ -24,3 +24,4 @@ export { default as RecentMessage } from "./RecentMessage";
 export { default as EditQuarterlyReport } from "./EditQuarterlyReport";
 export { default as QuarterlyReportPage } from "./QuarterlyReportPage";
 export { default as EditProfile } from "./EditProfile";
+export { default as StudentParent } from "./StudentParent";

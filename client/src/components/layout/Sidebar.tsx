@@ -52,7 +52,6 @@ const Sidebar: React.FC<SidebarProps> = ({
   const role = session?.user?.role || "ADMIN";
   const sidebarBg = roleColors[role] || roleColors.ADMIN;
   const textColor = textColors[role] || textColors.ADMIN;
-  const accentColor = roleColors[role] || roleColors.ADMIN;
 
   return (
     <div className={`font-sans fixed inset-0 z-100 transition-all duration-300 ${isOpen ? "visible opacity-100" : "invisible opacity-0"} md:static`}>
@@ -64,7 +63,7 @@ const Sidebar: React.FC<SidebarProps> = ({
         style={{ backgroundColor: sidebarBg }}
         onClick={(e) => e.stopPropagation()}>
         <div className="flex items-center justify-between mb-8">
-          <span className="text-2xl font-bold" style={{ color: textColor }}>Menu {role.toLowerCase().replace(/^\w/, (c) => c.toUpperCase())}</span> 
+          <span className="text-2xl font-bold" style={{ color: textColor }}>Menu {(role === "PARENT" ? "Orang Tua" : (role === "TEACHER") ? "Guru" : "Admin")}</span> 
           <button className="hover:text-gray-200 text-2xl p-2 rounded transition cursor-pointer md:hidden" style={{ color: textColor }} onClick={onClose} aria-label="Close sidebar">
             <FaTimes size={28} />
           </button>

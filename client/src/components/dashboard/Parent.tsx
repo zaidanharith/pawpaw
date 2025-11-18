@@ -17,6 +17,7 @@ import {
   PreviewChat,
   ResetPassword,
   FaceRegister,
+  StudentParent
 } from "@/components/ui/dashboard";
 
 import QuarterlyReportPage from "@/components/ui/dashboard/QuarterlyReportPage";
@@ -27,8 +28,11 @@ import {
   FaBullhorn, 
   FaUserCog, 
   FaRegSmile, 
-  FaComments 
+  FaComments ,
+  FaUsers
 } from "react-icons/fa";
+
+import { HiDocumentReport } from "react-icons/hi";
 
 interface ParentProps {
   activePage?: string;
@@ -39,8 +43,9 @@ export default function Parent({ activePage = "" }: ParentProps) {
 
   const menuItems = [
     { name: "Dashboard", urlName: "", icon: <FaTachometerAlt size={24} /> },
+    { name: "Siswa", urlName: "student", icon: <FaUsers size={24} /> },
     { name: "Laporan Kegiatan", urlName: "report", icon: <FaClipboardList size={24} /> },
-    { name: "Laporan Triwulan", urlName: "quarterly", icon: <FaClipboardList size={24} /> },
+    { name: "Laporan Triwulan", urlName: "quarterly", icon: <HiDocumentReport size={24} /> },
     { name: "Pengumuman", urlName: "announcement", icon: <FaBullhorn size={24} /> },
     { name: "Chat Guru", urlName: "chat", icon: <FaComments size={24} /> },
     { name: "Profil", urlName: "profile", icon: <FaUserCog size={24} /> },
@@ -68,6 +73,14 @@ export default function Parent({ activePage = "" }: ParentProps) {
             <Weather />
             <Announcement />
             <LiveReport />
+          </>
+        );
+
+      case "student":
+        return (
+          <>
+            <DashboardPageTitle page="Siswa" />
+            <StudentParent />
           </>
         );
 

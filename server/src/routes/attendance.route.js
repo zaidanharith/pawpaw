@@ -27,7 +27,7 @@ const { protect, requireRole } = require('../middleware/auth.middleware');
 router.get(
   '/attendance',
   protect,
-  requireRole('TEACHER', 'ADMIN'),
+  requireRole('TEACHER', 'ADMIN', 'PARENT'),
   attendanceController.getAllAttendances
 );
 

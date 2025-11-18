@@ -26,7 +26,7 @@ const RoleLabel: React.FC<RoleLabelProps> = ({role}) => {
             minWidth: 0,
             }}
         >
-            {role.toLowerCase().replace(/^\w/, (c) => c.toUpperCase())}
+            {(role === "PARENT" ? "Orang Tua" : (role === "TEACHER") ? "Guru" : "Admin")}
         </span>
     );
 };

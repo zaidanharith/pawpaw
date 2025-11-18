@@ -220,23 +220,25 @@ const authController = {
       }
 
       if (!user.googleId) {
+        const updateData = {
+          googleId,
+          picture,
+          provider: 'GOOGLE',
+          emailVerified: new Date(),
+          isLogin: true
+        };
         user = await prisma.user.update({
           where: { email },
-          data: {
-            googleId,
-            picture,
-            provider: 'GOOGLE',
-            emailVerified: new Date(),
-            isLogin: true
-          }
+          data: updateData
         });
       } else {
+        const updateData = {
+          picture,
+          isLogin: true
+        };
         user = await prisma.user.update({
           where: { email },
-          data: {
-            picture,
-            isLogin: true
-          }
+          data: updateData
         });
       }
 
@@ -392,7 +394,7 @@ const authController = {
         });
       }
 
-      const { name, username, email, phoneNumber } = req.body;
+      const { name, username, email, phoneNumber, pictureId } = req.body;
 
       if (!name || !username || !email || !phoneNumber) {
         return res.status(400).json({
