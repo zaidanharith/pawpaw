@@ -178,37 +178,32 @@ const quarterlyReportController = {
   },
 
   downloadQuarterlyReportPdf: async (req, res) => {
-    const { id, name } = req.params;
-    console.log("Generating PDF for report ID:", id, "with name:", name);
-    try {
-      const report = await prisma.quarterlyReport.findUnique({
-        where: { id }
-      });
+    const { id } = req.params;
+    const name = req.query?.name ? String(req.query.name) : req.params?.name;
 
+    try {
+      const report = await prisma.quarterlyReport.findUnique({ where: { id } });
       if (!report) {
-        return res.status(404).json({
-          success: false,
-          message: "Laporan tidak ditemukan"
-        });
+        return res.status(404).json({ success: false, message: "Laporan tidak ditemukan" });
       }
 
-      const liveReports = (report.liveReportIds && report.liveReportIds.length)
+      const liveReports = report.liveReportIds?.length
         ? await prisma.activity.findMany({
             where: { id: { in: report.liveReportIds } },
             include: { students: { select: { id: true, name: true } } },
-            orderBy: { date: 'asc' }
+            orderBy: { date: "asc" }
           })
         : [];
 
-      const attendanceDetails = (report.attendanceIds && report.attendanceIds.length)
+      const attendanceDetails = report.attendanceIds?.length
         ? await prisma.attendance.findMany({
             where: { id: { in: report.attendanceIds } },
             include: { student: { select: { id: true, name: true } } },
-            orderBy: { date: 'asc' }
+            orderBy: { date: "asc" }
           })
         : [];
 
-      const doc = new PDFDocument({ margin: 40, size: "A4" });
+      const doc = new PDFDocument({ margin: 50, size: "A4" });
       res.setHeader("Content-Type", "application/pdf");
       res.setHeader(
         "Content-Disposition",
@@ -216,50 +211,87 @@ const quarterlyReportController = {
       );
       doc.pipe(res);
 
-      doc.fontSize(14).text("LAPORAN TRIWULAN", { align: "center" });
-      doc.moveDown();
-      doc.text(`Judul     : ${report.title || 'N/A'}`);
-      doc.text(`Kuartal : ${report.quarter}`);
-      doc.text(`Tahun    : ${report.year}`);
-      doc.text(`Pertemuan   : ${report.meetingDate || 'N/A'}`);
+      // ——————————————————————————————
+      // Helper: Section Title
+      // ——————————————————————————————
+      const addSectionTitle = (title) => {
+        doc.moveDown(1);
+        doc.fontSize(13).font("Helvetica-Bold").text(title);
+        doc.moveTo(doc.x, doc.y + 2)
+          .lineTo(550, doc.y + 2)
+          .strokeColor("#888")
+          .lineWidth(1)
+          .stroke();
+        doc.moveDown(0.5);
+      };
+
+      // ——————————————————————————————
+      // HEADER
+      // ——————————————————————————————
+      doc.font("Helvetica-Bold").fontSize(18).text("LAPORAN TRIWULAN", { align: "center" });
+      doc.moveDown(0.5);
+
+      doc.fontSize(12).font("Helvetica");
+      doc.text(`Judul          : ${report.title || "N/A"}`);
+      doc.text(`Kuartal        : ${report.quarter}`);
+      doc.text(`Tahun          : ${report.year}`);
+      doc.text(`Pertemuan      : ${report.meetingDate || "N/A"}`);
 
       doc.moveDown();
-      doc.fontSize(12).text(`Diunduh oleh : ${name || 'Unknown'} pada ${new Date().toLocaleString('id-ID')}`, { align: "right" });
+      doc.fontSize(10).text(
+        `Diunduh oleh: ${name || "Unknown"} pada ${new Date().toLocaleString("id-ID")}`,
+        { align: "right" }
+      );
 
-      doc.moveDown();
-      doc.fontSize(12).text("Ringkasan Kegiatan:", { underline: true });
-      doc.moveDown(0.3);
+      // ——————————————————————————————
+      // SECTION: Ringkasan Kegiatan
+      // ——————————————————————————————
+      addSectionTitle("Ringkasan Kegiatan");
 
-      if (liveReports.length === 0) {
+      if (!liveReports.length) {
         doc.fontSize(10).text("Tidak ada kegiatan dalam periode ini.");
       } else {
         liveReports.forEach((act, idx) => {
-          const dateStr = act.date ? new Date(act.date).toLocaleDateString('id-ID') : '-';
-          doc.fontSize(11).font('Helvetica-Bold').text(`${idx + 1}. ${act.name} — ${dateStr}`);
-          if (act.description) doc.fontSize(10).font('Helvetica').text(`Deskripsi: ${act.description}`);
-          const studentNames = (act.students || []).map(s => s.name).filter(Boolean);
-          doc.fontSize(10).text(`Jumlah Peserta: ${studentNames.length}`);
-          if (studentNames.length > 0) {
-            doc.fontSize(9).text(`Peserta: ${studentNames.join(', ')}`);
+          const dateStr = act.date ? new Date(act.date).toLocaleDateString("id-ID") : "-";
+
+          doc.font("Helvetica-Bold").fontSize(11)
+            .text(`${idx + 1}. ${act.name} — ${dateStr}`);
+
+          doc.font("Helvetica").fontSize(10);
+          if (act.description) doc.text(`Deskripsi : ${act.description}`);
+
+          const students = (act.students || []).map(s => s.name).filter(Boolean);
+          doc.text(`Jumlah Peserta : ${students.length}`);
+
+          if (students.length > 0) {
+            doc.fontSize(9).text(`Peserta : ${students.join(", ")}`);
           }
-          doc.moveDown(0.5);
+
+          doc.moveDown(0.7);
         });
       }
 
-      doc.moveDown();
-      doc.fontSize(14).text("Kehadiran:", { underline: true });
-      doc.moveDown(0.3);
+      // ——————————————————————————————
+      // SECTION: Kehadiran
+      // ——————————————————————————————
+      addSectionTitle("Kehadiran");
 
-      if (attendanceDetails.length === 0) {
+      if (!attendanceDetails.length) {
         doc.fontSize(10).text("Tidak ada data kehadiran dalam periode ini.");
       } else {
         attendanceDetails.forEach((att, idx) => {
-          const dateStr = att.date ? new Date(att.date).toLocaleDateString('id-ID') : '-';
-          const studentName = att.student?.name || att.studentId || 'Unknown';
-          doc.fontSize(11).font('Helvetica-Bold').text(`${idx + 1}. ${studentName} — ${dateStr}`);
-          doc.fontSize(10).font('Helvetica').text(`Status: ${att.status}`);
-          if (att.notes) doc.fontSize(10).text(`Catatan: ${att.notes}`);
-          doc.moveDown(0.5);
+          const dateStr = att.date ? new Date(att.date).toLocaleDateString("id-ID") : "-";
+          const studentName = att.student?.name || att.studentId || "Unknown";
+
+          doc.font("Helvetica-Bold").fontSize(11)
+            .text(`${idx + 1}. ${studentName} — ${dateStr}`);
+
+          doc.font("Helvetica").fontSize(10);
+          doc.text(`Status : ${att.status}`);
+
+          if (att.notes) doc.text(`Catatan : ${att.notes}`);
+
+          doc.moveDown(0.7);
         });
       }
 
@@ -269,7 +301,8 @@ const quarterlyReportController = {
       console.error("PDF generate error:", error);
       res.status(500).json({ success: false, message: "Gagal membuat PDF" });
     }
-  },
+  }
+
 };
 
 module.exports = quarterlyReportController;
