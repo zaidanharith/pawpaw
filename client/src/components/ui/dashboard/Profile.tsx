@@ -6,7 +6,7 @@ import Link from "next/link";
 import authService, { AuthResponse } from "@/services/auth.service";
 import Image from "next/image";
 import RoleLabel from "@/components/ui/dashboard/RoleLabel";
-import EditProfile from "@/components/ui/dashboard/EditProfile"; // Import komponen EditProfile
+import EditProfile from "@/components/ui/dashboard/EditProfile"; 
 
 type UserProfile = AuthResponse["user"] & {
     createdAt?: string;
@@ -25,14 +25,12 @@ const roleColors: Record<string, string> = {
 };
 
 export default function Profile() {
-    const { data: session, status } = useSession();
+    const { data: session, status, update } = useSession(); // Tambahkan 'update'
     const [loading, setLoading] = useState(true);
     const role = session?.user?.role || "ADMIN";
     const [user, setUser] = useState<UserProfile | null>(null);
     const accentColor = roleColors[role] || roleColors.ADMIN;
     const [error, setError] = useState<string | null>(null);
-
-    // State untuk modal Edit Profile
     const [isEditProfileOpen, setIsEditProfileOpen] = useState(false);
 
     useEffect(() => {
@@ -60,19 +58,33 @@ export default function Profile() {
         }
     };
 
-    // Handler untuk membuka modal
     const handleEditProfile = () => {
         setIsEditProfileOpen(true);
     };
 
-    // Handler untuk menutup modal
     const handleCloseModal = () => {
         setIsEditProfileOpen(false);
     };
 
-    // Handler setelah save berhasil - refresh data profil
-    const handleSaveProfile = () => {
-        fetchProfile(); // Refresh data profil dari server
+    const handleSaveProfile = async () => {
+        console.log("🔄 Updating profile...");
+        
+        // 1. Refresh data profil dari API
+        await fetchProfile();
+        
+        // 2. Update NextAuth session
+        if (update) {
+            await update();
+            console.log("✅ Session updated successfully");
+        }
+        
+        // 3. Log session terbaru untuk debugging
+        console.log("📊 Updated session:", session);
+        
+        // Optional: Force reload jika masih tidak berubah
+        // setTimeout(() => {
+        //     window.location.reload();
+        // }, 1000);
     };
 
     if (loading) {

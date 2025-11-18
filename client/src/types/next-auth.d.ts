@@ -1,5 +1,5 @@
 import { DefaultSession, DefaultUser } from "next-auth";
-import { DefaultJWT } from "next-auth/jwt";
+import { JWT, DefaultJWT } from "next-auth/jwt";
 
 declare module "next-auth" {
   interface Session {
@@ -7,6 +7,7 @@ declare module "next-auth" {
       id: string;
       username: string;
       role: "ADMIN" | "TEACHER" | "PARENT";
+      picture?: string | null;
       phoneNumber?: string | null;
       isPasswordReset?: boolean;
     } & DefaultSession["user"];
@@ -17,6 +18,7 @@ declare module "next-auth" {
     id: string;
     username: string;
     role: "ADMIN" | "TEACHER" | "PARENT";
+    picture?: string | null;
     phoneNumber?: string | null;
     accessToken?: string;
     loginErrorMessage?: string;
@@ -29,6 +31,7 @@ declare module "next-auth/jwt" {
     id: string;
     username: string;
     role: "ADMIN" | "TEACHER" | "PARENT";
+    picture?: string | null;
     phoneNumber?: string | null;
     accessToken?: string;
     isPasswordReset?: boolean;

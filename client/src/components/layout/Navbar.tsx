@@ -5,6 +5,7 @@ import { useSession } from "next-auth/react";
 import Image from "next/image";
 import BurgerButton from '../ui/BurgerButton';
 import { usePathname } from "next/navigation";
+import { useEffect, useState } from "react";
 
 interface NavbarProps {
     setIsSidebarOpen?: (isOpen: boolean) => void;
@@ -13,6 +14,67 @@ interface NavbarProps {
 const Navbar = ({ setIsSidebarOpen }: NavbarProps) => {
     const { data: session, status } = useSession();
     const pathname = usePathname();
+    const [profilePicture, setProfilePicture] = useState<string>("/images/default-profile.png");
+    const [imageLoadError, setImageLoadError] = useState(false);
+
+    // Fetch profile picture dari API
+    useEffect(() => {
+        const fetchProfilePicture = async () => {
+            if (session?.accessToken) {
+                try {
+                    const API_URL = process.env.NEXT_PUBLIC_API_URL;
+                    const response = await fetch(`${API_URL}/auth/profile`, {
+                        headers: {
+                            Authorization: `Bearer ${session.accessToken}`,
+                        },
+                    });
+
+                    if (response.ok) {
+                        const data = await response.json();
+                        const userData = data.data || data;
+                        
+                        if (userData.picture) {
+                            console.log("🖼️ Profile picture from API:", userData.picture);
+                            setProfilePicture(userData.picture);
+                            setImageLoadError(false);
+                            return;
+                        }
+                    }
+                } catch (error) {
+                    console.error("❌ Error fetching profile picture from API:", error);
+                }
+            }
+
+            // Fallback ke session picture
+            if (session?.user) {
+                const userPicture = (session.user as any).picture || session.user.image || "/images/default-profile.png";
+                console.log("🖼️ Profile picture from session:", userPicture);
+                setProfilePicture(userPicture);
+            }
+        };
+
+        if (status === "authenticated") {
+            fetchProfilePicture();
+        }
+    }, [session, status]);
+
+    // Re-fetch ketika ada perubahan session (triggered by update())
+    useEffect(() => {
+        if (session?.user) {
+            const userPicture = (session.user as any).picture || session.user.image;
+            if (userPicture && userPicture !== profilePicture) {
+                console.log("🔄 Session updated, new picture:", userPicture);
+                setProfilePicture(userPicture);
+                setImageLoadError(false);
+            }
+        }
+    }, [session?.user]);
+
+    const handleImageError = () => {
+        console.warn("⚠️ Failed to load profile picture, using default");
+        setImageLoadError(true);
+        setProfilePicture("/images/default-profile.png");
+    };
 
     return (
         <nav className="px-4 py-3 flex justify-between items-center font-sans fixed inset-x-0 top-0 bg-background/70 backdrop-blur-md z-50">
@@ -41,14 +103,17 @@ const Navbar = ({ setIsSidebarOpen }: NavbarProps) => {
                         <p className="font-semibold text-lg text-gray-800 truncate max-w-42 hidden sm:block">
                             {session.user.name || "User"}
                         </p>
-                        <div className="w-10 h-10 bg-gray-300 rounded-full overflow-hidden">
+                        <div className="w-10 h-10 bg-gray-300 rounded-full overflow-hidden border-2 border-gray-200">
                             <Image
-                                src={session.user.image || "/images/default-profile.png"}
+                                src={profilePicture}
                                 alt={session.user.name || "Profile"}
                                 width={40}
                                 height={40}
-                                className="rounded-full object-cover"
+                                className="rounded-full object-cover w-full h-full"
                                 priority
+                                key={profilePicture} // Force re-render saat picture berubah
+                                onError={handleImageError}
+                                unoptimized={profilePicture.startsWith('http')} // Untuk URL eksternal (Cloudinary)
                             />
                         </div>
                     </Link>
