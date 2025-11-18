@@ -105,56 +105,6 @@ const messageController = {
 
       console.log(`✅ Message created: ${newMessage.id}`);
 
-      // Emit Socket.IO events
-      try {
-        const io = req.app.get('io');
-        if (io) {
-          // Emit to receiver
-          io.to(`user:${receiverId}`).emit('message:received', {
-            id: newMessage.id,
-            body: newMessage.body,
-            sender: newMessage.sender,
-            receiver: newMessage.receiver,
-            senderId: newMessage.senderId,
-            receiverId: newMessage.receiverId,
-            createdAt: newMessage.createdAt,
-            isRead: newMessage.isRead
-          });
-          console.log(`  📡 Emitted message:received to user:${receiverId}`);
-
-          // Emit to sender
-          io.to(`user:${senderId}`).emit('message:sent', {
-            id: newMessage.id,
-            body: newMessage.body,
-            sender: newMessage.sender,
-            receiver: newMessage.receiver,
-            senderId: newMessage.senderId,
-            receiverId: newMessage.receiverId,
-            createdAt: newMessage.createdAt,
-            isRead: newMessage.isRead
-          });
-          console.log(`  📡 Emitted message:sent to user:${senderId}`);
-
-          // Also emit to conversation room
-          const roomId = [senderId, receiverId].sort().join('-');
-          io.to(roomId).emit('message:received', {
-            id: newMessage.id,
-            body: newMessage.body,
-            sender: newMessage.sender,
-            receiver: newMessage.receiver,
-            senderId: newMessage.senderId,
-            receiverId: newMessage.receiverId,
-            createdAt: newMessage.createdAt,
-            isRead: newMessage.isRead
-          });
-          console.log(`  📡 Emitted message:received to room:${roomId}`);
-        } else {
-          console.warn('⚠️ Socket.IO not available');
-        }
-      } catch (emitErr) {
-        console.error('❌ Socket emit failed:', emitErr);
-      }
-
       res.status(201).json({ success: true, message: 'Pesan berhasil dikirim', data: newMessage });
     } catch (error) {
       console.error('❌ Error sending message:', error);
@@ -177,7 +127,7 @@ const messageController = {
       const updatedMessage = await prisma.message.update({
         where: { id },
         data: { isRead: true }
-      });      
+      });
 
       console.log(`✅ Message ${id} marked as read by ${userId}`);
 
@@ -215,35 +165,6 @@ const messageController = {
 
       console.log(`✅ Message ${id} updated`);
 
-      // Emit Socket.IO events
-      try {
-        const io = req.app.get('io');
-        if (io) {
-          const payload = {
-            id: updated.id,
-            body: updated.body,
-            sender: updated.sender,
-            receiver: updated.receiver,
-            senderId: updated.senderId,
-            receiverId: updated.receiverId,
-            createdAt: updated.createdAt
-          };
-
-          io.to(`user:${updated.receiverId}`).emit('message:updated', payload);
-          console.log(`  📡 Emitted message:updated to user:${updated.receiverId}`);
-
-          io.to(`user:${updated.senderId}`).emit('message:updated', payload);
-          console.log(`  📡 Emitted message:updated to user:${updated.senderId}`);
-
-          // Also emit to conversation room
-          const roomId = [updated.senderId, updated.receiverId].sort().join('-');
-          io.to(roomId).emit('message:updated', payload);
-          console.log(`  📡 Emitted message:updated to room:${roomId}`);
-        }
-      } catch (emitErr) {
-        console.error('❌ Socket emit failed (update):', emitErr);
-      }
-
       res.status(200).json({ success: true, message: 'Pesan berhasil diperbarui', data: updated });
     } catch (error) {
       console.error('❌ Error updating message:', error);
@@ -265,34 +186,9 @@ const messageController = {
 
       console.log(`🗑️ Deleting message ${id} by user ${userId}`);
 
-      const deleted = await prisma.message.delete({ where: { id } });
+      await prisma.message.delete({ where: { id } });
 
       console.log(`✅ Message ${id} deleted`);
-
-      // Emit Socket.IO events
-      try {
-        const io = req.app.get('io');
-        if (io) {
-          const payload = {
-            id: deleted.id,
-            senderId: deleted.senderId,
-            receiverId: deleted.receiverId
-          };
-
-          io.to(`user:${deleted.receiverId}`).emit('message:deleted', payload);
-          console.log(`  📡 Emitted message:deleted to user:${deleted.receiverId}`);
-
-          io.to(`user:${deleted.senderId}`).emit('message:deleted', payload);
-          console.log(`  📡 Emitted message:deleted to user:${deleted.senderId}`);
-
-          // Also emit to conversation room
-          const roomId = [deleted.senderId, deleted.receiverId].sort().join('-');
-          io.to(roomId).emit('message:deleted', payload);
-          console.log(`  📡 Emitted message:deleted to room:${roomId}`);
-        }
-      } catch (emitErr) {
-        console.error('❌ Socket emit failed (delete):', emitErr);
-      }
 
       res.status(200).json({ success: true, message: 'Pesan berhasil dihapus' });
     } catch (error) {
