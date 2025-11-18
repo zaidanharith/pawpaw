@@ -1,9 +1,10 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useSession } from "next-auth/react";
 import axios from "axios";
-import { MdOutlineClose } from "react-icons/md";
+import { MdOutlineClose, MdCameraAlt } from "react-icons/md";
+import Image from "next/image";
 
 interface SessionUser {
   id: string;
@@ -12,7 +13,8 @@ interface SessionUser {
   name?: string | null;
   email?: string | null;
   image?: string | null;
-  phoneNumber?: string | null; 
+  phoneNumber?: string | null;
+  picture?: string | null;
 }
 
 const roleColors: Record<string, string> = {
@@ -36,6 +38,7 @@ const EditProfile: React.FC<EditProfileProps> = ({ isOpen, onClose, onSave }) =>
 
   const [loading, setLoading] = useState(false);
   const [fetchingData, setFetchingData] = useState(false);
+  const [uploadingImage, setUploadingImage] = useState(false);
   const [message, setMessage] = useState("");
 
   const [formData, setFormData] = useState<{
@@ -43,12 +46,18 @@ const EditProfile: React.FC<EditProfileProps> = ({ isOpen, onClose, onSave }) =>
     username: string;
     email: string;
     phoneNumber: string;
+    picture: string;
   }>({
     name: "",
     username: "",
     email: "",
     phoneNumber: "",
+    picture: "",
   });
+
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [previewImage, setPreviewImage] = useState<string>("");
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Fetch data profil terbaru dari API saat modal dibuka
   useEffect(() => {
@@ -64,13 +73,15 @@ const EditProfile: React.FC<EditProfileProps> = ({ isOpen, onClose, onSave }) =>
           });
 
           const userData = response.data.data || response.data;
-          
+
           setFormData({
             name: userData.name || "",
             username: userData.username || "",
             email: userData.email || "",
             phoneNumber: userData.phoneNumber || "",
+            picture: userData.picture || "",
           });
+          setPreviewImage(userData.picture || "");
         } catch (error) {
           console.error("Error fetching profile:", error);
           // Fallback ke data session jika fetch gagal
@@ -80,7 +91,9 @@ const EditProfile: React.FC<EditProfileProps> = ({ isOpen, onClose, onSave }) =>
               username: session.user.username || "",
               email: session.user.email || "",
               phoneNumber: (session.user as any).phoneNumber || "",
+              picture: (session.user as any).picture || "",
             });
+            setPreviewImage((session.user as any).picture || "");
           }
         } finally {
           setFetchingData(false);
@@ -98,6 +111,68 @@ const EditProfile: React.FC<EditProfileProps> = ({ isOpen, onClose, onSave }) =>
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
+  const handleImageClick = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      // Validasi file
+      const validTypes = ["image/jpeg", "image/jpg", "image/png", "image/gif"];
+      if (!validTypes.includes(file.type)) {
+        setMessage("Format file harus JPG, JPEG, PNG, atau GIF");
+        return;
+      }
+
+      // Validasi ukuran file (max 5MB)
+      if (file.size > 5 * 1024 * 1024) {
+        setMessage("Ukuran file maksimal 5MB");
+        return;
+      }
+
+      setSelectedFile(file);
+      // Create preview
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setPreviewImage(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+      setMessage("");
+    }
+  };
+
+  const uploadImage = async (): Promise<string | null> => {
+    if (!selectedFile) return null;
+
+    setUploadingImage(true);
+    try {
+      const API_URL = process.env.NEXT_PUBLIC_API_URL;
+      const uploadFormData = new FormData();
+      uploadFormData.append("file", selectedFile);
+
+      const uploadResponse = await axios.post(
+        `${API_URL}/upload`,
+        uploadFormData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+
+      // Asumsikan response berisi URL cloudinary atau path file
+      const uploadedUrl = uploadResponse.data?.data?.path || uploadResponse.data?.data?.url;
+      return uploadedUrl;
+    } catch (error: any) {
+      console.error("Upload image error:", error);
+      throw new Error(error?.response?.data?.message || "Gagal mengupload gambar");
+    } finally {
+      setUploadingImage(false);
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -106,11 +181,7 @@ const EditProfile: React.FC<EditProfileProps> = ({ isOpen, onClose, onSave }) =>
       return;
     }
 
-    if (
-      !formData.name ||
-      !formData.username ||
-      !formData.email
-    ) {
+    if (!formData.name || !formData.username || !formData.email) {
       alert("Mohon lengkapi semua field wajib (Nama, Username, Email).");
       return;
     }
@@ -120,10 +191,22 @@ const EditProfile: React.FC<EditProfileProps> = ({ isOpen, onClose, onSave }) =>
 
     try {
       const API_URL = process.env.NEXT_PUBLIC_API_URL;
+      let pictureUrl = formData.picture;
+
+      // Upload gambar jika ada file baru
+      if (selectedFile) {
+        const uploadedUrl = await uploadImage();
+        if (uploadedUrl) {
+          pictureUrl = uploadedUrl;
+        }
+      }
 
       const response = await axios.put(
         `${API_URL}/auth/profile`,
-        formData,
+        {
+          ...formData,
+          picture: pictureUrl,
+        },
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -135,7 +218,7 @@ const EditProfile: React.FC<EditProfileProps> = ({ isOpen, onClose, onSave }) =>
       onSave();
       setTimeout(() => {
         onClose();
-      },500);
+      }, 500);
     } catch (error: any) {
       console.error("EDIT PROFILE ERROR:", error?.response || error);
       setMessage(error?.response?.data?.message || "Gagal memperbarui profil");
@@ -185,6 +268,49 @@ const EditProfile: React.FC<EditProfileProps> = ({ isOpen, onClose, onSave }) =>
               {message}
             </div>
           )}
+
+          {/* FOTO PROFIL */}
+          <div className="flex flex-col items-center mb-4">
+            <div className="relative">
+              <div
+                className="w-32 h-32 rounded-full border-4 overflow-hidden cursor-pointer hover:opacity-80 transition"
+                style={{ borderColor: accentColor }}
+                onClick={handleImageClick}
+              >
+                {previewImage ? (
+                  <Image
+                    src={previewImage}
+                    alt="Profile Preview"
+                    width={128}
+                    height={128}
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <div className="w-full h-full bg-gray-200 flex items-center justify-center">
+                    <MdCameraAlt className="w-12 h-12 text-gray-400" />
+                  </div>
+                )}
+              </div>
+              <button
+                type="button"
+                onClick={handleImageClick}
+                className="absolute bottom-0 right-0 p-2 rounded-full shadow-lg hover:opacity-90 transition"
+                style={{ backgroundColor: accentColor }}
+              >
+                <MdCameraAlt className="w-5 h-5" style={{ color: textColor }} />
+              </button>
+            </div>
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/jpeg,image/jpg,image/png,image/gif"
+              onChange={handleFileChange}
+              className="hidden"
+            />
+            <p className="text-xs text-gray-500 mt-2">
+              Klik untuk mengubah foto (Max 5MB, JPG/PNG/GIF)
+            </p>
+          </div>
 
           <div>
             <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
@@ -236,7 +362,7 @@ const EditProfile: React.FC<EditProfileProps> = ({ isOpen, onClose, onSave }) =>
 
           <div>
             <label htmlFor="phoneNumber" className="block text-sm font-medium text-gray-700 mb-1">
-              Nomor Telepon <span className="text-gray-400 text-xs"></span>
+              Nomor Telepon
             </label>
             <input
               type="text"
@@ -256,16 +382,21 @@ const EditProfile: React.FC<EditProfileProps> = ({ isOpen, onClose, onSave }) =>
               type="button"
               onClick={onClose}
               className="px-4 py-2 text-sm font-medium cursor-pointer rounded-lg text-gray-700 border border-gray-300 hover:bg-gray-100 transition disabled:opacity-50"
+              disabled={loading || uploadingImage}
             >
               Batal
             </button>
             <button
               type="submit"
-              disabled={loading}
+              disabled={loading || uploadingImage}
               className="px-4 py-2 text-sm font-semibold cursor-pointer rounded-lg shadow-md hover:opacity-80 transition disabled:opacity-50"
               style={{ backgroundColor: accentColor, color: textColor }}
             >
-              {loading ? "Menyimpan..." : "Simpan Perubahan"}
+              {uploadingImage
+                ? "Mengupload..."
+                : loading
+                ? "Menyimpan..."
+                : "Simpan Perubahan"}
             </button>
           </div>
         </form>
