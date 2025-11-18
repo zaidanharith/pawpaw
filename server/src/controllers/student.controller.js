@@ -105,10 +105,10 @@ const studentController = {
     try {
       const { name, gender, address, birthDate, classroomId, isActive, parentId } = req.body;
 
-      if (!name || !gender || !birthDate || !classroomId) {
+      if (!name || !gender || !birthDate || !classroomId || !parentId) {
         return res.status(400).json({ 
           success: false, 
-          message: 'Name, gender, birthDate, dan classroomId wajib diisi' 
+          message: 'Name, gender, birthDate, classroom, dan parent wajib diisi' 
         });
       }
 
@@ -139,9 +139,10 @@ const studentController = {
       const createData = {
         name,
         gender,
-        address: address || null,
         birthDate: new Date(birthDate),
         classroomId,
+        address: address || null,
+        parentId,
         isActive: typeof isActive === 'boolean' ? isActive : true,
         activityIds: []
       };
@@ -162,7 +163,6 @@ const studentController = {
       const student = await prisma.student.create({
         data: createData,
         include: {
-          classroom: { select: { id: true, name: true } },
           parent: { select: { id: true, name: true, email: true } }
         }
       });
