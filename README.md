@@ -26,9 +26,10 @@ npm run dev
   - **Frontend**: <a href="https://kidconnect.vercel.app" target="_blank" rel="noopener noreferrer">https://kidconnect.vercel.app</a>  
   - **Backend API**: <a href="https://api-kidconnect.vercel.app" target="_blank" rel="noopener noreferrer">https://api-kidconnect.vercel.app</a>
 
-## 📝 Penjelasan Detail Tentang Aplikasi (Back-End)
+## 📝 Penjelasan Detail Tentang Aplikasi (Back-End) dan Link Video Demo
 
 🔗 [Laporan Kelompok 13 PAW_US3 : KidConnect Application](https://drive.google.com/drive/folders/1BU8iePVpYhGK1ela7MJdZAZUS7w8tawK?usp=sharing)
+🔗 [Video Demo : KidConnect Application](https://drive.google.com/drive/folders/1EPUovRzS4Pk-QA-Hbb7jKz7DHd7jGYBK?usp=sharing)
 
 ## 📂 File Directory
 
