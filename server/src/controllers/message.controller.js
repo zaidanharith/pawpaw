@@ -177,7 +177,7 @@ const messageController = {
       const updatedMessage = await prisma.message.update({
         where: { id },
         data: { isRead: true }
-      });
+      });      
 
       console.log(`✅ Message ${id} marked as read by ${userId}`);
 
