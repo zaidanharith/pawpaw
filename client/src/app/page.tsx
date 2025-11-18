@@ -24,17 +24,20 @@ export default function Home() {
             <FeatureCard
               title="Live Report"
               description="Guru mengirimkan laporan kegiatan harian siswa lengkap dengan foto atau video, sehingga orang tua dapat memantau perkembangan anak secara langsung."
+              imageSrc="https://res.cloudinary.com/daaeu39vt/image/upload/v1763460424/uploads/livereport-landing-page-1763460420774.jpg"
               imageAlt="Attendance"
             />
             <FeatureCard
               title="Direct Message"
               description="Berkomunikasi langsung dengan guru untuk mendukung perkembangan anak."
-              imageAlt="Attendance"
+              imageSrc="https://res.cloudinary.com/daaeu39vt/image/upload/v1763461296/uploads/chat-landing-page-1763461293808.jpg"
+              imageAlt="Direct Message"
             />
             <FeatureCard
               title="Announcement"
               description="Dapatkan pengumuman penting dari sekolah secara langsung dan real-time."
-              imageAlt="Attendance"
+              imageSrc="https://res.cloudinary.com/daaeu39vt/image/upload/v1763461148/uploads/announcement-landing-page-1763461144197.jpg"
+              imageAlt="Announcement"
             />
           </div>
           <p className='text-center max-w-7xl mx-auto'>
