@@ -181,8 +181,7 @@ const activityController = {
           description: description || null,
           date: date ? new Date(date) : new Date(),
           studentIds: studentIds || [],
-          classroomIds: classroomIds || [],
-          liveReportIds: []
+          classroomIds: classroomIds || []
         },
         include: {
           students: {

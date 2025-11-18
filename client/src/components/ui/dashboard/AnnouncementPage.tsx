@@ -198,7 +198,7 @@ const AnnouncementPage: React.FC = () => {
             </section>
 
             {/* LIST */}
-            <section className="flex flex-col gap-4 mt-4">
+            <section className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {loading ? (
                     <div className="border rounded-xl p-10 shadow-sm bg-white text-center text-gray-500"
                     style={{ borderColor: accentColor}}>
@@ -245,7 +245,12 @@ const AnnouncementPage: React.FC = () => {
                                 {report.title}
                                 </h2>
                             </div>
-                            <p className="text-sm text-gray-700">{report.content}</p>
+                            <p className="text-sm text-gray-700 truncate">
+                                    {report.content.length > 60 
+                                        ? `${report.content.substring(0, 60)}...` 
+                                        : report.content
+                                    }
+                                </p>
 
                             <p className="text-xs text-gray-500 font-medium">
                                 {formatDateTime(report.createdAt)}

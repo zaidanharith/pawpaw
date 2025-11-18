@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { useSession } from "next-auth/react";
 import Navbar from "@/components/layout/Navbar";
 import Sidebar from "@/components/layout/Sidebar";
 
@@ -19,7 +20,7 @@ import {
   RecentMessage
 } from "@/components/ui/dashboard";
 
-import QuarterlyReportPage from "@/components/ui/dashboard/QuarterlyReportPage"; // import QuarterlyReportPage
+import QuarterlyReportPage from "@/components/ui/dashboard/QuarterlyReportPage";
 
 import { 
   FaTachometerAlt, 
@@ -36,11 +37,22 @@ interface ParentProps {
 
 export default function Parent({ activePage = "" }: ParentProps) {
   const router = useRouter();
+  const { data: session } = useSession();
+
+  const roleColors: Record<string, string> = {
+    ADMIN: "#3f9065",
+    TEACHER: "#f5bb00",
+    PARENT: "#58baab",
+  };
+  
+  const accentColor = roleColors.PARENT || "#58baab";
+  const textColor = "#FFFFFF";
+  const isParent = true;
 
   const menuItems = [
     { name: "Dashboard", urlName: "", icon: <FaTachometerAlt size={24} /> },
     { name: "Laporan Kegiatan", urlName: "report", icon: <FaClipboardList size={24} /> },
-    { name: "Laporan Triwulan", urlName: "quarterly", icon: <FaClipboardList size={24} /> }, // Tambah menu Quarterly
+    { name: "Laporan Triwulan", urlName: "quarterly", icon: <FaClipboardList size={24} /> },
     { name: "Pengumuman", urlName: "announcement", icon: <FaBullhorn size={24} /> },
     { name: "Chat Guru", urlName: "chat", icon: <FaComments size={24} /> },
     { name: "Profil", urlName: "profile", icon: <FaUserCog size={24} /> },
@@ -84,7 +96,7 @@ export default function Parent({ activePage = "" }: ParentProps) {
         return (
           <>
             <DashboardPageTitle page="Laporan Triwulan" />
-            <QuarterlyReportPage /> {/* Parent bisa melihat QuarterlyReport */}
+            <QuarterlyReportPage accentColor={accentColor} textColor={textColor} isParent={isParent} />
           </>
         );
 

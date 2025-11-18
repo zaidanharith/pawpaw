@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { useSession, signOut } from "next-auth/react";
-import { useRouter } from "next/navigation";
+import { useSession } from "next-auth/react";
+import Link from "next/link";
 
 const roleColors: Record<string, string> = {
     ADMIN: "#3f9065",
@@ -52,8 +52,8 @@ const Statistics: React.FC = () => {
                         Authorization: `Bearer ${session?.accessToken || ""}`,
                     },
                 });
-
                 const dataUser = await resUser.json();
+
                 if (dataUser.success && Array.isArray(dataUser.data)) {
                     const users: User[] = dataUser.data;
                     setTeacherCount(users.filter((u) => u.role === "TEACHER").length);
@@ -66,37 +66,66 @@ const Statistics: React.FC = () => {
             }
             setLoading(false);
         };
+
         if (session?.accessToken) fetchStats();
     }, [session?.accessToken]);
 
     const stats = [
-        { label: "Siswa", count: studentCount, icon: "👨‍🎓" },
-        { label: "Guru", count: teacherCount, icon: "👩‍🏫" },
-        { label: "Admin", count: adminCount, icon: "🛡️" },
+        { 
+            label: "Siswa", 
+            count: studentCount, 
+            icon: "👨‍🎓",
+            href: "/dashboard/student"
+        },
+        { 
+            label: "Guru", 
+            count: teacherCount, 
+            icon: "👩‍🏫",
+            href: "/dashboard/user"
+        },
+        { 
+            label: "Admin", 
+            count: adminCount, 
+            icon: "🛡️",
+            href: "/dashboard/user"
+        },
     ];
 
     return (
         <section className="flex gap-2 justify-between">
             {stats.map((item, i) => (
-                <div key={i} className="rounded-xl shadow p-5 flex flex-col items-center transition w-1/3"
-                    style={{ backgroundColor: cardColor }} >
+                <div 
+                    key={i} 
+                    className="rounded-xl shadow p-5 flex flex-col items-center transition w-1/3"
+                    style={{ backgroundColor: cardColor }}
+                >
                     <div className="mb-3 text-4xl">{item.icon}</div>
-                    <h3  className="text-3xl md:text-4xl font-extrabold"
-                        style={{ color: textColor }} >
+                    
+                    <h3 
+                        className="text-3xl md:text-4xl font-extrabold"
+                        style={{ color: textColor }}
+                    >
                         {loading ? <span className="animate-pulse">-</span> : item.count}
                     </h3>
-                    <p className="text-sm md:text-base mt-2 font-semibold tracking-wide"
-                        style={{ color: textColor }}>
+                    
+                    <p 
+                        className="text-sm md:text-base mt-2 font-semibold tracking-wide"
+                        style={{ color: textColor }}
+                    >
                         {item.label}
                     </p>
-                    <button className="mt-5 cursor-pointer text-sm font-bold rounded-lg px-3 py-1"
+                    
+                    <Link 
+                        href={item.href}
+                        className="mt-5 cursor-pointer text-sm font-bold rounded-lg px-3 py-1 hover:shadow-md transition-all"
                         style={{
                             backgroundColor: "#fefaef",
                             borderColor: cardColor,
                             color: "#282828",
-                        }} >
+                        }}
+                    >
                         Kelola
-                    </button>
+                    </Link>
                 </div>
             ))}
         </section>

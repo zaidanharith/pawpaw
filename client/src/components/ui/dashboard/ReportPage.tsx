@@ -258,17 +258,23 @@ const ReportPage: React.FC = () => {
     <>
       <section>
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-          <div className="flex items-center gap-4 w-full sm:w-auto">
-            <div className="rounded-2xl p-3 text-center" style={{ backgroundColor: accentColor, color: textColor }}>
-              <div className="font-semibold text-lg">{dayName}</div>
-              <div className="text-xs opacity-90">{dateString}</div>
-            </div>
-
-            <div className="bg-white border rounded-2xl px-4 py-3 shadow-sm" style={{ borderColor: accentColor }}>
-              <div className="text-sm text-gray-600">Total Laporan Hari Ini</div>
-              <div className="font-bold text-3xl mt-1">{todayReportsCount}</div>
-            </div>
+        <div
+          className="flex flex-row items-center gap-2 px-4 bg-white rounded-xl w-full sm:w-auto border"
+          style={{ borderColor: accentColor }}
+        >
+          <div
+            className="rounded-xl px-3 py-2 my-2 flex flex-col items-center"
+            style={{ backgroundColor: accentColor, color: textColor }}
+          >
+            <h3 className="font-semibold text-md">{dayName}</h3>
+            <h4 className="font-normal text-sm">{dateString}</h4>
           </div>
+
+          <div className="text-gray-800 px-3 py-2 flex flex-col items-center">
+            <h3 className="font-semibold text-sm">Total Laporan Hari Ini</h3>
+            <h4 className="font-bold text-3xl">{todayReportsCount}</h4>
+          </div>
+        </div>
 
           {!isReadOnly && (
             <div className="w-full sm:w-auto">
@@ -311,22 +317,18 @@ const ReportPage: React.FC = () => {
                   style={{ borderColor: accentColor }}
                 >
                   <div>
+                    <div className="mt-2 my-2 text-xs text-gray-500 text-right flex items-center gap-2"><FaClock /> {getRelativeTime(report.date || report.createdAt)}</div>
                     <div className="flex items-start justify-between">
                       <div>
                         <h3 className="text-lg font-bold text-gray-900">{report.title}</h3>
                         <div className="mt-1 text-sm text-gray-600">{displayActivityName}</div>
                       </div>
-
-                      <div className="flex flex-col items-end text-right">
-                        <div className="px-3 py-1 rounded-xl text-sm font-semibold" style={{ backgroundColor: accentColor, color: textColor }}>{teacherName}</div>
-                        <div className="mt-2 text-xs text-gray-500 flex items-center gap-2"><FaClock /> {getRelativeTime(report.date || report.createdAt)}</div>
-                      </div>
                     </div>
-
+                    <div className="mt-2 text-xs text-gray-500 text-right flex items-center">{teacherName}</div>
                     <p className="mt-3 text-sm text-gray-700">{report.description || "Tidak ada deskripsi."}</p>
 
                     {report.photos && report.photos.length > 0 ? (
-                      <div className="mt-3 flex items-center gap-2">
+                      <div className="mt-3 flex items-center content-end gap-2">
                         {report.photos.slice(0,3).map((p) => (
                           <div key={p.id} className="w-16 h-12 relative rounded-md overflow-hidden border">
                             <Image src={p.path || p.filename} alt={p.originalName || 'photo'} fill style={{ objectFit: 'cover' }} />

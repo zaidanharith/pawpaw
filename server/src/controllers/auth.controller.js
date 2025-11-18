@@ -385,7 +385,6 @@ const authController = {
 
   updateProfile: async (req, res) => {
     try {
-      // Cek apakah user terautentikasi
       if (!req.user || !req.user.id) {
         return res.status(401).json({
           success: false,
@@ -393,7 +392,6 @@ const authController = {
         });
       }
 
-      // Ambil data dari request body
       const { name, username, email, phoneNumber } = req.body;
 
       if (!name || !username || !email || !phoneNumber) {
@@ -403,7 +401,6 @@ const authController = {
         });
       }
 
-      // Cari user berdasarkan ID
       const user = await prisma.user.findUnique({
         where: { id: req.user.id }
       });
@@ -415,7 +412,6 @@ const authController = {
         });
       }
 
-      // Update data user
       const updatedUser = await prisma.user.update({
         where: { id: req.user.id },
         data: {
