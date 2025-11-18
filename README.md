@@ -270,6 +270,7 @@ pawpaw/
   <img src="https://img.shields.io/badge/-Weather%20API-FF9A00?style=for-the-badge&logo=openweathermap&logoColor=white"/>
   <img src="https://img.shields.io/badge/-Socket.io-010101?style=for-the-badge&logo=socketdotio&logoColor=white"/>
   <img src="https://img.shields.io/badge/-Gmail-EA4335?style=for-the-badge&logo=gmail&logoColor=white"/>
+  <img src="https://img.shields.io/badge/-Helmet.js-4C4C4C?style=for-the-badge&logo=helmet&logoColor=white"/>
 </p>
 
 ### Frontend
@@ -279,6 +280,7 @@ pawpaw/
   <img src="https://img.shields.io/badge/-TypeScript-3178C6?style=for-the-badge&logo=typescript&logoColor=white"/>
   <img src="https://img.shields.io/badge/-Tailwind%20CSS-06B6D4?style=for-the-badge&logo=tailwindcss&logoColor=white"/>
   <img src="https://img.shields.io/badge/-NextAuth.js-000000?style=for-the-badge&logo=next.js&logoColor=white"/>
+  <img src="https://img.shields.io/badge/-FACE/API.js-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black"/>
 </p>
 
 ### Authentication & Authorization
