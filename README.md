@@ -29,6 +29,8 @@ npm run dev
 ## 📝 Penjelasan Detail Tentang Aplikasi (Back-End) dan Link Video Demo
 
 🔗 [Laporan Kelompok 13 PAW_US3 : KidConnect Application](https://drive.google.com/drive/folders/1BU8iePVpYhGK1ela7MJdZAZUS7w8tawK?usp=sharing)
+
+
 🔗 [Video Demo : KidConnect Application](https://drive.google.com/drive/folders/1EPUovRzS4Pk-QA-Hbb7jKz7DHd7jGYBK?usp=sharing)
 
 ## 📂 File Directory
@@ -97,26 +99,10 @@ pawpaw/
 │   ├── postcss.config.mjs
 │   ├── tsconfig.json
 |   ├── .next
-|   |   ├── build/
-|   |   ├── chace/
-|   |   ├── logs/
-|   |   ├── server/
-|   |   ├── static/
-|   |   ├── types/
-|   |   ├── build-manifest.json
-|   |   ├── fallback-build-manifest.json
-|   |   ├── package.json
-|   |   ├── prerender-manifest.json
-|   |   └── routes-manifest.json
 |   ├── node_modules/
 │   ├── public/
 │   |   ├── images/
 |   |   ├── models/
-|   |   ├── default-user.png
-|   |   ├── google669cb8f46a.html
-|   |   ├── logo.svg
-|   |   ├── next.svg
-|   |   ├── vercel.svg
 │   └── src/
 │       ├── app/
 │       │   ├── globals.css
