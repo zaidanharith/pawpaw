@@ -24,20 +24,27 @@ const DetailQuarterlyReport: FC<DetailQuarterlyReportProps> = ({
   onDelete,
 }) => {
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30">
-      <div className="relative w-full max-w-2xl rounded-xl bg-white p-6 shadow-lg">
-        <button
-          onClick={onClose}
-          className="absolute right-4 top-4 rounded-lg p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-600"
+    <div className="fixed inset-0 z-50 bg-black/40 flex items-center justify-center">
+      <div className="w-full max-w-2xl bg-white rounded-xl shadow-lg overflow-hidden">
+
+        {/* HEADER */}
+        <div
+          className="w-full px-6 py-4 flex items-center justify-between"
+          style={{ backgroundColor: accentColor }}
         >
-          <X size={24} />
-        </button>
+          <h2 className="text-lg font-semibold" style={{ color: textColor }}>
+            Detail Laporan Triwulan
+          </h2>
+          <button
+            onClick={onClose}
+            className="p-2 rounded-lg hover:bg-white/20 transition"
+          >
+            <X size={22} color={textColor} />
+          </button>
+        </div>
 
-        <h2 className="mb-4 text-2xl font-bold" style={{ color: textColor }}>
-          Detail Laporan Triwulan
-        </h2>
+        <div className="p-6 space-y-3 text-sm text-gray-800">
 
-        <div className="space-y-3 text-sm text-gray-800">
           <p>
             <strong>Kelas:</strong> {report.classroom?.name ?? "-"}
           </p>
@@ -50,10 +57,10 @@ const DetailQuarterlyReport: FC<DetailQuarterlyReportProps> = ({
 
           <div>
             <strong>Catatan:</strong>
-            <p className="mt-1 whitespace-pre-wrap">{report.notes}</p>
+            <p className="mt-1 whitespace-pre-wrap">{report.notes ?? "-"}</p>
           </div>
 
-          {report.activitiesSummary && report.activitiesSummary.length > 0 && (
+          {report.activitiesSummary?.length ? (
             <div>
               <strong>Ringkasan Kegiatan:</strong>
               <ul className="ml-5 mt-1 list-disc">
@@ -62,28 +69,29 @@ const DetailQuarterlyReport: FC<DetailQuarterlyReportProps> = ({
                 ))}
               </ul>
             </div>
-          )}
+          ) : null}
         </div>
 
         {!isParent && (
-          <div className="mt-6 flex gap-3 border-t border-gray-200 pt-4">
+          <div className="mt-6 flex gap-3 border-t p-6">
             <button
               type="button"
               onClick={onEdit}
               style={{ backgroundColor: accentColor }}
-              className="flex-1 rounded-lg py-2 text-sm font-semibold text-white"
+              className="flex-1 py-2 rounded-lg text-white font-semibold"
             >
               Edit
             </button>
             <button
               type="button"
               onClick={onDelete}
-              className="flex-1 rounded-lg bg-red-600 py-2 text-sm font-semibold text-white"
+              className="flex-1 py-2 rounded-lg bg-red-600 text-white font-semibold"
             >
               Hapus
             </button>
           </div>
         )}
+
       </div>
     </div>
   );

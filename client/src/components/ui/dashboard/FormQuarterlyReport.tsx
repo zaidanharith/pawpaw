@@ -1,6 +1,6 @@
 "use client";
 
-import { FC, useState, useEffect } from "react";
+import { FC, useEffect, useState } from "react";
 import axios from "axios";
 import { toast } from "sonner";
 import { X } from "lucide-react";
@@ -29,26 +29,18 @@ const FormQuarterlyReport: FC<FormQuarterlyReportProps> = ({
   const token = session?.accessToken;
 
   const [loading, setLoading] = useState(false);
-  const [fetching, setFetching] = useState(false);
 
   const [formData, setFormData] = useState({
     quarter: "",
     title: "",
     meetingDate: "",
   });
-  if (!isOpen) return null;
 
+  // LOAD DATA WHEN EDIT
   useEffect(() => {
-    if (!isOpen) {
-      setFormData({ quarter: "", title: "", meetingDate: "" });
-      return;
-    }
+    if (!isOpen || !editingReport?.id || !token) return;
 
     const fetchData = async () => {
-      if (!editingReport?.id) return;
-      if (!token) return;
-      setFetching(true);
-
       try {
         const API_URL = process.env.NEXT_PUBLIC_API_URL;
         const res = await axios.get(`${API_URL}/report/${editingReport.id}`, {
@@ -64,32 +56,22 @@ const FormQuarterlyReport: FC<FormQuarterlyReportProps> = ({
             ? new Date(d.meetingDate).toISOString().split("T")[0]
             : "",
         });
-      } catch (err) {
+      } catch {
         toast.error("Gagal memuat laporan");
       }
-
-      setFetching(false);
     };
 
-    if (editingReport?.id) fetchData();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    fetchData();
   }, [isOpen, editingReport?.id, token]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
-    if (editingReport) {
-      if (!formData.title || !formData.meetingDate) {
-        toast.error("Judul dan tanggal meeting wajib diisi");
-        return;
-      }
-    }
-
     setLoading(true);
-    
+
     try {
       const API_URL = process.env.NEXT_PUBLIC_API_URL;
       let res;
+
       if (editingReport?.id) {
         res = await axios.put(
           `${API_URL}/report/${editingReport.id}`,
@@ -97,17 +79,12 @@ const FormQuarterlyReport: FC<FormQuarterlyReportProps> = ({
             title: formData.title,
             meetingDate: new Date(formData.meetingDate),
           },
-          {
-            headers: { Authorization: `Bearer ${token}` },
-          }
+          { headers: { Authorization: `Bearer ${token}` } }
         );
       } else {
-        res = await axios.post(
-          `${API_URL}/report`,formData,
-          {
-            headers: { Authorization: `Bearer ${token}` },
-          }
-        );
+        res = await axios.post(`${API_URL}/report`, formData, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
       }
 
       if (res.data.success) {
@@ -116,101 +93,103 @@ const FormQuarterlyReport: FC<FormQuarterlyReportProps> = ({
         );
         onClose(true);
       }
-    } catch (err: any) {
-      toast.error(err.response?.data?.message || "Gagal menyimpan laporan");
+    } catch {
+      toast.error("Gagal menyimpan laporan");
+    } finally {
+      setLoading(false);
     }
-
-    setLoading(false);
   };
 
-  if (fetching) {
-    return (
-      <div className="fixed inset-0 bg-black/30 flex items-center justify-center">
-        <div className="bg-white p-6 rounded-lg shadow-md">Memuat data...</div>
-      </div>
-    );
-  }
+  if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/30 flex items-center justify-center">
-      <div className="relative w-full max-w-xl bg-white rounded-xl p-6 shadow-lg">
-        <button
-          onClick={() => onClose(false)}
-          className="absolute right-4 top-4 text-gray-400 hover:bg-gray-100 p-2 rounded-lg"
+    <div className="fixed inset-0 z-50 bg-black/40 flex items-start justify-center pt-20">
+      <div className="w-full max-w-xl bg-white rounded-xl shadow-lg overflow-hidden">
+
+        {/* HEADER */}
+        <div
+          className="w-full px-6 py-4 flex items-center justify-between"
+          style={{ backgroundColor: accentColor }}
         >
-          <X size={24} />
-        </button>
+          <h2 className="text-lg font-semibold" style={{ color: textColor }}>
+            {editingReport ? "Edit Laporan Triwulan" : "Tambah Laporan Triwulan"}
+          </h2>
 
-        <h2 className="mb-6 text-2xl font-bold" style={{ color: textColor }}>
-          {editingReport ? "Edit Laporan Triwulan" : "Buat Laporan Triwulan"}
-        </h2>
+          <button
+            onClick={() => onClose(false)}
+            className="p-2 rounded-lg hover:bg-white/20 transition"
+          >
+            <X size={22} color={textColor} />
+          </button>
+        </div>
 
-        <form onSubmit={handleSubmit} className="space-y-6">
-          {/* QUARTER (READ ONLY FOR EDIT) */}
-          {editingReport && (
+        {/* FORM */}
+        <div className="p-6 space-y-6">
+          <form onSubmit={handleSubmit} className="space-y-6">
+
+            {editingReport && (
+              <div>
+                <label className="text-sm font-medium">Kuartal</label>
+                <input
+                  disabled
+                  value={formData.quarter}
+                  className="mt-2 px-4 py-2 w-full bg-gray-100 border rounded-lg"
+                />
+              </div>
+            )}
+
             <div>
-              <label className="text-sm font-semibold">Kuartal</label>
+              <label className="text-sm font-medium">Judul *</label>
               <input
-                disabled
-                value={formData.quarter}
-                className="mt-2 px-4 py-2 w-full bg-gray-100 border rounded-lg"
+                type="text"
+                value={formData.title}
+                onChange={(e) =>
+                  setFormData({ ...formData, title: e.target.value })
+                }
+                className="mt-2 px-4 py-2 w-full border rounded-lg"
+                required
               />
             </div>
-          )}
 
-          {/* TITLE */}
-          <div>
-            <label className="text-sm font-semibold">Judul *</label>
-            <input
-              name="title"
-              type="text"
-              value={formData.title}
-              onChange={(e) =>
-                setFormData((p) => ({ ...p, title: e.target.value }))
-              }
-              className="mt-2 px-4 py-2 w-full border rounded-lg"
-              required={!!editingReport}
-            />
-          </div>
+            <div>
+              <label className="text-sm font-medium">Tanggal Meeting *</label>
+              <input
+                type="date"
+                value={formData.meetingDate}
+                onChange={(e) =>
+                  setFormData({ ...formData, meetingDate: e.target.value })
+                }
+                className="mt-2 px-4 py-2 w-full border rounded-lg"
+                required
+              />
+            </div>
 
-          {/* MEETING DATE */}
-          <div>
-            <label className="text-sm font-semibold">Tanggal Meeting *</label>
-            <input
-              name="meetingDate"
-              type="date"
-              value={formData.meetingDate}
-              onChange={(e) =>
-                setFormData((p) => ({ ...p, meetingDate: e.target.value }))
-              }
-              className="mt-2 px-4 py-2 w-full border rounded-lg"
-              required={!!editingReport}
-            />
-          </div>
+            {/* FOOTER */}
+            <div className="flex gap-3 pt-4 border-t">
+              <button
+                type="button"
+                onClick={() => onClose(false)}
+                className="flex-1 border rounded-lg py-2 bg-gray-100"
+              >
+                Batal
+              </button>
 
-          {/* BUTTONS */}
-          <div className="flex gap-3 border-t pt-6">
-            <button
-              type="button"
-              onClick={() => onClose(false)}
-              className="flex-1 border rounded-lg py-2 bg-gray-50"
-            >
-              Batal
-            </button>
-            <button
-              type="submit"
-              disabled={loading}
-              style={{ backgroundColor: accentColor }}
-              className="flex-1 py-2 rounded-lg text-white disabled:opacity-50"
-            >
-              {loading
-                ? "Menyimpan..."
-                : editingReport
-                ? "Perbarui"
-                : "Buat Laporan"}
-            </button>
-          </div>
-        </form>
+              <button
+                type="submit"
+                disabled={loading}
+                style={{ backgroundColor: accentColor }}
+                className="flex-1 py-2 rounded-lg text-white font-semibold disabled:opacity-50"
+              >
+                {loading
+                  ? "Menyimpan..."
+                  : editingReport
+                  ? "Perbarui"
+                  : "Buat Laporan"}
+              </button>
+            </div>
+          </form>
+        </div>
+
       </div>
     </div>
   );
