@@ -218,4 +218,9 @@ process.on('SIGTERM', async () => {
   process.exit(0);
 });
 
-module.exports = { io, emitMessageEvent };
+// Export the HTTP server as the default export so server platforms (like Vercel)
+// that expect a function or server as the module's default export will accept it.
+module.exports = server;
+// Also expose socket/io helpers as properties for use in other modules if needed.
+module.exports.io = io;
+module.exports.emitMessageEvent = emitMessageEvent;
