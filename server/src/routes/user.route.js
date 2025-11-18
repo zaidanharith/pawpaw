@@ -40,7 +40,7 @@ const { protect, requireRole } = require("../middleware/auth.middleware");
 router.get(
   "/user",
   protect,
-  requireRole("ADMIN", "TEACHER"),
+  requireRole("ADMIN", "TEACHER", "PARENT"),
   userController.getAllUsers
 );
 
@@ -72,7 +72,7 @@ router.get(
 router.get(
   "/user/:id",
   protect,
-  requireRole("ADMIN", "TEACHER"),
+  requireRole("ADMIN", "TEACHER", "PARENT"),
   userController.getUserById
 );
 

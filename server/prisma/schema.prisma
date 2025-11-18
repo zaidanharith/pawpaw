@@ -40,8 +40,8 @@ model User {
   classroomsAsTeacher Classroom[]
   attendancesCreated  Attendance[]
   liveReports         LiveReport[]
-  sentMessages        Message[]         @relation("SentMessages")
-  receivedMessages    Message[]         @relation("ReceivedMessages")
+  sentMessages        Message[]      @relation("SentMessages")
+  receivedMessages    Message[]      @relation("ReceivedMessages")
   students            Student[]
 
   @@map("users")
@@ -121,12 +121,12 @@ model Classroom {
   teacher   User   @relation(fields: [teacherId], references: [id], onDelete: Cascade)
 
   // Relations
-  students    Student[]
-  activityIds String[]   @db.ObjectId
-  activities  Activity[] @relation(fields: [activityIds], references: [id])
+  students Student[]
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+  activity   Activity? @relation(fields: [activityId], references: [id])
+  activityId String?   @db.ObjectId
 
   @@map("classrooms")
 }
@@ -149,9 +149,8 @@ model Student {
   activityIds String[]   @db.ObjectId
   activities  Activity[] @relation(fields: [activityIds], references: [id])
 
-  attendances      Attendance[]
-  messages         Message[]
-  
+  attendances Attendance[]
+  messages    Message[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -175,14 +174,14 @@ model Activity {
   studentIds String[]  @db.ObjectId
   students   Student[] @relation(fields: [studentIds], references: [id])
 
-  classroomIds String[]    @db.ObjectId
-  classrooms   Classroom[] @relation(fields: [classroomIds], references: [id])
+  classroomIds String[] @db.ObjectId
 
   liveReportIds String[]     @db.ObjectId
   liveReports   LiveReport[] @relation(fields: [liveReportIds], references: [id])
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
+  classrooms Classroom[]
 
   @@map("activities")
 }
@@ -267,14 +266,14 @@ model Message {
 
 // ===== QUARTERLY REPORT MODEL =====
 model QuarterlyReport {
-  id                String      @id @default(auto()) @map("_id") @db.ObjectId
-  quarter           Quarter
-  year              Int
-  title             String?
-  meetingDate       DateTime?
+  id          String    @id @default(auto()) @map("_id") @db.ObjectId
+  quarter     Quarter
+  year        Int
+  title       String?
+  meetingDate DateTime?
 
-  liveReportIds   String[]      @db.ObjectId
-  attendanceIds String[]   @db.ObjectId
+  liveReportIds String[] @db.ObjectId
+  attendanceIds String[] @db.ObjectId
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

@@ -6,7 +6,7 @@ import { useSession } from "next-auth/react";
 import { FaPlus } from "react-icons/fa";
 import AddClassModal from "./AddClass";
 import EditClassModal from "./EditClass";
-import { MdEdit, MdDelete } from "react-icons/md";
+import { MdEdit } from "react-icons/md";
 
 interface Teacher {
     id: string;

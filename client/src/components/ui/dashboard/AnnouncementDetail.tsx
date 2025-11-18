@@ -23,9 +23,6 @@ const AnnouncementDetail: React.FC<Props> = ({
     accentColor,
     textColor,
 }) => {
-    // ===============================
-    // WAKTU - sama seperti ReportDetail
-    // ===============================
     const rawDate = announcement.createdAt;
     const dateObj = rawDate ? new Date(rawDate) : null;
 
@@ -64,9 +61,6 @@ const AnnouncementDetail: React.FC<Props> = ({
             {/* CARD */}
             <div className="relative bg-white rounded-2xl w-full max-w-md mx-4 shadow-xl overflow-hidden flex flex-col max-h-[90vh]">
                 
-                {/* =======================
-                    HEADER
-                ======================== */}
                 <div
                     className="relative px-4 py-2 flex items-center justify-center"
                     style={{ backgroundColor: accentColor }}

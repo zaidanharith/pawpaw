@@ -36,13 +36,16 @@ const FormQuarterlyReport: FC<FormQuarterlyReportProps> = ({
     title: "",
     meetingDate: "",
   });
-  if (!isOpen) return null;
-
   useEffect(() => {
     if (!isOpen) {
-      setFormData({ quarter: "", title: "", meetingDate: "" });
-      return;
+      const t = setTimeout(() => setFormData({ quarter: "", title: "", meetingDate: "" }), 0);
+      return () => clearTimeout(t);
     }
+    return;
+  }, [isOpen]);
+
+  useEffect(() => {
+    if (!isOpen) return;
 
     const fetchData = async () => {
       if (!editingReport?.id) return;
@@ -64,7 +67,8 @@ const FormQuarterlyReport: FC<FormQuarterlyReportProps> = ({
             ? new Date(d.meetingDate).toISOString().split("T")[0]
             : "",
         });
-      } catch (err) {
+      } catch (error) {
+        console.error(error);
         toast.error("Gagal memuat laporan");
       }
 
@@ -72,7 +76,6 @@ const FormQuarterlyReport: FC<FormQuarterlyReportProps> = ({
     };
 
     if (editingReport?.id) fetchData();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isOpen, editingReport?.id, token]);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -102,6 +105,7 @@ const FormQuarterlyReport: FC<FormQuarterlyReportProps> = ({
           }
         );
       } else {
+        alert(JSON.stringify(formData));
         res = await axios.post(
           `${API_URL}/report`,formData,
           {
@@ -116,8 +120,12 @@ const FormQuarterlyReport: FC<FormQuarterlyReportProps> = ({
         );
         onClose(true);
       }
-    } catch (err: any) {
-      toast.error(err.response?.data?.message || "Gagal menyimpan laporan");
+    } catch (err: unknown) {
+      if (axios.isAxiosError(err)) {
+        toast.error(err.response?.data?.message || "Gagal menyimpan laporan");
+      } else {
+        toast.error("Gagal menyimpan laporan");
+      }
     }
 
     setLoading(false);
@@ -130,6 +138,8 @@ const FormQuarterlyReport: FC<FormQuarterlyReportProps> = ({
       </div>
     );
   }
+
+  if (!isOpen) return null;
 
   return (
     <div className="fixed inset-0 z-50 bg-black/30 flex items-center justify-center">
@@ -158,7 +168,6 @@ const FormQuarterlyReport: FC<FormQuarterlyReportProps> = ({
             </div>
           )}
 
-          {/* TITLE */}
           <div>
             <label className="text-sm font-semibold">Judul *</label>
             <input

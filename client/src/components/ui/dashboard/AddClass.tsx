@@ -34,7 +34,7 @@ const AddClassModal: React.FC<AddClassModalProps> = ({
     const [loading, setLoading] = useState(false);
     const { data: session } = useSession();
     const token = session?.accessToken;
-    const role = (session?.user as any)?.role || "ADMIN";
+    const role = session?.user?.role || "ADMIN";
     const textColor = role === "ADMIN" ? "#FFFFFF" : "#3d3006";
     const accentColor = roleColors[role] || roleColors.ADMIN;
 
@@ -52,12 +52,11 @@ const AddClassModal: React.FC<AddClassModalProps> = ({
 
         try {
             const API_URL = process.env.NEXT_PUBLIC_API_URL;
-
             await axios.post(
-                `${API_URL}/classroom/create`,
+                `${API_URL}/classroom`,
                 {
                     name: className,
-                    teacherId: teacherId,
+                    teacher: teacherId,
                 },
                 {
                     headers: { Authorization: `Bearer ${token}` },

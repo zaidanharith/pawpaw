@@ -41,9 +41,6 @@ const ReportDetail: React.FC<ReportDetailProps> = ({
 
   if (!isOpen || !report) return null;
 
-  // ===============================
-  // WAKTU
-  // ===============================
   const rawDate = report.date || report.createdAt;
   const dateObj = rawDate ? new Date(rawDate) : null;
 
@@ -74,18 +71,10 @@ const ReportDetail: React.FC<ReportDetailProps> = ({
     else relativeStr = `${diffDays} hari yang lalu`;
   }
 
-  // ===============================
-  // KEGIATAN
-  // ===============================
   const rawActivityName = report.activities?.[0]?.name || "";
   const activityDisplay =
     kegiatanLabels[rawActivityName] || rawActivityName || "Kegiatan Harian";
 
-  const className = (report as any).kelas || "-";
-
-  // ===============================
-  // FOTO FIX
-  // ===============================
   const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
   const rawPath = report.photos?.[0]?.path || null;
@@ -181,13 +170,6 @@ const ReportDetail: React.FC<ReportDetailProps> = ({
               <p className="text-gray-500 text-xs">Nama Kegiatan</p>
               <p className="font-semibold text-gray-900 mt-1">
                 {activityDisplay}
-              </p>
-            </div>
-
-            <div>
-              <p className="text-gray-500 text-xs">Kelas</p>
-              <p className="font-semibold text-gray-900 mt-1">
-                {className}
               </p>
             </div>
           </div>

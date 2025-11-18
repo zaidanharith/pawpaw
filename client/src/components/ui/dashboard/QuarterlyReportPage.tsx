@@ -30,17 +30,13 @@ export interface QuarterlyReport {
   } | null;
 }
 
-interface QuarterlyReportPageProps {
-  accentColor: string;
-  textColor: string;
-  isParent: boolean;
-}
+const roleColors: Record<string, string> = {
+    ADMIN: "#3f9065",
+    TEACHER: "#f5bb00",
+    PARENT: "#58baab",
+};
 
-const QuarterlyReportPage: FC<QuarterlyReportPageProps> = ({
-  accentColor,
-  textColor,
-  isParent,
-}) => {
+const QuarterlyReportPage: FC = () => {
   const [reports, setReports] = useState<QuarterlyReport[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -52,6 +48,9 @@ const QuarterlyReportPage: FC<QuarterlyReportPageProps> = ({
 
   const { data: session } = useSession();
   const token = session?.accessToken;
+  const role = session?.user?.role || "ADMIN";
+
+  const accentColor = roleColors[role] || roleColors.ADMIN;
 
   const fetchReports = async () => {
     try {
@@ -100,21 +99,21 @@ const QuarterlyReportPage: FC<QuarterlyReportPageProps> = ({
     }
   };
 
-  const handleDownloadPdf = async (id: string, classroomName: string) => {
+  const handleDownloadPdf = async (id: string, name: string) => {
     try {
-
       const res = await axios.get(
         `${process.env.NEXT_PUBLIC_API_URL}/report/${id}/pdf`,
         {
           responseType: "blob",
           headers: { Authorization: `Bearer ${token}` },
+          params: { name },
         }
       );
 
       const url = window.URL.createObjectURL(new Blob([res.data]));
       const link = document.createElement("a");
       link.href = url;
-      link.download = `quarterly-report-${classroomName}-${Date.now()}.pdf`;
+      link.download = `quarterly-report-${Date.now()}.pdf`;
       document.body.appendChild(link);
       link.click();
       link.remove();
@@ -154,17 +153,12 @@ const QuarterlyReportPage: FC<QuarterlyReportPageProps> = ({
 
   return (
     <div className="space-y-6">
-      {/* HEADER */}
       <div className="flex items-center justify-between">
-        <h2 className="text-2xl font-bold" style={{ color: textColor }}>
-          Laporan Triwulan
-        </h2>
-
-        {!isParent && (
+        {(role !== "PARENT") && (
           <button
             onClick={openCreateForm}
             style={{ backgroundColor: accentColor }}
-            className="flex items-center gap-2 rounded-lg px-4 py-2 text-white transition hover:shadow-lg"
+            className="flex items-center gap-2 rounded-lg px-4 py-2 text-white transition hover:shadow-lg cursor-pointer"
           >
             <Plus size={20} />
             Buat Laporan Baru
@@ -178,7 +172,7 @@ const QuarterlyReportPage: FC<QuarterlyReportPageProps> = ({
           onClose={handleFormClosed}
           editingReport={editingReport}
           accentColor={accentColor}
-          textColor={textColor}
+          textColor="#282828"
         />
       )}
 
@@ -188,8 +182,8 @@ const QuarterlyReportPage: FC<QuarterlyReportPageProps> = ({
           report={selectedReport}
           onClose={() => setSelectedReport(null)}
           accentColor={accentColor}
-          textColor={textColor}
-          isParent={isParent}
+          textColor="#282828"
+          isParent={( role === "PARENT" )}
           onEdit={() => {
             openEditForm(selectedReport);
             setSelectedReport(null);
@@ -209,13 +203,10 @@ const QuarterlyReportPage: FC<QuarterlyReportPageProps> = ({
             <thead className="bg-gray-50">
               <tr>
                 <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700">
-                  Kelas
+                  Judul
                 </th>
                 <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700">
                   Kuartal
-                </th>
-                <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700">
-                  Guru
                 </th>
                 <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700">
                   Catatan
@@ -232,14 +223,8 @@ const QuarterlyReportPage: FC<QuarterlyReportPageProps> = ({
             <tbody className="divide-y divide-gray-200">
               {reports.map((report) => (
                 <tr key={report.id} className="hover:bg-gray-50">
-                  <td className="px-6 py-4 text-sm font-medium text-gray-900">
-                    <button
-                      type="button"
-                      onClick={() => setSelectedReport(report)}
-                      className="text-left text-blue-600 hover:underline"
-                    >
-                      {report.classroom?.name ?? "-"}
-                    </button>
+                  <td className="px-6 py-4 text-sm text-gray-600">
+                    {report.title ?? "-"}
                   </td>
 
                   <td className="px-6 py-4 text-sm text-gray-600">
@@ -248,12 +233,6 @@ const QuarterlyReportPage: FC<QuarterlyReportPageProps> = ({
 
                   <td className="px-6 py-4 text-sm text-gray-600">
                     {report.classroom?.teacher?.name ?? "-"}
-                  </td>
-
-                  <td className="px-6 py-4 text-sm text-gray-600 max-w-xs">
-                    <p className="line-clamp-2">
-                      {report.notes ?? report.title ?? "-"}
-                    </p>
                   </td>
 
                   <td className="px-6 py-4 text-sm text-gray-600">
@@ -266,7 +245,7 @@ const QuarterlyReportPage: FC<QuarterlyReportPageProps> = ({
                         onClick={() =>
                           handleDownloadPdf(
                             report.id,
-                            report.classroom?.name ?? "report"
+                            session?.user?.name || "User"
                           )
                         }
                         className="rounded p-2 text-blue-600 hover:bg-blue-100"
@@ -275,7 +254,7 @@ const QuarterlyReportPage: FC<QuarterlyReportPageProps> = ({
                         <Download size={18} />
                       </button>
 
-                      {!isParent && (
+                      {(role !== "PARENT") && (
                         <>
                           <button
                             onClick={() => openEditForm(report)}

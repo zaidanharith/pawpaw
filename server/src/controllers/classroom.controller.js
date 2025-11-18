@@ -21,14 +21,6 @@ const classroomController = {
               email: true,
               role: true
             }
-          },
-          activities: {
-            select: {
-              id: true,
-              name: true,
-              description: true,
-              date: true
-            }
           }
         },
         orderBy: {
@@ -87,17 +79,6 @@ const classroomController = {
               role: true
             }
           },
-          activities: {
-            select: {
-              id: true,
-              name: true,
-              description: true,
-              date: true
-            },
-            orderBy: {
-              date: 'desc'
-            }
-          },
           _count: {
             select: {
               students: true,
@@ -130,7 +111,8 @@ const classroomController = {
 
   createClassroom: async (req, res) => {
     try {
-      const { name, teacher, activityIds } = req.body;
+      const { name, teacher } = req.body;
+      console.log("Creating classroom with name:", name, "and teacher ID:", teacher);
 
       if (!name || !teacher) {
         return res.status(400).json({
@@ -138,14 +120,14 @@ const classroomController = {
           message: "Nama kelas dan guru wajib diisi"
         });
       }
-
+      console.log("1");
       if (!teacher || teacher.length !== 24) {
         return res.status(400).json({
           success: false,
           message: "Teacher ID tidak valid"
         });
       }
-
+      console.log("2");
       const teacherExists = await prisma.user.findUnique({
         where: { id: teacher }
       });
@@ -175,21 +157,10 @@ const classroomController = {
         });
       }
 
-      if (activityIds && activityIds.length > 0) {
-        const invalidIds = activityIds.filter(id => !id || id.length !== 24);
-        if (invalidIds.length > 0) {
-          return res.status(400).json({
-            success: false,
-            message: "Format Activity ID tidak valid"
-          });
-        }
-      }
-
       const classroom = await prisma.classroom.create({
         data: {
           name,
-          teacherId: teacher,
-          activityIds: activityIds || []
+          teacherId: teacher
         },
         include: {
           teacher: {
@@ -198,13 +169,6 @@ const classroomController = {
               name: true,
               email: true,
               role: true
-            }
-          },
-          activities: {
-            select: {
-              id: true,
-              name: true,
-              description: true
             }
           }
         }
@@ -227,7 +191,7 @@ const classroomController = {
   updateClassroom: async (req, res) => {
     try {
       const { id } = req.params;
-      const { name, teacher, activityIds } = req.body;
+      const { name, teacher } = req.body;
 
       if (!id || id.length !== 24) {
         return res.status(400).json({ 
@@ -290,20 +254,9 @@ const classroomController = {
         }
       }
 
-      if (activityIds && activityIds.length > 0) {
-        const invalidIds = activityIds.filter(id => !id || id.length !== 24);
-        if (invalidIds.length > 0) {
-          return res.status(400).json({
-            success: false,
-            message: "Format Activity ID tidak valid"
-          });
-        }
-      }
-
       const updateData = {};
       if (name) updateData.name = name;
       if (teacher) updateData.teacherId = teacher;
-      if (activityIds) updateData.activityIds = activityIds;
 
       const updatedClassroom = await prisma.classroom.update({
         where: { id },
@@ -322,13 +275,6 @@ const classroomController = {
               name: true,
               email: true,
               role: true
-            }
-          },
-          activities: {
-            select: {
-              id: true,
-              name: true,
-              description: true
             }
           }
         }

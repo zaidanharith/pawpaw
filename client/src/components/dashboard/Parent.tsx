@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { useSession } from "next-auth/react";
 import Navbar from "@/components/layout/Navbar";
 import Sidebar from "@/components/layout/Sidebar";
 
@@ -17,7 +16,6 @@ import {
   MenuNotFound,
   PreviewChat,
   FaceRegister,
-  RecentMessage
 } from "@/components/ui/dashboard";
 
 import QuarterlyReportPage from "@/components/ui/dashboard/QuarterlyReportPage";
@@ -37,17 +35,6 @@ interface ParentProps {
 
 export default function Parent({ activePage = "" }: ParentProps) {
   const router = useRouter();
-  const { data: session } = useSession();
-
-  const roleColors: Record<string, string> = {
-    ADMIN: "#3f9065",
-    TEACHER: "#f5bb00",
-    PARENT: "#58baab",
-  };
-  
-  const accentColor = roleColors.PARENT || "#58baab";
-  const textColor = "#FFFFFF";
-  const isParent = true;
 
   const menuItems = [
     { name: "Dashboard", urlName: "", icon: <FaTachometerAlt size={24} /> },
@@ -78,7 +65,6 @@ export default function Parent({ activePage = "" }: ParentProps) {
           <>
             <DashboardPageTitle page="Dashboard" />
             <Weather />
-            <RecentMessage />
             <Announcement />
             <LiveReport />
           </>
@@ -96,7 +82,7 @@ export default function Parent({ activePage = "" }: ParentProps) {
         return (
           <>
             <DashboardPageTitle page="Laporan Triwulan" />
-            <QuarterlyReportPage accentColor={accentColor} textColor={textColor} isParent={isParent} />
+            <QuarterlyReportPage />
           </>
         );
 

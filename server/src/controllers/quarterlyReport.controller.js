@@ -36,21 +36,10 @@ const quarterlyReportController = {
 
       req.body.meetingDate = meetingDate;
 
-      const existing = await prisma.quarterlyReport.findFirst({
-        where: { quarter, year }
-      });
-
-      if (existing) {
-        return res.status(400).json({
-          success: false,
-          message: `Laporan untuk ${quarter} ${year} sudah ada`
-        });
-      }
-
       const ninetyDaysAgo = new Date(now);
       ninetyDaysAgo.setDate(ninetyDaysAgo.getDate() - 90);
 
-      const liveReports = await prisma.activity.findMany({
+      const liveReports = await prisma.liveReport.findMany({
         where: {
           date: { gte: ninetyDaysAgo, lte: now }
         },
@@ -78,8 +67,7 @@ const quarterlyReportController = {
         success: true,
         message: "Laporan triwulan berhasil dibuat",
         data: {
-          report: newReport,
-          summary: activitySummary
+          report: newReport
         }
       });
 
@@ -167,9 +155,6 @@ const quarterlyReportController = {
     }
   },
 
-  // ========================
-  // 5. DELETE REPORT
-  // ========================
   deleteQuarterlyReport: async (req, res) => {
     try {
       const { id } = req.params;
@@ -193,9 +178,9 @@ const quarterlyReportController = {
   },
 
   downloadQuarterlyReportPdf: async (req, res) => {
+    const { id, name } = req.params;
+    console.log("Generating PDF for report ID:", id, "with name:", name);
     try {
-      const { id } = req.params;
-
       const report = await prisma.quarterlyReport.findUnique({
         where: { id }
       });
@@ -207,7 +192,6 @@ const quarterlyReportController = {
         });
       }
 
-      // Fetch related details for live reports (activities) and attendances
       const liveReports = (report.liveReportIds && report.liveReportIds.length)
         ? await prisma.activity.findMany({
             where: { id: { in: report.liveReportIds } },
@@ -232,15 +216,18 @@ const quarterlyReportController = {
       );
       doc.pipe(res);
 
-      doc.fontSize(20).text("LAPORAN TRIWULAN", { align: "center" });
+      doc.fontSize(14).text("LAPORAN TRIWULAN", { align: "center" });
       doc.moveDown();
-      doc.text(`Quarter : ${report.quarter}`);
+      doc.text(`Judul     : ${report.title || 'N/A'}`);
+      doc.text(`Kuartal : ${report.quarter}`);
       doc.text(`Tahun    : ${report.year}`);
-      doc.text(`Judul     : ${report.title}`);
-      doc.text(`Meeting   : ${report.meetingDate.toLocaleString("id-ID")}`);
+      doc.text(`Pertemuan   : ${report.meetingDate || 'N/A'}`);
 
       doc.moveDown();
-      doc.fontSize(14).text("Ringkasan Kegiatan:", { underline: true });
+      doc.fontSize(12).text(`Diunduh oleh : ${name || 'Unknown'} pada ${new Date().toLocaleString('id-ID')}`, { align: "right" });
+
+      doc.moveDown();
+      doc.fontSize(12).text("Ringkasan Kegiatan:", { underline: true });
       doc.moveDown(0.3);
 
       if (liveReports.length === 0) {

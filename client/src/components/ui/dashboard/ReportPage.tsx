@@ -75,7 +75,6 @@ const ReportPage: React.FC = () => {
   const [isEditReportOpen, setIsEditReportOpen] = useState(false);
   const [editReportData, setEditReportData] = useState<Report | null>(null);
 
-  // toast state
   const [toast, setToast] = useState<{
     type: "success" | "error";
     message: string;
@@ -258,31 +257,27 @@ const ReportPage: React.FC = () => {
     <>
       <section>
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div
-          className="flex flex-row items-center gap-2 px-4 bg-white rounded-xl w-full sm:w-auto border"
-          style={{ borderColor: accentColor }}
-        >
           <div
-            className="rounded-xl px-3 py-2 my-2 flex flex-col items-center"
-            style={{ backgroundColor: accentColor, color: textColor }}
-          >
-            <h3 className="font-semibold text-md">{dayName}</h3>
-            <h4 className="font-normal text-sm">{dateString}</h4>
+            className="flex flex-row items-center gap-4 px-3 py-1.5 bg-white rounded-xl w-full sm:w-auto border"
+            style={{ borderColor: accentColor }}>
+            <div
+              className="rounded-xl px-3 py-2 flex flex-col items-center"
+              style={{ backgroundColor: accentColor, color: textColor }}>
+              <h4 className="font-normal text-sm">{dayName}, {dateString}</h4>
+            </div>
+            <div
+              className="rounded-xl px-3 py-2 flex flex-col items-center"
+              style={{ backgroundColor: accentColor, color: textColor }}>
+              <h4 className="font-normal text-sm"><span className="font-bold mr-2">{todayReportsCount}</span>Laporan Masuk Hari Ini</h4>
+            </div>
           </div>
-
-          <div className="text-gray-800 px-3 py-2 flex flex-col items-center">
-            <h3 className="font-semibold text-sm">Total Laporan Hari Ini</h3>
-            <h4 className="font-bold text-3xl">{todayReportsCount}</h4>
-          </div>
-        </div>
 
           {!isReadOnly && (
             <div className="w-full sm:w-auto">
               <button
                 onClick={() => setIsAddReportOpen(true)}
                 className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl text-sm md:text-base font-semibold hover:opacity-80 transition cursor-pointer"
-                style={{ backgroundColor: accentColor, color: textColor }}
-              >
+                style={{ backgroundColor: accentColor, color: textColor }}>
                 <FaEdit /> Buat Laporan
               </button>
             </div>
@@ -290,7 +285,7 @@ const ReportPage: React.FC = () => {
         </div>
       </section>
 
-      <section className="mt-4">
+      <section>
         {loading ? (
           <div className="border rounded-xl p-10 shadow-sm bg-white text-center text-gray-500">
             Memuat data laporan...

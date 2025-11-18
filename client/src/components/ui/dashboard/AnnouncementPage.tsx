@@ -164,38 +164,35 @@ const AnnouncementPage: React.FC = () => {
 
     return (
         <>
-            {/* HEADER */}
             <section>
-                <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                     <div
-                        className="flex flex-row items-center gap-2 px-4 bg-white rounded-xl w-full sm:w-auto border"
-                        style={{ borderColor: accentColor }}
-                    >
-                        <div
-                            className="rounded-xl px-3 py-2 my-2 flex flex-col items-center"
-                            style={{ backgroundColor: accentColor, color: textColor }}
-                        >
-                            <h3 className="font-semibold text-md">{dayName}</h3>
-                            <h4 className="font-normal text-sm">{dateString}</h4>
-                        </div>
-
-                        <div className="text-gray-800 px-3 py-2 flex flex-col items-center">
-                            <h3 className="font-semibold text-sm">Total Pengumuman Hari Ini</h3>
-                            <h4 className="font-bold text-3xl">{todayAnnouncementsCount}</h4>
-                        </div>
+                    className="flex flex-row items-center gap-4 px-3 py-1.5 bg-white rounded-xl w-full sm:w-auto border"
+                    style={{ borderColor: accentColor }}>
+                    <div
+                        className="rounded-xl px-3 py-2 flex flex-col items-center"
+                        style={{ backgroundColor: accentColor, color: textColor }}>
+                        <h4 className="font-normal text-sm">{dayName}, {dateString}</h4>
                     </div>
-
+                    <div
+                        className="rounded-xl px-3 py-2 flex flex-col items-center"
+                        style={{ backgroundColor: accentColor, color: textColor }}>
+                        <h4 className="font-normal text-sm"><span className="font-bold mr-2">{todayAnnouncementsCount}</span>Pengumuman Hari Ini</h4>
+                    </div>
+                    </div>
+        
                     {!isParent && (
+                    <div className="w-full sm:w-auto">
                         <button
-                            onClick={() => setIsAddAnnouncementOpen(true)}
-                            className="w-full sm:w-auto flex items-center justify-center gap-2 px-4 py-3 cursor-pointer rounded-xl text-sm md:text-base font-semibold hover:opacity-80 transition"
-                            style={{ backgroundColor: accentColor, color: textColor }}
-                        >
-                            <FaEdit /> Buat Pengumuman
+                        onClick={() => setIsAddAnnouncementOpen(true)}
+                        className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl text-sm md:text-base font-semibold hover:opacity-80 transition cursor-pointer"
+                        style={{ backgroundColor: accentColor, color: textColor }}>
+                        <FaEdit /> Buat Pengumuman
                         </button>
+                    </div>
                     )}
                 </div>
-            </section>
+                </section>
 
             {/* LIST */}
             <section className="grid grid-cols-1 sm:grid-cols-2 gap-4">

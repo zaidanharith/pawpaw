@@ -48,7 +48,6 @@ export default function LiveReportPage() {
     },
   ];
 
-  // Filter data berdasarkan search dan date
   const filteredReports = reports.filter((report) => {
     const matchesSearch = report.className
       .toLowerCase()

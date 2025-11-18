@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
-import { FaEdit, FaClock } from "react-icons/fa";
+import { FaClock } from "react-icons/fa";
 import axios from "axios";
 import Link from "next/link";
 
@@ -49,13 +49,10 @@ const LiveReport: React.FC = () => {
     const token = session?.accessToken;
     const role = session?.user?.role || "ADMIN";
     const accentColor = roleColors[role] || roleColors.ADMIN;
-    const textColor = role === "ADMIN" ? "#FFFFFF" : "#282828";
-    const isReadOnly = role === "PARENT";
 
     const [recentReports, setRecentReports] = useState<Report[]>([]);
     const [loading, setLoading] = useState(true);
 
-    // Fetch latest 3 reports from API
     useEffect(() => {
         const fetchRecentReports = async () => {
             if (!token) return;

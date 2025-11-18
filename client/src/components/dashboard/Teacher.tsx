@@ -38,17 +38,6 @@ interface TeacherProps {
 export default function Teacher({ activePage = "" }: TeacherProps) {
   const router = useRouter();
   
-  // Role colors
-  const roleColors: Record<string, string> = {
-    ADMIN: "#3f9065",
-    TEACHER: "#f5bb00",
-    PARENT: "#58baab",
-  };
-  
-  const accentColor = roleColors.TEACHER || "#f5bb00";
-  const textColor = "#3d3006";
-  const isParent = false;
-  
   const menuItems = [
     { name: "Dashboard", urlName: "", icon: <FaTachometerAlt size={24} /> },
     { name: "Siswa", urlName: "student", icon: <FaUsers size={24} /> },
@@ -102,7 +91,7 @@ export default function Teacher({ activePage = "" }: TeacherProps) {
         return (
           <>
             <DashboardPageTitle page="Laporan Triwulan" />
-            <QuarterlyReportPage accentColor={accentColor} textColor={textColor} isParent={isParent} />
+            <QuarterlyReportPage />
           </>
         );
       case "announcement":
