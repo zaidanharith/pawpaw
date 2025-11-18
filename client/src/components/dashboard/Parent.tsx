@@ -15,6 +15,7 @@ import {
   ReportPage,
   MenuNotFound,
   PreviewChat,
+  ResetPassword,
   FaceRegister,
 } from "@/components/ui/dashboard";
 
@@ -106,6 +107,7 @@ export default function Parent({ activePage = "" }: ParentProps) {
         return (
           <>
             <DashboardPageTitle page="Profil" />
+            <ResetPassword />
             <Profile />
           </>
         );

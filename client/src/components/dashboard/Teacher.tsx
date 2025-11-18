@@ -15,6 +15,7 @@ import {
   ReportPage,
   AnnouncementPage,
   MenuNotFound,
+  ResetPassword,
   PreviewChat,
   QuarterlyReportPage,
 } from "@/components/ui/dashboard";
@@ -112,6 +113,7 @@ export default function Teacher({ activePage = "" }: TeacherProps) {
         return (
           <>
             <DashboardPageTitle page="Profil" />
+            <ResetPassword />
             <Profile />
           </>
         );
