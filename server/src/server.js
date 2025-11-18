@@ -5,11 +5,14 @@ const helmet = require('helmet');
 const routes = require('./routes'); 
 const setupSwagger = require('./config/swagger');
 const prisma = require('./config/prisma');
+const http = require('http');
+const { Server } = require('socket.io');
+const jwt = require('jsonwebtoken');
 
 dotenv.config();
 
 const app = express();
-const PORT = process.env.PORT || 3001;
+const PORT = process.env.PORT;
 
 app.use(helmet({
   contentSecurityPolicy: process.env.NODE_ENV === 'production' ? undefined : false,
@@ -81,107 +84,56 @@ app.use((err, req, res, next) => {
   });
 });
 
-// For Vercel serverless deployment
-if (process.env.VERCEL) {
-  module.exports = app;
-} else {
-  // For local development or non-serverless deployment
-  const http = require('http');
-  const { Server } = require('socket.io');
-  const jwt = require('jsonwebtoken');
+const server = http.createServer(app);
 
-  const server = http.createServer(app);
+const io = new Server(server, {
+  cors: {
+    origin: allowedOrigins,
+    credentials: true
+  }
+});
 
-  const io = new Server(server, {
-    cors: {
-      origin: allowedOrigins,
-      credentials: true
-    },
-    pingTimeout: 60000,
-    pingInterval: 25000
-  });
+app.set('io', io);
 
-  app.set('io', io);
+io.use((socket, next) => {
+  const token = socket.handshake.auth && socket.handshake.auth.token;
+  if (!token) return next(new Error('Unauthorized'));
+  try {
+    const payload = jwt.verify(token, process.env.JWT_SECRET);
+    socket.user = payload;
+    return next();
+  } catch (err) {
+    console.error('Socket auth error', err.message || err);
+    return next(new Error('Invalid token'));
+  }
+});
 
-  io.use((socket, next) => {
-    const token = socket.handshake.auth && socket.handshake.auth.token;
-    if (!token) {
-      console.log('Socket connection rejected: No token');
-      return next(new Error('Unauthorized'));
-    }
-    try {
-      const payload = jwt.verify(token, process.env.JWT_SECRET);
-      socket.user = payload;
-      console.log('Socket authenticated for user:', payload.id);
-      return next();
-    } catch (err) {
-      console.error('Socket auth error:', err.message || err);
-      return next(new Error('Invalid token'));
-    }
-  });
+io.on('connection', (socket) => {
+  const userId = socket.user?.id;
+  console.log('User connected:', socket.id, 'userId:', userId);
 
-  const userSockets = new Map();
-
-  io.on('connection', (socket) => {
-    const userId = socket.user?.id;
-    console.log('✅ User connected:', socket.id, 'userId:', userId);
-
-    if (!userId) {
-      console.log('❌ No userId found, disconnecting socket');
-      socket.disconnect();
-      return;
-    }
-
+  if (userId) {
     socket.join(`user:${userId}`);
-    console.log(`📍 Socket ${socket.id} joined room: user:${userId}`);
+    console.log(`Socket ${socket.id} joined room user:${userId}`);
+  }
 
-    if (!userSockets.has(userId)) {
-      userSockets.set(userId, new Set());
-    }
-    userSockets.get(userId).add(socket.id);
-
-    socket.on('join', (data) => {
-      const { otherId, userId: clientUserId } = data;
-      console.log(`🔗 Join event: userId=${clientUserId}, otherId=${otherId}`);
-      
-      if (otherId && clientUserId) {
-        const roomId = [clientUserId, otherId].sort().join('-');
-        socket.join(roomId);
-        console.log(`📍 Socket ${socket.id} joined conversation room: ${roomId}`);
-      }
-    });
-
-    socket.on('chat message', async (msg) => {
-      console.log('📨 Chat message received:', msg);
-      io.emit('chat message', msg);
-    });
-
-    socket.on('disconnect', () => {
-      console.log('❌ User disconnected:', socket.id);
-      
-      if (userSockets.has(userId)) {
-        userSockets.get(userId).delete(socket.id);
-        if (userSockets.get(userId).size === 0) {
-          userSockets.delete(userId);
-        }
-      }
-    });
-
-    socket.on('error', (err) => {
-      console.error('Socket error:', err);
-    });
+  socket.on('chat message', async (msg) => {
+    io.emit('chat message', msg);
   });
 
-  server.listen(PORT, () => {
-    console.log(`🚀 Server berjalan di http://localhost:${PORT}`);
-    console.log(`📚 API Docs: http://localhost:${PORT}/api/docs`);
-    console.log(`🔒 Helmet: Enabled`);
-    console.log(`🔌 Socket.IO: Ready`);
+  socket.on('disconnect', () => {
+    console.log('User disconnected:', socket.id);
   });
+});
 
-  process.on('SIGTERM', async () => {
-    console.log('SIGTERM signal diterima, menutup server...');
-    await prisma.$disconnect();
-    process.exit(0);
-  });
-}
+server.listen(PORT, () => {
+  console.log(`🚀 Server berjalan di http://localhost:${PORT}`);
+  console.log(`📚 API Docs: http://localhost:${PORT}/api/docs`);
+  console.log(`🔒 Helmet: Enabled`);
+});
+
+process.on('SIGTERM', async () => {
+  console.log('SIGTERM signal diterima, menutup server...');
+  await prisma.$disconnect();
+  process.exit(0);
+});
