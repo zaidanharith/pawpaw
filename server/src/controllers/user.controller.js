@@ -301,26 +301,28 @@ const userController = {
             });
 
             if (!user) {
-                return res.status(404).json({ 
+                return res.status(404).json({ success: false, message: 'Pengguna tidak ditemukan' });
+            }
+
+            const counts = user._count || {};
+            const blocking = [];
+            if (counts.classroomsAsTeacher && counts.classroomsAsTeacher > 0) blocking.push({ relation: 'classroomsAsTeacher', count: counts.classroomsAsTeacher });
+            if (counts.liveReports && counts.liveReports > 0) blocking.push({ relation: 'liveReports', count: counts.liveReports });
+
+            if (blocking.length > 0) {
+                return res.status(400).json({
                     success: false,
-                    message: 'Pengguna tidak ditemukan' 
+                    message: 'Pengguna memiliki data terkait dan tidak dapat dihapus',
+                    details: blocking
                 });
             }
 
-            await prisma.user.delete({
-                where: { id }
-            });
+            await prisma.user.delete({ where: { id } });
 
-            res.status(200).json({ 
-                success: true,
-                message: 'Pengguna berhasil dihapus' 
-            });
+            res.status(200).json({ success: true, message: 'Pengguna berhasil dihapus' });
         } catch (error) {
-            console.error('Delete user error:', error);
-            res.status(500).json({ 
-                success: false,
-                message: 'Gagal menghapus pengguna'
-            });
+            console.error('Delete user error:', error && error.stack ? error.stack : error);
+            res.status(500).json({ success: false, message: 'Gagal menghapus pengguna', error: error && error.message ? error.message : String(error) });
         }
     }
 };
