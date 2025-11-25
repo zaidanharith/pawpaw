@@ -17,7 +17,7 @@ const DeleteConfirmation: React.FC<DeleteConfirmationProps> = ({
 
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4">
-            <div className="bg-white rounded-xl shadow p-6 w-full min-w-[300px]">
+            <div className="bg-white rounded-xl shadow p-6 w-full min-w-[300px] max-w-2xl">
                 <h2 className="text-xl font-bold mb-2 text-gray-800">Konfirmasi Hapus</h2>
                 <p className="mb-4 text-gray-700">
                     Apakah Anda yakin ingin menghapus <strong>{deleted}</strong>?

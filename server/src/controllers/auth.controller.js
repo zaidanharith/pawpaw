@@ -220,25 +220,23 @@ const authController = {
       }
 
       if (!user.googleId) {
-        const updateData = {
-          googleId,
-          picture,
-          provider: 'GOOGLE',
-          emailVerified: new Date(),
-          isLogin: true
-        };
         user = await prisma.user.update({
           where: { email },
-          data: updateData
+          data: {
+            googleId,
+            picture,
+            provider: 'GOOGLE',
+            emailVerified: new Date(),
+            isLogin: true
+          }
         });
       } else {
-        const updateData = {
-          picture,
-          isLogin: true
-        };
         user = await prisma.user.update({
           where: { email },
-          data: updateData
+          data: {
+            picture,
+            isLogin: true
+          }
         });
       }
 
@@ -396,7 +394,7 @@ const authController = {
         });
       }
 
-      const { name, username, email, phoneNumber, pictureId } = req.body;
+      const { name, username, email, phoneNumber, picture } = req.body;
 
       if (!name || !username || !email) {
         return res.status(400).json({
@@ -441,7 +439,6 @@ const authController = {
         });
       }
 
-      // Update data user
       const updateData = {
         name,
         username,
@@ -449,7 +446,6 @@ const authController = {
         phoneNumber: phoneNumber || null
       };
 
-      // Hanya update picture jika ada perubahan
       if (picture !== undefined && picture !== user.picture) {
         updateData.picture = picture;
       }
@@ -562,7 +558,7 @@ const authController = {
       });
 
       let matchedUser = null;
-      let minDistance = 0.6;
+      let minDistance = 0.5;
       for (const user of users) {
         if (user.faceDescriptor && user.faceDescriptor.length === descriptor.length) {
           const dist = euclideanDistance(user.faceDescriptor, descriptor);
@@ -588,6 +584,7 @@ const authController = {
             picture: matchedUser.picture,
             provider: matchedUser.provider
           }
+          
         });
       } else {
         return res.status(401).json({ success: false, message: "Wajah tidak cocok" });

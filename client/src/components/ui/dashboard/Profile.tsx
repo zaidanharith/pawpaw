@@ -69,22 +69,12 @@ export default function Profile() {
     const handleSaveProfile = async () => {
         console.log("🔄 Updating profile...");
         
-        // 1. Refresh data profil dari API
         await fetchProfile();
         
-        // 2. Update NextAuth session
         if (update) {
             await update();
             console.log("✅ Session updated successfully");
         }
-        
-        // 3. Log session terbaru untuk debugging
-        console.log("📊 Updated session:", session);
-        
-        // Optional: Force reload jika masih tidak berubah
-        // setTimeout(() => {
-        //     window.location.reload();
-        // }, 1000);
     };
 
     if (loading) {

@@ -15,13 +15,7 @@ const Navbar = ({ setIsSidebarOpen }: NavbarProps) => {
     const { data: session, status } = useSession();
     const pathname = usePathname();
     const [profilePicture, setProfilePicture] = useState<string>("/images/default-profile.png");
-
-    // Minimal type to avoid `any` casts for `session.user`
-    type SessionUser = {
-        name?: string | null;
-        image?: string | null;
-        picture?: string | null;
-    };
+    const [imageLoadError, setImageLoadError] = useState(false);
 
     // Fetch profile picture dari API
     useEffect(() => {
@@ -40,8 +34,8 @@ const Navbar = ({ setIsSidebarOpen }: NavbarProps) => {
                         const userData = data.data || data;
                         
                         if (userData.picture) {
-                            console.log("🖼️ Profile picture from API:", userData.picture);
                             setProfilePicture(userData.picture);
+                            setImageLoadError(false);
                             return;
                         }
                     }
@@ -50,11 +44,8 @@ const Navbar = ({ setIsSidebarOpen }: NavbarProps) => {
                 }
             }
 
-            // Fallback ke session picture
             if (session?.user) {
-                const u = session.user as SessionUser;
-                const userPicture = u.picture || u.image || "/images/default-profile.png";
-                console.log("🖼️ Profile picture from session:", userPicture);
+                const userPicture = session.user.picture || session.user.image || "/images/default-profile.png";
                 setProfilePicture(userPicture);
             }
         };
@@ -67,21 +58,18 @@ const Navbar = ({ setIsSidebarOpen }: NavbarProps) => {
     // Re-fetch ketika ada perubahan session (triggered by update())
     useEffect(() => {
         if (session?.user) {
-            const u = session.user as SessionUser;
-            const userPicture = u.picture || u.image;
+            const userPicture = (session.user as any).picture || session.user.image;
             if (userPicture && userPicture !== profilePicture) {
                 console.log("🔄 Session updated, new picture:", userPicture);
-                // Avoid synchronous setState directly in effect body to satisfy ESLint rule
-                const t = setTimeout(() => {
-                    setProfilePicture(userPicture);
-                }, 0);
-                return () => clearTimeout(t);
+                setProfilePicture(userPicture);
+                setImageLoadError(false);
             }
         }
-    }, [session?.user, profilePicture]);
+    }, [session?.user]);
 
     const handleImageError = () => {
         console.warn("⚠️ Failed to load profile picture, using default");
+        setImageLoadError(true);
         setProfilePicture("/images/default-profile.png");
     };
 
@@ -120,9 +108,9 @@ const Navbar = ({ setIsSidebarOpen }: NavbarProps) => {
                                 height={40}
                                 className="rounded-full object-cover w-full h-full"
                                 priority
-                                key={profilePicture} // Force re-render saat picture berubah
+                                key={profilePicture}
                                 onError={handleImageError}
-                                unoptimized={profilePicture.startsWith('http')} // Untuk URL eksternal (Cloudinary)
+                                unoptimized={profilePicture.startsWith('http')}
                             />
                         </div>
                     </Link>

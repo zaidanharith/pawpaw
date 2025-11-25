@@ -141,11 +141,11 @@ const UserTable = () => {
                     <table className="w-full text-sm text-gray-700 rounded-xl">
                         <thead style={{ backgroundColor: accentColor, color:textColor }}>
                             <tr>
-                                <th className="px-4 py-3 text-left font-semibold whitespace-nowrap">Nama Lengkap</th>
-                                <th className="px-4 py-3 text-left font-semibold">Username</th>
-                                <th className="px-4 py-3 text-left font-semibold">Email</th>
-                                <th className="px-4 py-3 text-left font-semibold">Role</th>
-                                <th className="px-4 py-3 text-left font-semibold">Aksi   </th>
+                                <th className="p-3 text-left font-semibold whitespace-nowrap">Nama Lengkap</th>
+                                <th className="p-3 text-left font-semibold">Username</th>
+                                <th className="p-3 text-left font-semibold">Email</th>
+                                <th className="p-3 text-left font-semibold">Role</th>
+                                <th className="p-3 text-left font-semibold">Aksi </th>
                             </tr>
                         </thead>
                         <tbody className="bg-background">
@@ -164,13 +164,13 @@ const UserTable = () => {
                             ) : (
                                 allUsers.map((user) => (
                                     <tr key={user.id} className="border-t hover:bg-gray-50 transition-colors">
-                                        <td className="px-4 py-3 font-medium whitespace-nowrap">{user.name}</td>
-                                        <td className="px-4 py-3">{user.username}</td>
-                                        <td className="px-4 py-3">{user.email}</td>
-                                        <td className="px-4 py-3">
+                                        <td className="p-3 font-medium whitespace-nowrap">{user.name}</td>
+                                        <td className="p-3">{user.username}</td>
+                                        <td className="p-3">{user.email}</td>
+                                        <td className="p-3">
                                             <RoleLabel role={user.role} />
                                         </td>
-                                        <td className="px-4 py-3 flex justify-center sm:justify-start gap-3">
+                                        <td className="p-3 flex justify-center sm:justify-start gap-1">
                                             <button 
                                                 onClick={() => handleEditUser(user)}
                                                 className="cursor-pointer hover:scale-110 transition-transform p-1 rounded-full text-blue-500 hover:bg-blue-50"

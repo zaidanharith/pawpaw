@@ -15,7 +15,14 @@ Orang tua bisa melihat aktivitas harian anak, cuaca, hingga laporan berkala, sem
 
 1. Pastikan file `.env` sudah ada di folder `/server` dan file `.env.local` sudah ada di folder `/client`. Jika belum, silakan buat dengan _template_ di `.env.example` di setiap foldernya.
 
-2. Jalankan _command prompt_ berikut di folder root (`/pawpaw`).
+2. _Clone_ Repository GitHub ini.
+
+```bash
+git clone https://github.com/zaidanharith/pawpaw.git
+cd pawpaw
+```
+
+3. Jalankan _command prompt_ berikut di folder root (`/pawpaw`).
 
 ```bash
 npm run install:all
@@ -26,7 +33,7 @@ npm run dev
   - **Frontend**: <a href="https://kidconnect.vercel.app" target="_blank" rel="noopener noreferrer">https://kidconnect.vercel.app</a>  
   - **Backend API**: <a href="https://api-kidconnect.vercel.app" target="_blank" rel="noopener noreferrer">https://api-kidconnect.vercel.app</a>
 
-## 📝 Penjelasan Detail Tentang Aplikasi (Back-End) dan Link Video Demo
+## 📝 Penjelasan Detail Tentang Aplikasi dan Link Video Demo
 
 🔗 [Laporan Kelompok 13 PAW_US3 : KidConnect Application](https://drive.google.com/drive/folders/1BU8iePVpYhGK1ela7MJdZAZUS7w8tawK?usp=sharing)
 

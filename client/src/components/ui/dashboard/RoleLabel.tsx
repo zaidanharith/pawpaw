@@ -18,12 +18,12 @@ const RoleLabel: React.FC<RoleLabelProps> = ({role}) => {
 
     return (
         <span
-            className="inline-flex items-center text-center px-2 py-0.5 rounded-lg text-xs first-letter:uppercase w-auto"
+            className="inline-flex items-center text-center px-2 py-0.5 rounded-lg text-xs first-letter:uppercase w-auto whitespace-nowrap flex-shrink-0"
             style={{
-            backgroundColor: accentColor,
-            color: textColor,
-            width: "auto",
-            minWidth: 0,
+                backgroundColor: accentColor,
+                color: textColor,
+                width: "auto",
+                minWidth: 0,
             }}
         >
             {(role === "PARENT" ? "Orang Tua" : (role === "TEACHER") ? "Guru" : "Admin")}

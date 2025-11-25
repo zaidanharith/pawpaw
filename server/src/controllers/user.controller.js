@@ -281,7 +281,6 @@ const userController = {
         try {
             const { id } = req.params;
 
-            // Validate ObjectId
             if (!id || id.length !== 24) {
                 return res.status(400).json({ 
                     success: false,
@@ -295,8 +294,7 @@ const userController = {
                     _count: {
                         select: {
                             classroomsAsTeacher: true,
-                            liveReports: true,
-                            quarterlyReports: true
+                            liveReports: true
                         }
                     }
                 }
